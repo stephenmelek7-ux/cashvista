@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CashVista - Earn, Watch, Advertise & Grow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span {
+            color: #fff;
+        }
+        .topbar .logo .play-icon {
+            color: #f5c842;
+            margin-right: 5px;
+        }
+        .topbar nav {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .topbar nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .topbar nav a:hover {
+            color: #f5c842;
+        }
+        .topbar nav .btn-login {
+            background: #f5c842;
+            color: #0d1b2a;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .topbar nav .btn-login:hover {
+            background: #e6b800;
+        }
+        .topbar nav .btn-signup {
+            background: #fff;
+            color: #0d1b2a;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .topbar nav .btn-signup:hover {
+            background: #e6e6e6;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+        }
+        .hero h1 span {
+            color: #f5c842;
+        }
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 20px auto 30px;
+            color: #ccc;
+        }
+        .hero .btn {
+            background: #f5c842;
+            color: #0d1b2a;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 18px;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .hero .btn:hover {
+            background: #e6b800;
+            transform: scale(1.05);
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .section-title span {
+            color: #f5c842;
+        }
+
+        /* ===== FEATURES GRID ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            transition: 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+        }
+        .feature-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .feature-card h3 {
+            font-size: 20px;
+            color: #0d1b2a;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            background: #0d1b2a;
+            color: #fff;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            text-align: center;
+            gap: 20px;
+        }
+        .stats-bar .stat h2 {
+            font-size: 36px;
+            color: #f5c842;
+        }
+        .stats-bar .stat p {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-item {
+            background: #fff;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .faq-item h4 {
+            color: #0d1b2a;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        .faq-item p {
+            color: #555;
+            font-size: 15px;
+        }
+
+        /* ===== CONTACT SECTION ===== */
+        .contact-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .contact-section h3 {
+            font-size: 24px;
+            color: #0d1b2a;
+            margin-bottom: 10px;
+        }
+        .contact-section p {
+            color: #555;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .contact-section .whatsapp-link {
+            display: inline-block;
+            background: #25d366;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .contact-section .whatsapp-link:hover {
+            background: #1da851;
+            transform: scale(1.05);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .footer .founder {
+            color: #f5c842;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .footer .whatsapp {
+            color: #25d366;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .topbar nav {
+                justify-content: center;
+            }
+            .contact-section {
+                padding: 20px;
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="topbar">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contact">Contact</a>
+            <a href="login.html" class="btn-login">Login</a>
+            <a href="register.html" class="btn-signup">Sign Up</a>
+        </nav>
+    </div>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero">
+        <h1>Earn, Watch, Advertise & <span>Grow</span></h1>
+        <p>CashVista is the ultimate platform where you earn money by watching videos, advertise your business, and grow your income through referrals.</p>
+        <a href="register.html" class="btn">Get Started — It's Free</a>
+    </section>
+
+    <!-- ===== STATS BAR ===== -->
+    <section class="stats-bar">
+        <div class="stat"><h2 id="statUsers">0+</h2><p>Active Users</p></div>
+        <div class="stat"><h2 id="statEarnings">₦0+</h2><p>Earnings Paid</p></div>
+        <div class="stat"><h2 id="statCampaigns">0+</h2><p>Video Campaigns</p></div>
+        <div class="stat"><h2 id="statAdvertisers">0+</h2><p>Advertisers</p></div>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <div class="container" id="features">
+        <h2 class="section-title">Why <span>CashVista</span>?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">📹</div>
+                <h3>Watch & Earn</h3>
+                <p>Watch videos from advertisers and earn ₦1 per second directly to your wallet.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📢</div>
+                <h3>Advertise Your Video</h3>
+                <p>Promote your video content to thousands of engaged viewers instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔗</div>
+                <h3>Invest & Grow</h3>
+                <p>Pay ₦5,000 to unlock your referral link and earn 55% commission on every referral.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">💰</div>
+                <h3>Instant Wallet</h3>
+                <p>Your earnings are credited instantly. Withdraw anytime to your bank account.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🛡️</div>
+                <h3>Secure & Trusted</h3>
+                <p>Your data is safe. We use industry-standard encryption and security practices.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🌐</div>
+                <h3>Referral Network</h3>
+                <p>Invite friends and earn commissions on every referral that joins Invest & Grow.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <div class="container" id="how-it-works" style="background:#f8fafc; border-radius:20px;">
+        <h2 class="section-title">How <span>It Works</span></h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:30px;">
+            <div style="text-align:center; background:#fff; padding:30px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+                <div style="font-size:40px; background:#f5c842; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:#0d1b2a; font-weight:700;">1</div>
+                <h3>Sign Up Free</h3>
+                <p>Create your account in minutes. No fees to join.</p>
+            </div>
+            <div style="text-align:center; background:#fff; padding:30px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+                <div style="font-size:40px; background:#f5c842; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:#0d1b2a; font-weight:700;">2</div>
+                <h3>Watch or Advertise</h3>
+                <p>Watch videos to earn ₦1/second or advertise your video to reach thousands.</p>
+            </div>
+            <div style="text-align:center; background:#fff; padding:30px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+                <div style="font-size:40px; background:#f5c842; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:#0d1b2a; font-weight:700;">3</div>
+                <h3>Invest & Grow</h3>
+                <p>Pay ₦5,000 to unlock your referral link and start earning commissions.</p>
+            </div>
+            <div style="text-align:center; background:#fff; padding:30px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+                <div style="font-size:40px; background:#f5c842; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:#0d1b2a; font-weight:700;">4</div>
+                <h3>Withdraw Earnings</h3>
+                <p>Cash out your earnings directly to your bank account anytime.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FAQ ===== -->
+    <div class="container" id="faq">
+        <h2 class="section-title">Frequently Asked <span>Questions</span></h2>
+        <div style="display:grid; gap:15px; max-width:800px; margin:0 auto;">
+            <div class="faq-item">
+                <h4>What is CashVista?</h4>
+                <p>CashVista is a video earning and advertising platform where users earn ₦1 per second by watching videos, advertisers promote their content, and members earn commissions through referrals.</p>
+            </div>
+            <div class="faq-item">
+                <h4>How do I earn money?</h4>
+                <p>You earn ₦1 per second by watching videos. You also earn 55% commission when your referrals join Invest & Grow.</p>
+            </div>
+            <div class="faq-item">
+                <h4>What is Invest & Grow?</h4>
+                <p>Invest & Grow is a ₦5,000 membership that unlocks your permanent referral link, allowing you to earn 55% on direct referrals and downline bonuses up to 200 people.</p>
+            </div>
+            <div class="faq-item">
+                <h4>How do I withdraw my earnings?</h4>
+                <p>Go to your dashboard, click Withdraw, enter your bank details, and request a withdrawal. Payments are processed within 24-48 hours.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Is CashVista free to join?</h4>
+                <p>Yes! Registration is completely free. You only pay ₦5,000 if you choose to join the Invest & Grow program.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTACT SECTION ===== -->
+    <div class="container" id="contact">
+        <h2 class="section-title">Contact <span>Us</span></h2>
+        <div class="contact-section">
+            <h3>📱 Get in Touch</h3>
+            <p>Have questions? Reach out to us on WhatsApp.</p>
+            <p><strong>Founder & Designer:</strong> Stephen Melek Elisha</p>
+            <a href="https://wa.me/2348039541999" target="_blank" class="whatsapp-link">
+                💬 Chat on WhatsApp: 08039541999
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+        <p class="whatsapp">📱 WhatsApp: 08039541999</p>
+    </footer>
+
+    <!-- ===== STATS SCRIPT ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
+                const campaigns = JSON.parse(localStorage.getItem('cashvista_campaigns') || '[]');
+                document.getElementById('statUsers').textContent = users.length + '+';
+                document.getElementById('statCampaigns').textContent = campaigns.length + '+';
+                let totalEarnings = 0;
+                users.forEach(u => totalEarnings += (u.balance || 0));
+                document.getElementById('statEarnings').textContent = '₦' + totalEarnings.toLocaleString() + '+';
+                const advertisers = new Set();
+                campaigns.forEach(c => advertisers.add(c.userEmail));
+                document.getElementById('statAdvertisers').textContent = advertisers.size + '+';
+            } catch (e) {
+                // Stats stay as default
+            }
+        });
+    </script>
+
+</body>
+</html>

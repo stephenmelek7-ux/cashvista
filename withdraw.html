@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Withdraw - CashVista</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===== RESET & BASE ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        background: #f0f4f8;
+        color: #1a1a2e;
+      }
+
+      /* ===== TOP BAR ===== */
+      .topbar {
+        background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+        color: #fff;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .topbar .logo {
+        font-size: 28px;
+        font-weight: 800;
+        color: #f5c842;
+      }
+      .topbar .logo span {
+        color: #fff;
+      }
+      .topbar .logo .play-icon {
+        color: #f5c842;
+        margin-right: 5px;
+      }
+      .topbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .topbar .user-info .greeting {
+        color: #ddd;
+        font-size: 14px;
+      }
+      .topbar .user-info .greeting strong {
+        color: #f5c842;
+        font-weight: 700;
+      }
+      .topbar .user-info .balance-badge {
+        background: rgba(245, 200, 66, 0.15);
+        border: 1px solid #f5c842;
+        padding: 6px 18px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 15px;
+        color: #f5c842;
+      }
+      .topbar .user-info .logout {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
+        padding: 6px 18px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: 0.3s;
+      }
+      .topbar .user-info .logout:hover {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .topbar .back-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 6px 18px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .topbar .back-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* ===== CONTAINER ===== */
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 25px 20px;
+      }
+
+      /* ===== CARDS ===== */
+      .card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px 35px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        margin-bottom: 25px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+      .card h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0d1b2a;
+        margin-bottom: 6px;
+      }
+      .card .subtitle {
+        color: #888;
+        font-size: 15px;
+        margin-bottom: 20px;
+      }
+      .card p {
+        color: #555;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      /* ===== BALANCE DISPLAY ===== */
+      .balance-display {
+        background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+        color: #fff;
+        padding: 25px 30px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      .balance-display .label {
+        font-size: 14px;
+        color: #aac;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .balance-display .amount {
+        font-size: 48px;
+        font-weight: 800;
+        color: #f5c842;
+        margin: 6px 0;
+      }
+      .balance-display .sub {
+        font-size: 13px;
+        color: #aac;
+      }
+
+      /* ===== FORM ELEMENTS ===== */
+      .form-group {
+        margin-bottom: 18px;
+      }
+      .form-group label {
+        font-weight: 600;
+        color: #333;
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+      .form-group label .optional {
+        font-weight: 400;
+        color: #999;
+        font-size: 12px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e8ecf0;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: 0.3s;
+        background: #fafbfc;
+        font-family: inherit;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: #f5c842;
+        outline: none;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+      }
+      .form-group .hint {
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 4px;
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn {
+        display: inline-block;
+        padding: 14px 35px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: center;
+        text-decoration: none;
+      }
+      .btn-green {
+        background: #2e7d32;
+        color: #fff;
+      }
+      .btn-green:hover {
+        background: #1b5e20;
+        transform: scale(1.02);
+      }
+      .btn-gold {
+        background: #f5c842;
+        color: #0d1b2a;
+      }
+      .btn-gold:hover {
+        background: #e6b800;
+      }
+      .btn-block {
+        width: 100%;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* ===== STATUS BADGE ===== */
+      .badge {
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .badge-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .badge-warning {
+        background: #fff3e0;
+        color: #e65100;
+      }
+      .badge-danger {
+        background: #fce4ec;
+        color: #c62828;
+      }
+
+      /* ===== NOTIFICATION ===== */
+      .notification {
+        padding: 15px 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        display: none;
+        font-weight: 500;
+      }
+      .notification.show {
+        display: block;
+      }
+      .notification.success {
+        background: #e8f5e9;
+        color: #1b5e20;
+        border-left: 5px solid #2e7d32;
+      }
+      .notification.error {
+        background: #fce4ec;
+        color: #b71c1c;
+        border-left: 5px solid #c62828;
+      }
+      .notification.info {
+        background: #e3f2fd;
+        color: #0d47a1;
+        border-left: 5px solid #0d47a1;
+      }
+
+      /* ===== HISTORY TABLE ===== */
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      .history-table th {
+        background: #0d1b2a;
+        color: #fff;
+        padding: 10px 16px;
+        text-align: left;
+      }
+      .history-table td {
+        padding: 10px 16px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .history-table tr:hover td {
+        background: #f8fafc;
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        background: #0d1b2a;
+        color: #aaa;
+        text-align: center;
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 20px 20px 0 0;
+      }
+      .footer .founder {
+        color: #f5c842;
+        font-weight: 600;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        .topbar {
+          flex-direction: column;
+          gap: 12px;
+          text-align: center;
+          padding: 15px;
+        }
+        .topbar .user-info {
+          justify-content: center;
+        }
+        .card {
+          padding: 20px;
+        }
+        .balance-display .amount {
+          font-size: 32px;
+        }
+        .history-table {
+          font-size: 12px;
+        }
+        .history-table th,
+        .history-table td {
+          padding: 8px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== TOP BAR ===== -->
+    <div class="topbar">
+      <div class="logo">
+        <span class="play-icon">▶</span>Cash<span>Vista</span>
+      </div>
+      <div class="user-info">
+        <span class="greeting"
+          >👋 Welcome, <strong id="userName">User</strong></span
+        >
+        <span class="balance-badge"
+          >💰 <span id="userBalance">₦0.00</span></span
+        >
+        <a href="dashboard.html" class="back-btn">← Dashboard</a>
+        <button class="logout" onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- ===== NOTIFICATION ===== -->
+      <div id="notification" class="notification">
+        <span id="notificationMessage">Welcome to Withdraw!</span>
+      </div>
+
+      <!-- ===== BALANCE DISPLAY ===== -->
+      <div class="balance-display">
+        <div class="label">💰 Available Balance</div>
+        <div class="amount" id="availableBalance">₦0.00</div>
+        <div class="sub">Minimum withdrawal: ₦1,000</div>
+      </div>
+
+      <!-- ===== WITHDRAW FORM ===== -->
+      <div class="card">
+        <h2>💸 Withdraw Funds</h2>
+        <p class="subtitle">
+          Enter your bank details below to request a withdrawal.
+        </p>
+
+        <form id="withdrawForm">
+          <div class="form-group">
+            <label>Amount to Withdraw (₦) *</label>
+            <input
+              type="number"
+              id="withdrawAmount"
+              placeholder="e.g., 1000"
+              required
+            />
+            <div class="hint">Minimum withdrawal: ₦1,000</div>
+          </div>
+
+          <div class="form-group">
+            <label>Bank Name</label>
+            <select id="bankName" required>
+              <option value="">Select your bank</option>
+              <option value="Access Bank">Access Bank</option>
+              <option value="First Bank">First Bank</option>
+              <option value="GTBank">GTBank</option>
+              <option value="UBA">UBA</option>
+              <option value="Zenith Bank">Zenith Bank</option>
+              <option value="Opay">Opay</option>
+              <option value="Palmpay">Palmpay</option>
+              <option value="Kuda Bank">Kuda Bank</option>
+              <option value="Moniepoint">Moniepoint</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Account Number *</label>
+            <input
+              type="text"
+              id="accountNumber"
+              placeholder="Enter your 10-digit account number"
+              maxlength="10"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Account Name *</label>
+            <input
+              type="text"
+              id="accountName"
+              placeholder="Enter account holder's name"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-green btn-block">
+            💸 Request Withdrawal
+          </button>
+        </form>
+      </div>
+
+      <!-- ===== WITHDRAWAL HISTORY ===== -->
+      <div class="card">
+        <h3>📋 Withdrawal History</h3>
+        <p style="color: #888; font-size: 14px; margin-bottom: 15px">
+          View all your withdrawal requests and their status.
+        </p>
+
+        <div style="overflow-x: auto">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Bank</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="withdrawalHistory">
+              <tr>
+                <td
+                  colspan="4"
+                  style="text-align: center; padding: 20px; color: #888"
+                >
+                  No withdrawal requests yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <p>&copy; 2026 CashVista. All rights reserved.</p>
+      <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
+
+    <script>
+      // =============================================
+      // GET LOGGED-IN USER
+      // =============================================
+      function getLoggedInUser() {
+        const userEmail = sessionStorage.getItem('userEmail');
+        if (!userEmail) {
+          window.location.href = 'login.html';
+          return null;
+        }
+        try {
+          const users = JSON.parse(
+            localStorage.getItem('cashvista_users') || '[]'
+          );
+          const user = users.find((u) => u.email === userEmail);
+          if (!user) {
+            window.location.href = 'login.html';
+            return null;
+          }
+          return user;
+        } catch (e) {
+          window.location.href = 'login.html';
+          return null;
+        }
+      }
+
+      let currentUser = null;
+
+      // =============================================
+      // LOAD PAGE
+      // =============================================
+      document.addEventListener('DOMContentLoaded', function () {
+        currentUser = getLoggedInUser();
+        if (!currentUser) return;
+
+        document.getElementById('userName').textContent =
+          currentUser.name || 'User';
+        document.getElementById('userBalance').textContent =
+          '₦' + (currentUser.balance || 0).toLocaleString();
+        document.getElementById('availableBalance').textContent =
+          '₦' + (currentUser.balance || 0).toLocaleString();
+
+        loadWithdrawalHistory();
+      });
+
+      // =============================================
+      // LOAD WITHDRAWAL HISTORY
+      // =============================================
+      function loadWithdrawalHistory() {
+        const withdrawals = JSON.parse(
+          localStorage.getItem('cashvista_withdrawals') || '[]'
+        );
+        const userWithdrawals = withdrawals.filter(
+          (w) => w.userEmail === currentUser?.email
+        );
+        const tbody = document.getElementById('withdrawalHistory');
+
+        if (userWithdrawals.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">No withdrawal requests yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = userWithdrawals
+          .map((w) => {
+            let statusBadge = '';
+            if (w.status === 'pending') {
+              statusBadge =
+                '<span class="badge badge-warning">⏳ Pending</span>';
+            } else if (w.status === 'approved') {
+              statusBadge =
+                '<span class="badge badge-success">✅ Approved</span>';
+            } else if (w.status === 'rejected') {
+              statusBadge =
+                '<span class="badge badge-danger">❌ Rejected</span>';
+            } else {
+              statusBadge =
+                '<span class="badge badge-warning">⏳ Pending</span>';
+            }
+
+            return `
+                    <tr>
+                        <td>${new Date(w.date).toLocaleDateString()}</td>
+                        <td>₦${Number(w.amount).toLocaleString()}</td>
+                        <td>${w.bankName || 'N/A'}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+          })
+          .join('');
+      }
+
+      // =============================================
+      // SUBMIT WITHDRAWAL
+      // =============================================
+      document
+        .getElementById('withdrawForm')
+        .addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const amount = Number(
+            document.getElementById('withdrawAmount').value.trim()
+          );
+          const bankName = document.getElementById('bankName').value;
+          const accountNumber = document
+            .getElementById('accountNumber')
+            .value.trim();
+          const accountName = document
+            .getElementById('accountName')
+            .value.trim();
+
+          // Validation
+          if (!amount || amount <= 0) {
+            showNotification('❌ Please enter a valid amount.', 'error');
+            return;
+          }
+
+          if (amount < 1000) {
+            showNotification(
+              '❌ Minimum withdrawal amount is ₦1,000.',
+              'error'
+            );
+            return;
+          }
+
+          if (amount > (currentUser.balance || 0)) {
+            showNotification(
+              '❌ Insufficient balance. You have ₦' +
+                (currentUser.balance || 0).toLocaleString(),
+              'error'
+            );
+            return;
+          }
+
+          if (!bankName) {
+            showNotification('❌ Please select your bank.', 'error');
+            return;
+          }
+
+          if (!accountNumber || accountNumber.length < 10) {
+            showNotification(
+              '❌ Please enter a valid 10-digit account number.',
+              'error'
+            );
+            return;
+          }
+
+          if (!accountName) {
+            showNotification(
+              "❌ Please enter the account holder's name.",
+              'error'
+            );
+            return;
+          }
+
+          // Create withdrawal request
+          const withdrawal = {
+            id: 'wd_' + Date.now(),
+            user: currentUser.name,
+            userEmail: currentUser.email,
+            amount: amount,
+            bankName: bankName,
+            accountNumber: accountNumber,
+            accountName: accountName,
+            status: 'pending',
+            date: new Date().toISOString(),
+          };
+
+          // Save to localStorage
+          let withdrawals = JSON.parse(
+            localStorage.getItem('cashvista_withdrawals') || '[]'
+          );
+          withdrawals.push(withdrawal);
+          localStorage.setItem(
+            'cashvista_withdrawals',
+            JSON.stringify(withdrawals)
+          );
+
+          // Deduct from user balance
+          let users = JSON.parse(
+            localStorage.getItem('cashvista_users') || '[]'
+          );
+          const index = users.findIndex((u) => u.email === currentUser.email);
+          if (index !== -1) {
+            users[index].balance = (users[index].balance || 0) - amount;
+            localStorage.setItem('cashvista_users', JSON.stringify(users));
+            currentUser = users[index];
+          }
+
+          // Add activity
+          addActivity(
+            currentUser.name,
+            'Requested withdrawal of ₦' + amount,
+            amount
+          );
+
+          // Send notification to admin
+          sendAdminNotification(
+            '💰 New withdrawal request: ' +
+              currentUser.name +
+              ' requested ₦' +
+              amount
+          );
+
+          // Update display
+          document.getElementById('userBalance').textContent =
+            '₦' + (currentUser.balance || 0).toLocaleString();
+          document.getElementById('availableBalance').textContent =
+            '₦' + (currentUser.balance || 0).toLocaleString();
+
+          // Reset form
+          document.getElementById('withdrawAmount').value = '';
+          document.getElementById('bankName').value = '';
+          document.getElementById('accountNumber').value = '';
+          document.getElementById('accountName').value = '';
+
+          // Reload history
+          loadWithdrawalHistory();
+
+          showNotification(
+            '✅ Withdrawal request submitted successfully! Admin will process it shortly.',
+            'success'
+          );
+        });
+
+      // =============================================
+      // SEND NOTIFICATION TO ADMIN
+      // =============================================
+      function sendAdminNotification(message) {
+        console.log('🔔 Admin Notification:', message);
+        // In production, this would be saved to database
+      }
+
+      // =============================================
+      // ADD ACTIVITY
+      // =============================================
+      function addActivity(user, action, amount = 0) {
+        const activity = JSON.parse(
+          localStorage.getItem('cashvista_activity') || '[]'
+        );
+        activity.unshift({
+          user: user,
+          action: action,
+          amount: amount,
+          date: new Date().toLocaleString(),
+        });
+        if (activity.length > 100) activity.pop();
+        localStorage.setItem('cashvista_activity', JSON.stringify(activity));
+      }
+
+      // =============================================
+      // NOTIFICATION SYSTEM
+      // =============================================
+      function showNotification(message, type) {
+        const el = document.getElementById('notification');
+        const msg = document.getElementById('notificationMessage');
+        el.className = 'notification show ' + (type || 'info');
+        msg.textContent = message;
+        setTimeout(() => {
+          el.classList.remove('show');
+        }, 5000);
+      }
+
+      // =============================================
+      // LOGOUT
+      // =============================================
+      function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+          sessionStorage.removeItem('userEmail');
+          window.location.href = 'login.html';
+        }
+      }
+
+      // =============================================
+      // ADMIN FUNCTIONS (Called from Admin Dashboard)
+      // =============================================
+      function adminApproveWithdrawal(withdrawalId) {
+        let withdrawals = JSON.parse(
+          localStorage.getItem('cashvista_withdrawals') || '[]'
+        );
+        const index = withdrawals.findIndex((w) => w.id === withdrawalId);
+        if (index !== -1) {
+          withdrawals[index].status = 'approved';
+          localStorage.setItem(
+            'cashvista_withdrawals',
+            JSON.stringify(withdrawals)
+          );
+          alert('✅ Withdrawal approved!');
+          loadWithdrawalHistory();
+        }
+      }
+
+      function adminRejectWithdrawal(withdrawalId) {
+        let withdrawals = JSON.parse(
+          localStorage.getItem('cashvista_withdrawals') || '[]'
+        );
+        const index = withdrawals.findIndex((w) => w.id === withdrawalId);
+        if (index !== -1) {
+          withdrawals[index].status = 'rejected';
+          localStorage.setItem(
+            'cashvista_withdrawals',
+            JSON.stringify(withdrawals)
+          );
+          alert('❌ Withdrawal rejected.');
+          loadWithdrawalHistory();
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invest & Grow - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span {
+            color: #fff;
+        }
+        .topbar .logo .play-icon {
+            color: #f5c842;
+            margin-right: 5px;
+        }
+        .topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .topbar .user-info .greeting {
+            color: #ddd;
+            font-size: 14px;
+        }
+        .topbar .user-info .greeting strong {
+            color: #f5c842;
+            font-weight: 700;
+        }
+        .topbar .user-info .balance-badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #f5c842;
+        }
+        .topbar .user-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .user-info .logout:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .topbar .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .topbar .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px 35px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0d1b2a;
+            margin-bottom: 6px;
+        }
+        .card .subtitle {
+            color: #888;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .card p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .price-tag {
+            font-size: 36px;
+            font-weight: 800;
+            color: #f5c842;
+            background: #fef7e0;
+            padding: 15px 30px;
+            border-radius: 16px;
+            display: inline-block;
+            margin: 10px 0 20px;
+        }
+
+        /* ===== BANK DETAILS ===== */
+        .bank-details {
+            background: #e8f5e9;
+            padding: 20px 25px;
+            border-radius: 16px;
+            border-left: 5px solid #2e7d32;
+            margin: 15px 0;
+        }
+        .bank-details p {
+            font-size: 15px;
+            margin: 5px 0;
+            color: #1a1a2e;
+        }
+        .bank-details strong {
+            color: #0d1b2a;
+        }
+        .bank-details .number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0d1b2a;
+            letter-spacing: 2px;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: 0.3s;
+            background: #fafbfc;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-gold {
+            background: #f5c842;
+            color: #0d1b2a;
+        }
+        .btn-gold:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+        }
+        .btn-green {
+            background: #2e7d32;
+            color: #fff;
+        }
+        .btn-green:hover {
+            background: #1b5e20;
+        }
+        .btn-block {
+            width: 100%;
+        }
+
+        /* ===== COMMISSION TABLE ===== */
+        .commission-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .commission-table th {
+            background: #0d1b2a;
+            color: #fff;
+            padding: 10px 16px;
+            text-align: left;
+        }
+        .commission-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .commission-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* ===== STATUS BADGE ===== */
+        .badge {
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .badge-warning {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .badge-info {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+        .notification.show {
+            display: block;
+        }
+        .notification.success {
+            background: #e8f5e9;
+            color: #1b5e20;
+            border-left: 5px solid #2e7d32;
+        }
+        .notification.error {
+            background: #fce4ec;
+            color: #b71c1c;
+            border-left: 5px solid #c62828;
+        }
+        .notification.info {
+            background: #e3f2fd;
+            color: #0d47a1;
+            border-left: 5px solid #0d47a1;
+        }
+
+        /* ===== REFERRAL LINK DISPLAY ===== */
+        .referral-link-box {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px dashed #f5c842;
+            word-break: break-all;
+            font-size: 16px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .referral-link-box .link-text {
+            font-weight: 600;
+            color: #0d1b2a;
+        }
+        .referral-link-box .copy-btn {
+            background: #0d1b2a;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .referral-link-box .copy-btn:hover {
+            background: #1b3a5c;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder {
+            color: #f5c842;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+                padding: 15px;
+            }
+            .topbar .user-info {
+                justify-content: center;
+            }
+            .card {
+                padding: 20px;
+            }
+            .price-tag {
+                font-size: 28px;
+                padding: 10px 20px;
+            }
+            .bank-details .number {
+                font-size: 18px;
+            }
+            .referral-link-box {
+                flex-direction: column;
+                text-align: center;
+            }
+            .commission-table {
+                font-size: 12px;
+            }
+            .commission-table th,
+            .commission-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="topbar">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="user-info">
+            <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
+            <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
+            <a href="dashboard.html" class="back-btn">← Dashboard</a>
+            <button class="logout" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- ===== NOTIFICATION ===== -->
+        <div id="notification" class="notification">
+            <span id="notificationMessage">Welcome to Invest & Grow!</span>
+        </div>
+
+        <!-- ===== MAIN CARD ===== -->
+        <div class="card">
+            <h2>📈 Invest & Grow</h2>
+            <p class="subtitle">Pay ₦5,000 to unlock your permanent referral link and start earning commissions.</p>
+
+            <div style="text-align:center;">
+                <div class="price-tag">₦5,000</div>
+            </div>
+
+            <div style="margin:15px 0; background:#f8fafc; padding:20px; border-radius:16px;">
+                <h4 style="color:#0d1b2a; margin-bottom:10px;">📌 Your Status</h4>
+                <p id="membershipStatus" style="font-size:16px;">
+                    <span class="badge badge-warning">⚠️ Not Activated</span>
+                </p>
+                <p style="color:#555; font-size:14px; margin-top:6px;">
+                    Pay ₦5,000 to activate your referral link and start earning.
+                </p>
+            </div>
+
+            <hr style="border:1px solid #f0f0f0; margin:20px 0;" />
+
+            <h3 style="color:#0d1b2a; margin-bottom:15px;">💰 Choose Payment Method</h3>
+
+            <div class="form-group">
+                <label>Select Payment Method</label>
+                <select id="paymentMethod">
+                    <option value="paystack">💳 Pay with Paystack (Card)</option>
+                    <option value="bank">🏦 Bank Transfer</option>
+                </select>
+            </div>
+
+            <!-- Bank Transfer Details -->
+            <div id="bankTransferDetails" class="bank-details">
+                <p><strong>🏦 Bank:</strong> United Bank for Africa (UBA)</p>
+                <p><strong>📋 Account Name:</strong> Stephenmelek Global Business Enterprise</p>
+                <p><strong>🔢 Account Number:</strong> <span class="number">1023456789</span></p>
+                <p style="font-size:13px; color:#555; margin-top:10px;">
+                    After payment, click the "I Have Paid" button below and fill in your transaction details.
+                </p>
+            </div>
+
+            <!-- Paystack Button -->
+            <div id="paystackSection">
+                <button class="btn btn-gold btn-block" onclick="payWithPaystack()">
+                    💳 Pay ₦5,000 with Paystack
+                </button>
+            </div>
+
+            <!-- I Have Paid (Bank Transfer) -->
+            <div style="margin-top:12px;">
+                <button class="btn btn-green btn-block" onclick="showPaymentConfirmation()">
+                    ✅ I Have Paid (Bank Transfer)
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== COMMISSION STRUCTURE ===== -->
+        <div class="card">
+            <h3>💰 Commission Structure</h3>
+            <p style="color:#555; font-size:14px; margin-bottom:15px;">
+                You earn commissions when people register through your referral link.
+            </p>
+            <table class="commission-table">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Percentage</th>
+                        <th>Amount (₦5,000)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Direct Referral</strong></td>
+                        <td>55%</td>
+                        <td>₦2,750</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Downline (1-20)</strong></td>
+                        <td>0.5%</td>
+                        <td>₦25</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Downline (21-50)</strong></td>
+                        <td>0.3%</td>
+                        <td>₦15</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Downline (51-200)</strong></td>
+                        <td>0.1%</td>
+                        <td>₦5</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-size:12px; color:#888; margin-top:10px;">
+                Maximum downline bonus: 200 people | Direct referrals: Unlimited
+            </p>
+        </div>
+
+        <!-- ===== REFERRAL LINK SECTION ===== -->
+        <div class="card" id="referralSection">
+            <h3>🔗 Your Referral Link</h3>
+            <p style="color:#555; font-size:14px; margin-bottom:10px;">
+                Share this link to invite others and earn commissions.
+            </p>
+
+            <div id="referralLinkDisplay" style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100; margin-bottom:15px;">
+                <p style="color:#e65100; font-weight:600;">
+                    ⚠️ You need to activate your membership first. Pay ₦5,000 to unlock your referral link.
+                </p>
+            </div>
+
+            <div class="referral-link-box" id="referralLinkBox" style="display:none;">
+                <span class="link-text" id="referralLinkText">https://cashvista.com/ref/guest</span>
+                <button class="copy-btn" onclick="copyReferralLink()">📋 Copy Link</button>
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
+                <button class="btn btn-block" style="background:#25d366; color:#fff; padding:10px; font-size:14px;" onclick="shareLink('whatsapp')">📱 WhatsApp</button>
+                <button class="btn btn-block" style="background:#1877f2; color:#fff; padding:10px; font-size:14px;" onclick="shareLink('facebook')">📘 Facebook</button>
+                <button class="btn btn-block" style="background:#e4405f; color:#fff; padding:10px; font-size:14px;" onclick="shareLink('instagram')">📸 Instagram</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
+
+    <!-- ===== PAYMENT CONFIRMATION MODAL ===== -->
+    <div id="paymentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+        <div style="background:#fff; padding:30px; border-radius:20px; max-width:500px; width:90%;">
+            <h3 style="color:#0d1b2a; margin-bottom:15px;">✅ Confirm Payment</h3>
+            <p style="color:#555; margin-bottom:15px;">Enter your transaction details below.</p>
+
+            <div class="form-group">
+                <label>Transaction Reference</label>
+                <input type="text" id="transactionRef" placeholder="Enter reference number" />
+            </div>
+            <div class="form-group">
+                <label>Amount Paid</label>
+                <input type="text" id="amountPaid" value="₦5,000" disabled />
+            </div>
+            <div class="form-group">
+                <label>Upload Payment Receipt (Optional)</label>
+                <input type="file" id="receiptUpload" accept="image/*" />
+            </div>
+
+            <button class="btn btn-gold btn-block" onclick="submitPaymentConfirmation()">Submit for Approval</button>
+            <button onclick="closePaymentModal()" style="margin-top:10px; background:#e0e0e0; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; width:100%;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // GET LOGGED-IN USER
+        // =============================================
+        function getLoggedInUser() {
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            try {
+                const users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
+                const user = users.find(u => u.email === userEmail);
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                return user;
+            } catch (e) {
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
+
+        // =============================================
+        // LOAD PAGE
+        // =============================================
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            currentUser = getLoggedInUser();
+            if (!currentUser) return;
+
+            document.getElementById('userName').textContent = currentUser.name || 'User';
+            document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
+
+            updateMembershipStatus();
+        });
+
+        // =============================================
+        // PAYMENT METHOD TOGGLE
+        // =============================================
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            const bankDetails = document.getElementById('bankTransferDetails');
+            const paystackSection = document.getElementById('paystackSection');
+
+            if (this.value === 'bank') {
+                bankDetails.style.display = 'block';
+                paystackSection.style.display = 'none';
+            } else {
+                bankDetails.style.display = 'none';
+                paystackSection.style.display = 'block';
+            }
+        });
+
+        // =============================================
+        // PAY WITH PAYSTACK
+        // =============================================
+        function payWithPaystack() {
+            showNotification('🔐 Redirecting to Paystack to complete payment of ₦5,000...', 'info');
+            setTimeout(() => {
+                showNotification('✅ Paystack payment successful! Your membership is now active.', 'success');
+                activateMembership();
+            }, 2000);
+        }
+
+        // =============================================
+        // SHOW PAYMENT CONFIRMATION (Bank Transfer)
+        // =============================================
+        function showPaymentConfirmation() {
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function submitPaymentConfirmation() {
+            const ref = document.getElementById('transactionRef').value.trim();
+            if (!ref) {
+                showNotification('❌ Please enter your transaction reference.', 'error');
+                return;
+            }
+
+            closePaymentModal();
+            showNotification('✅ Payment submitted for admin approval. You will be notified once approved.', 'success');
+
+            // Send notification to admin
+            sendAdminNotification('New Invest & Grow payment submitted by ' + currentUser.name + '. Reference: ' + ref);
+        }
+
+        // =============================================
+        // SEND NOTIFICATION TO ADMIN
+        // =============================================
+        function sendAdminNotification(message) {
+            console.log('🔔 Admin Notification:', message);
+            // In production, this would be saved to database
+        }
+
+        // =============================================
+        // ACTIVATE MEMBERSHIP (Called by Admin or Paystack)
+        // =============================================
+        function activateMembership() {
+            currentUser.isInvestMember = true;
+            currentUser.referralLink = 'https://cashvista.com/ref/' + currentUser.email.split('@')[0] + '_' + Date.now();
+
+            // Update user in localStorage
+            let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
+            const index = users.findIndex(u => u.email === currentUser.email);
+            if (index !== -1) {
+                users[index].isInvestMember = true;
+                users[index].referralLink = currentUser.referralLink;
+                localStorage.setItem('cashvista_users', JSON.stringify(users));
+            }
+
+            // Update Invest Members list
+            let investMembers = JSON.parse(localStorage.getItem('cashvista_invest_members') || '[]');
+            investMembers.push({
+                user: currentUser.name,
+                userEmail: currentUser.email,
+                amount: 5000,
+                status: 'active',
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('cashvista_invest_members', JSON.stringify(investMembers));
+
+            // Add activity
+            addActivity(currentUser.name, 'Invest & Grow activated', 5000);
+
+            updateMembershipStatus();
+            showNotification('✅ Congratulations! Your referral link is now active.', 'success');
+        }
+
+        // =============================================
+        // UPDATE MEMBERSHIP STATUS
+        // =============================================
+        function updateMembershipStatus() {
+            const statusEl = document.getElementById('membershipStatus');
+
+            if (currentUser.isInvestMember) {
+                statusEl.innerHTML = '<span class="badge badge-success">✅ Active</span>';
+                document.getElementById('referralLinkDisplay').innerHTML =
+                    `<div style="background:#e8f5e9; padding:15px; border-radius:12px; border-left:5px solid #2e7d32;">
+                        <p style="color:#2e7d32; font-weight:600;">✅ Your referral link is active! Share it to start earning.</p>
+                    </div>`;
+                document.getElementById('referralLinkBox').style.display = 'flex';
+                document.getElementById('referralLinkText').textContent = currentUser.referralLink ||
+                    'https://cashvista.com/ref/' + currentUser.email.split('@')[0];
+            } else {
+                statusEl.innerHTML = '<span class="badge badge-warning">⚠️ Not Activated</span>';
+                document.getElementById('referralLinkDisplay').innerHTML =
+                    `<div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
+                        <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay ₦5,000 to unlock your referral link.</p>
+                    </div>`;
+                document.getElementById('referralLinkBox').style.display = 'none';
+            }
+        }
+
+        // =============================================
+        // COPY REFERRAL LINK
+        // =============================================
+        function copyReferralLink() {
+            const link = document.getElementById('referralLinkText').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                showNotification('✅ Referral link copied to clipboard!', 'success');
+            }).catch(() => {
+                prompt('Copy this link manually:', link);
+            });
+        }
+
+        // =============================================
+        // SHARE LINK
+        // =============================================
+        function shareLink(platform) {
+            const link = document.getElementById('referralLinkText').textContent;
+            const message = '🎯 Join CashVista and earn money by watching videos! Use my referral link: ' + link;
+
+            const urls = {
+                whatsapp: 'https://api.whatsapp.com/send?text=' + encodeURIComponent(message),
+                facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' +
+                    encodeURIComponent('Join CashVista and earn money!'),
+                instagram: 'instagram://?message=' + encodeURIComponent(message)
+            };
+
+            if (urls[platform]) {
+                window.open(urls[platform], '_blank');
+            } else {
+                showNotification('Share link: ' + link, 'info');
+            }
+        }
+
+        // =============================================
+        // NOTIFICATION SYSTEM
+        // =============================================
+        function showNotification(message, type) {
+            const el = document.getElementById('notification');
+            const msg = document.getElementById('notificationMessage');
+            el.className = 'notification show ' + (type || 'info');
+            msg.textContent = message;
+            setTimeout(() => {
+                el.classList.remove('show');
+            }, 5000);
+        }
+
+        // =============================================
+        // ADD ACTIVITY
+        // =============================================
+        function addActivity(user, action, amount = 0) {
+            const activity = JSON.parse(localStorage.getItem('cashvista_activity') || '[]');
+            activity.unshift({
+                user: user,
+                action: action,
+                amount: amount,
+                date: new Date().toLocaleString()
+            });
+            if (activity.length > 100) activity.pop();
+            localStorage.setItem('cashvista_activity', JSON.stringify(activity));
+        }
+
+        // =============================================
+        // LOGOUT
+        // =============================================
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('userEmail');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // =============================================
+        // ADMIN FUNCTIONS (Called from Admin Dashboard)
+        // =============================================
+        function adminApproveInvest(userEmail) {
+            // This function would be called from admin dashboard
+            // It approves the investment and activates the user's referral link
+            let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
+            const index = users.findIndex(u => u.email === userEmail);
+            if (index !== -1) {
+                users[index].isInvestMember = true;
+                users[index].referralLink = 'https://cashvista.com/ref/' + userEmail.split('@')[0] + '_' + Date.now();
+                localStorage.setItem('cashvista_users', JSON.stringify(users));
+                alert('✅ User ' + userEmail + ' has been approved for Invest & Grow!');
+            }
+        }
+
+        function adminRejectInvest(userEmail) {
+            alert('❌ User ' + userEmail + ' has been rejected for Invest & Grow.');
+        }
+    </script>
+
+</body>
+</html>
