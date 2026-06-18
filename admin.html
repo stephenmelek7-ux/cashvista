@@ -768,6 +768,10 @@
         // LOAD ON PAGE LOAD
         // =============================================
         document.addEventListener('DOMContentLoaded', renderDashboard);
+// ===== AUTO-REFRESH EVERY 5 SECONDS =====
+setInterval(function() {
+    renderDashboard();
+}, 5000);
     </script>
 </body>
 </html>
