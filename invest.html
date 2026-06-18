@@ -403,10 +403,10 @@
         <!-- ===== MAIN CARD ===== -->
         <div class="card">
             <h2>📈 Invest & Grow</h2>
-            <p class="subtitle">Pay ₦5,000 to unlock your permanent referral link and start earning commissions.</p>
+            <p class="subtitle">Pay <span id="investAmountDisplay">₦5,000</span> to unlock your permanent referral link and start earning commissions.</p>
 
             <div style="text-align:center;">
-                <div class="price-tag">₦5,000</div>
+                <div class="price-tag" id="investPriceTag">₦5,000</div>
             </div>
 
             <div style="margin:15px 0; background:#f8fafc; padding:20px; border-radius:16px;">
@@ -415,7 +415,7 @@
                     <span class="badge badge-warning">⚠️ Not Activated</span>
                 </p>
                 <p style="color:#555; font-size:14px; margin-top:6px;">
-                    Pay ₦5,000 to activate your referral link and start earning.
+                    Pay <span id="investAmountStatus">₦5,000</span> to activate your referral link and start earning.
                 </p>
             </div>
 
@@ -431,21 +431,24 @@
                 </select>
             </div>
 
-            <!-- Bank Transfer Details -->
+            <!-- ===== UPDATED: DYNAMIC BANK DETAILS ===== -->
             <div id="bankTransferDetails" class="bank-details">
-                <p><strong>🏦 Bank:</strong> United Bank for Africa (UBA)</p>
-                <p><strong>📋 Account Name:</strong> Stephenmelek Global Business Enterprise</p>
-                <p><strong>🔢 Account Number:</strong> <span class="number">1023456789</span></p>
+                <p><strong>🏦 Bank:</strong> <span id="displayBankName">Loading...</span></p>
+                <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Loading...</span></p>
+                <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">Loading...</span></p>
                 <p style="font-size:13px; color:#555; margin-top:10px;">
                     After payment, click the "I Have Paid" button below and fill in your transaction details.
                 </p>
             </div>
 
-            <!-- Paystack Button -->
+            <!-- ===== UPDATED: PAYSTACK "COMING SOON" ===== -->
             <div id="paystackSection">
-                <button class="btn btn-gold btn-block" onclick="payWithPaystack()">
-                    💳 Pay ₦5,000 with Paystack
+                <button class="btn btn-gold btn-block" onclick="payWithPaystack()" id="paystackBtn">
+                    💳 Pay <span id="paystackAmount">₦5,000</span> with Paystack
                 </button>
+                <p style="font-size:12px; color:#888; text-align:center; margin-top:4px;" id="paystackNote">
+                    ⏳ Paystack is coming soon. Please use Bank Transfer.
+                </p>
             </div>
 
             <!-- I Have Paid (Bank Transfer) -->
@@ -467,29 +470,29 @@
                     <tr>
                         <th>Level</th>
                         <th>Percentage</th>
-                        <th>Amount (₦5,000)</th>
+                        <th>Amount (<span id="commissionAmount">₦5,000</span>)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><strong>Direct Referral</strong></td>
-                        <td>55%</td>
-                        <td>₦2,750</td>
+                        <td id="directCommPct">55%</td>
+                        <td id="directCommAmount">₦2,750</td>
                     </tr>
                     <tr>
                         <td><strong>Downline (1-20)</strong></td>
-                        <td>0.5%</td>
-                        <td>₦25</td>
+                        <td id="downline1Pct">0.5%</td>
+                        <td id="downline1Amount">₦25</td>
                     </tr>
                     <tr>
                         <td><strong>Downline (21-50)</strong></td>
-                        <td>0.3%</td>
-                        <td>₦15</td>
+                        <td id="downline2Pct">0.3%</td>
+                        <td id="downline2Amount">₦15</td>
                     </tr>
                     <tr>
                         <td><strong>Downline (51-200)</strong></td>
-                        <td>0.1%</td>
-                        <td>₦5</td>
+                        <td id="downline3Pct">0.1%</td>
+                        <td id="downline3Amount">₦5</td>
                     </tr>
                 </tbody>
             </table>
@@ -507,7 +510,7 @@
 
             <div id="referralLinkDisplay" style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100; margin-bottom:15px;">
                 <p style="color:#e65100; font-weight:600;">
-                    ⚠️ You need to activate your membership first. Pay ₦5,000 to unlock your referral link.
+                    ⚠️ You need to activate your membership first. Pay <span id="referralLinkAmount">₦5,000</span> to unlock your referral link.
                 </p>
             </div>
 
@@ -591,8 +594,53 @@
             document.getElementById('userName').textContent = currentUser.name || 'User';
             document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
 
+            loadSettingsAndUpdate();
             updateMembershipStatus();
         });
+
+        // =============================================
+        // LOAD SETTINGS AND UPDATE ALL DISPLAYS
+        // =============================================
+        function loadSettingsAndUpdate() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+                const investAmount = settings.investAmount || 5000;
+                const directComm = settings.directCommission || 55;
+                const d1 = settings.downline1 || 0.5;
+                const d2 = settings.downline2 || 0.3;
+                const d3 = settings.downline3 || 0.1;
+
+                // Bank Details
+                document.getElementById('displayBankName').textContent = settings.bankName || 'United Bank for Africa (UBA)';
+                document.getElementById('displayAccountName').textContent = settings.accountName || 'Stephenmelek Global Business Enterprise';
+                document.getElementById('displayAccountNumber').textContent = settings.accountNumber || '1023456789';
+
+                // Invest Amount
+                document.getElementById('investAmountDisplay').textContent = '₦' + investAmount.toLocaleString();
+                document.getElementById('investPriceTag').textContent = '₦' + investAmount.toLocaleString();
+                document.getElementById('investAmountStatus').textContent = '₦' + investAmount.toLocaleString();
+                document.getElementById('paystackAmount').textContent = '₦' + investAmount.toLocaleString();
+                document.getElementById('commissionAmount').textContent = '₦' + investAmount.toLocaleString();
+                document.getElementById('referralLinkAmount').textContent = '₦' + investAmount.toLocaleString();
+                document.getElementById('amountPaid').value = '₦' + investAmount.toLocaleString();
+
+                // Commission Amounts
+                document.getElementById('directCommPct').textContent = directComm + '%';
+                document.getElementById('directCommAmount').textContent = '₦' + ((investAmount * directComm) / 100).toLocaleString();
+                document.getElementById('downline1Pct').textContent = d1 + '%';
+                document.getElementById('downline1Amount').textContent = '₦' + ((investAmount * d1) / 100).toLocaleString();
+                document.getElementById('downline2Pct').textContent = d2 + '%';
+                document.getElementById('downline2Amount').textContent = '₦' + ((investAmount * d2) / 100).toLocaleString();
+                document.getElementById('downline3Pct').textContent = d3 + '%';
+                document.getElementById('downline3Amount').textContent = '₦' + ((investAmount * d3) / 100).toLocaleString();
+
+            } catch (e) {
+                // Use defaults if settings not found
+                document.getElementById('displayBankName').textContent = 'United Bank for Africa (UBA)';
+                document.getElementById('displayAccountName').textContent = 'Stephenmelek Global Business Enterprise';
+                document.getElementById('displayAccountNumber').textContent = '1023456789';
+            }
+        }
 
         // =============================================
         // PAYMENT METHOD TOGGLE
@@ -611,14 +659,10 @@
         });
 
         // =============================================
-        // PAY WITH PAYSTACK
+        // PAY WITH PAYSTACK (UPDATED: COMING SOON)
         // =============================================
         function payWithPaystack() {
-            showNotification('🔐 Redirecting to Paystack to complete payment of ₦5,000...', 'info');
-            setTimeout(() => {
-                showNotification('✅ Paystack payment successful! Your membership is now active.', 'success');
-                activateMembership();
-            }, 2000);
+            showNotification('⏳ Paystack is coming soon. Please use Bank Transfer for now.', 'info');
         }
 
         // =============================================
@@ -707,7 +751,7 @@
                 statusEl.innerHTML = '<span class="badge badge-warning">⚠️ Not Activated</span>';
                 document.getElementById('referralLinkDisplay').innerHTML =
                     `<div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
-                        <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay ₦5,000 to unlock your referral link.</p>
+                        <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay <span id="referralLinkAmount">₦5,000</span> to unlock your referral link.</p>
                     </div>`;
                 document.getElementById('referralLinkBox').style.display = 'none';
             }
@@ -788,8 +832,6 @@
         // ADMIN FUNCTIONS (Called from Admin Dashboard)
         // =============================================
         function adminApproveInvest(userEmail) {
-            // This function would be called from admin dashboard
-            // It approves the investment and activates the user's referral link
             let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
             const index = users.findIndex(u => u.email === userEmail);
             if (index !== -1) {
