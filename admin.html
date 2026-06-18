@@ -6,7 +6,6 @@
     <title>Admin Dashboard - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -17,8 +16,6 @@
             background: #f0f4f8;
             color: #1a1a2e;
         }
-
-        /* ===== TOP BAR ===== */
         .topbar {
             background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
             color: #fff;
@@ -27,7 +24,6 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -78,18 +74,14 @@
             background: #e74c3c;
             color: #fff;
         }
-
-        /* ===== CONTAINER ===== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 25px 20px;
         }
-
-        /* ===== STATS GRID ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 18px;
             margin-bottom: 25px;
         }
@@ -131,8 +123,6 @@
             color: #888;
             font-weight: 500;
         }
-
-        /* ===== SECTION CARDS ===== */
         .section-card {
             background: #fff;
             border-radius: 20px;
@@ -161,10 +151,13 @@
             font-size: 13px;
             font-weight: 700;
         }
-        .section-card .header .actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        .section-card .header .live-badge {
+            font-size: 12px;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 2px 12px;
+            border-radius: 30px;
+            margin-left: 10px;
         }
         .section-card .header .actions button {
             padding: 6px 18px;
@@ -183,8 +176,14 @@
             background: #0d47a1;
             color: #fff;
         }
-
-        /* ===== TABLES ===== */
+        .btn-settings {
+            background: #fef7e0;
+            color: #e65100;
+        }
+        .btn-settings:hover {
+            background: #e65100;
+            color: #fff;
+        }
         .table-wrapper {
             overflow-x: auto;
         }
@@ -221,8 +220,6 @@
             font-size: 36px;
             margin-bottom: 6px;
         }
-
-        /* ===== BADGES ===== */
         .badge {
             padding: 4px 14px;
             border-radius: 30px;
@@ -242,12 +239,6 @@
             background: #fce4ec;
             color: #c62828;
         }
-        .badge-info {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-
-        /* ===== BUTTONS ===== */
         .btn-sm {
             padding: 4px 14px;
             border: none;
@@ -309,8 +300,6 @@
             background: #2e7d32;
             color: #fff;
         }
-
-        /* ===== FOOTER ===== */
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -323,8 +312,6 @@
             color: #f5c842;
             font-weight: 600;
         }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .topbar {
                 flex-direction: column;
@@ -371,7 +358,6 @@
 </head>
 <body>
 
-    <!-- ===== TOP BAR ===== -->
     <div class="topbar">
         <div class="logo">
             <span class="play-icon">▶</span>Cash<span>Vista</span>
@@ -379,13 +365,14 @@
         <div class="admin-info">
             <span class="badge">🔐 ADMIN</span>
             <span class="email" id="adminEmail">admin@cashvista.com</span>
+            <a href="settings.html" style="color:#f5c842; text-decoration:none; font-weight:600; font-size:13px;">⚙️ Settings</a>
             <button class="logout" onclick="adminLogout()">🚪 Logout</button>
         </div>
     </div>
 
     <div class="container">
 
-        <!-- ===== STATS GRID ===== -->
+        <!-- STATS GRID -->
         <div class="stats-grid" id="statsGrid">
             <div class="stat-card">
                 <div class="icon">👥</div>
@@ -419,10 +406,10 @@
             </div>
         </div>
 
-        <!-- ===== ALL REGISTERED USERS ===== -->
+        <!-- ALL REGISTERED USERS -->
         <div class="section-card">
             <div class="header">
-                <h2>👥 All Registered Users <span class="count-badge" id="userCountBadge">0</span></h2>
+                <h2>👥 All Registered Users <span class="count-badge" id="userCountBadge">0</span><span class="live-badge">🔴 Live</span></h2>
                 <div class="actions">
                     <button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button>
                 </div>
@@ -454,7 +441,7 @@
             </div>
         </div>
 
-        <!-- ===== PENDING APPROVALS ===== -->
+        <!-- PENDING APPROVALS -->
         <div class="section-card">
             <div class="header">
                 <h2>📋 Pending Approvals <span class="count-badge" id="pendingBadge">0</span></h2>
@@ -474,7 +461,7 @@
                         <tr>
                             <td colspan="5" class="empty-state">
                                 <div class="icon">✅</div>
-                                <p>No pending approvals. Everything is up to date!</p>
+                                <p>No pending approvals.</p>
                             </td>
                         </tr>
                     </tbody>
@@ -482,7 +469,7 @@
             </div>
         </div>
 
-        <!-- ===== RECENT ACTIVITY ===== -->
+        <!-- RECENT ACTIVITY -->
         <div class="section-card">
             <div class="header">
                 <h2>🕐 Recent Activity</h2>
@@ -511,7 +498,6 @@
 
     </div>
 
-    <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <p>&copy; 2026 CashVista. All rights reserved.</p>
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
@@ -765,14 +751,14 @@
         }
 
         // =============================================
-        // LOAD ON PAGE LOAD
+        // LOAD ON PAGE LOAD + AUTO REFRESH
         // =============================================
-        document.addEventListener('DOMContentLoaded', renderDashboard);
-// ===== AUTO-REFRESH EVERY 5 SECONDS =====
-setInterval(function() {
-    renderDashboard();
-}, 5000);
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDashboard();
+            // Auto-refresh every 5 seconds to show new users instantly
+            setInterval(renderDashboard, 5000);
+        });
     </script>
+
 </body>
 </html>
-<a href="settings.html">⚙️ Settings</a>
