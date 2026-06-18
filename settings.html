@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span {
+            color: #fff;
+        }
+        .topbar .logo .play-icon {
+            color: #f5c842;
+            margin-right: 5px;
+        }
+        .topbar .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .topbar .admin-info .badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #f5c842;
+        }
+        .topbar .admin-info .email {
+            color: #ddd;
+            font-size: 14px;
+        }
+        .topbar .admin-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .admin-info .logout:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .topbar .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .topbar .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px 35px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0d1b2a;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-group label .hint {
+            font-weight: 400;
+            color: #999;
+            font-size: 12px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: 0.3s;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .form-group .current-value {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .form-group .current-value strong {
+            color: #0d1b2a;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-gold {
+            background: #f5c842;
+            color: #0d1b2a;
+        }
+        .btn-gold:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+        }
+        .btn-green {
+            background: #2e7d32;
+            color: #fff;
+        }
+        .btn-green:hover {
+            background: #1b5e20;
+        }
+        .btn-block {
+            width: 100%;
+        }
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+        .toggle-group .toggle-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .toggle-group .toggle-status {
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .toggle-status.active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .toggle-status.inactive {
+            background: #fce4ec;
+            color: #c62828;
+        }
+        .toggle-btn {
+            background: #e0e0e0;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .toggle-btn:hover {
+            background: #ccc;
+        }
+        .toggle-btn.active {
+            background: #2e7d32;
+            color: #fff;
+        }
+        .toggle-btn.inactive {
+            background: #c62828;
+            color: #fff;
+        }
+        .notification {
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+        .notification.show {
+            display: block;
+        }
+        .notification.success {
+            background: #e8f5e9;
+            color: #1b5e20;
+            border-left: 5px solid #2e7d32;
+        }
+        .notification.error {
+            background: #fce4ec;
+            color: #b71c1c;
+            border-left: 5px solid #c62828;
+        }
+        .notification.info {
+            background: #e3f2fd;
+            color: #0d47a1;
+            border-left: 5px solid #0d47a1;
+        }
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder {
+            color: #f5c842;
+            font-weight: 600;
+        }
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            .topbar .admin-info {
+                justify-content: center;
+            }
+            .card {
+                padding: 20px;
+            }
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="admin-info">
+            <span class="badge">🔐 ADMIN</span>
+            <span class="email" id="adminEmail">admin@cashvista.com</span>
+            <a href="admin.html" class="back-btn">← Dashboard</a>
+            <button class="logout" onclick="adminLogout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="notification" class="notification">
+            <span id="notificationMessage">Settings loaded successfully!</span>
+        </div>
+
+        <!-- ===== BANK SETTINGS ===== -->
+        <div class="card">
+            <h2>💳 Bank Account Details</h2>
+            <p class="subtitle">These details will appear on all user pages (Invest & Grow and Advertise).</p>
+
+            <form id="bankSettingsForm">
+                <div class="form-group">
+                    <label>Bank Name</label>
+                    <input type="text" id="bankName" placeholder="e.g., United Bank for Africa (UBA)" />
+                    <div class="current-value">Current: <strong id="currentBankName">United Bank for Africa (UBA)</strong></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Account Name</label>
+                    <input type="text" id="accountName" placeholder="e.g., Stephenmelek Global Business Enterprise" />
+                    <div class="current-value">Current: <strong id="currentAccountName">Stephenmelek Global Business Enterprise</strong></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="accountNumber" placeholder="e.g., 1023456789" maxlength="10" />
+                    <div class="current-value">Current: <strong id="currentAccountNumber">1023456789</strong></div>
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-block">💾 Save Bank Settings</button>
+            </form>
+        </div>
+
+        <!-- ===== PAYMENT METHODS ===== -->
+        <div class="card">
+            <h2>💳 Payment Methods</h2>
+            <p class="subtitle">Enable or disable payment methods on the platform.</p>
+
+            <div class="settings-grid">
+                <div style="background:#f8fafc; padding:20px; border-radius:16px;">
+                    <h4 style="color:#0d1b2a; margin-bottom:8px;">Paystack</h4>
+                    <div class="toggle-group">
+                        <span class="toggle-status" id="paystackStatus">🔴 Inactive</span>
+                        <button class="toggle-btn" id="paystackToggle" onclick="togglePaystack()">Enable</button>
+                    </div>
+                    <p style="font-size:13px; color:#888; margin-top:6px;">
+                        <span id="paystackNote">Coming soon. Not activated yet.</span>
+                    </p>
+                </div>
+
+                <div style="background:#f8fafc; padding:20px; border-radius:16px;">
+                    <h4 style="color:#0d1b2a; margin-bottom:8px;">Bank Transfer</h4>
+                    <div class="toggle-group">
+                        <span class="toggle-status active" id="bankStatus">🟢 Active</span>
+                        <button class="toggle-btn active" id="bankToggle" onclick="toggleBank()">Disable</button>
+                    </div>
+                    <p style="font-size:13px; color:#888; margin-top:6px;">
+                        Users can pay via bank transfer using the account details above.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== COMMISSION SETTINGS ===== -->
+        <div class="card">
+            <h2>📊 Commission Settings</h2>
+            <p class="subtitle">Adjust the commission rates for referrals and downline bonuses.</p>
+
+            <form id="commissionSettingsForm">
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label>Direct Referral Commission (%)</label>
+                        <input type="number" id="directCommission" value="55" min="0" max="100" />
+                        <div class="current-value">Current: <strong id="currentDirectCommission">55%</strong></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Downline Bonus (1-20) (%)</label>
+                        <input type="number" id="downline1" value="0.5" min="0" max="100" step="0.1" />
+                        <div class="current-value">Current: <strong id="currentDownline1">0.5%</strong></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Downline Bonus (21-50) (%)</label>
+                        <input type="number" id="downline2" value="0.3" min="0" max="100" step="0.1" />
+                        <div class="current-value">Current: <strong id="currentDownline2">0.3%</strong></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Downline Bonus (51-200) (%)</label>
+                        <input type="number" id="downline3" value="0.1" min="0" max="100" step="0.1" />
+                        <div class="current-value">Current: <strong id="currentDownline3">0.1%</strong></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-block">💾 Save Commission Settings</button>
+            </form>
+        </div>
+
+        <!-- ===== INVEST AMOUNT ===== -->
+        <div class="card">
+            <h2>📈 Invest & Grow Settings</h2>
+            <p class="subtitle">Set the amount users pay to unlock their referral link.</p>
+
+            <form id="investSettingsForm">
+                <div class="form-group">
+                    <label>Invest & Grow Amount (₦)</label>
+                    <input type="number" id="investAmount" value="5000" min="1000" step="500" />
+                    <div class="current-value">Current: <strong id="currentInvestAmount">₦5,000</strong></div>
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-block">💾 Save Invest Settings</button>
+            </form>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
+
+    <script>
+        // =============================================
+        // ADMIN SESSION CHECK
+        // =============================================
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
+
+        // =============================================
+        // LOAD SETTINGS FROM localStorage
+        // =============================================
+        function loadSettings() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+
+                // Bank Settings
+                document.getElementById('bankName').value = settings.bankName || 'United Bank for Africa (UBA)';
+                document.getElementById('accountName').value = settings.accountName ||
+                'Stephenmelek Global Business Enterprise';
+                document.getElementById('accountNumber').value = settings.accountNumber || '1023456789';
+
+                document.getElementById('currentBankName').textContent = settings.bankName ||
+                    'United Bank for Africa (UBA)';
+                document.getElementById('currentAccountName').textContent = settings.accountName ||
+                    'Stephenmelek Global Business Enterprise';
+                document.getElementById('currentAccountNumber').textContent = settings.accountNumber || '1023456789';
+
+                // Payment Methods
+                const paystackActive = settings.paystackEnabled === true;
+                const bankActive = settings.bankEnabled !== false;
+
+                updatePaymentStatus('paystack', paystackActive);
+                updatePaymentStatus('bank', bankActive);
+
+                // Commission Settings
+                document.getElementById('directCommission').value = settings.directCommission || 55;
+                document.getElementById('downline1').value = settings.downline1 || 0.5;
+                document.getElementById('downline2').value = settings.downline2 || 0.3;
+                document.getElementById('downline3').value = settings.downline3 || 0.1;
+
+                document.getElementById('currentDirectCommission').textContent = (settings.directCommission || 55) + '%';
+                document.getElementById('currentDownline1').textContent = (settings.downline1 || 0.5) + '%';
+                document.getElementById('currentDownline2').textContent = (settings.downline2 || 0.3) + '%';
+                document.getElementById('currentDownline3').textContent = (settings.downline3 || 0.1) + '%';
+
+                // Invest Amount
+                document.getElementById('investAmount').value = settings.investAmount || 5000;
+                document.getElementById('currentInvestAmount').textContent = '₦' + (settings.investAmount || 5000)
+                    .toLocaleString();
+
+            } catch (e) {
+                console.log('Error loading settings:', e);
+            }
+        }
+
+        // =============================================
+        // UPDATE PAYMENT STATUS DISPLAY
+        // =============================================
+        function updatePaymentStatus(method, active) {
+            if (method === 'paystack') {
+                const status = document.getElementById('paystackStatus');
+                const toggle = document.getElementById('paystackToggle');
+                const note = document.getElementById('paystackNote');
+
+                if (active) {
+                    status.textContent = '🟢 Active';
+                    status.className = 'toggle-status active';
+                    toggle.textContent = 'Disable';
+                    toggle.className = 'toggle-btn active';
+                    note.textContent = 'Paystack is active and ready to accept payments.';
+                } else {
+                    status.textContent = '🔴 Inactive';
+                    status.className = 'toggle-status inactive';
+                    toggle.textContent = 'Enable';
+                    toggle.className = 'toggle-btn inactive';
+                    note.textContent = 'Coming soon. Not activated yet.';
+                }
+            }
+
+            if (method === 'bank') {
+                const status = document.getElementById('bankStatus');
+                const toggle = document.getElementById('bankToggle');
+
+                if (active) {
+                    status.textContent = '🟢 Active';
+                    status.className = 'toggle-status active';
+                    toggle.textContent = 'Disable';
+                    toggle.className = 'toggle-btn active';
+                } else {
+                    status.textContent = '🔴 Inactive';
+                    status.className = 'toggle-status inactive';
+                    toggle.textContent = 'Enable';
+                    toggle.className = 'toggle-btn inactive';
+                }
+            }
+        }
+
+        // =============================================
+        // TOGGLE PAYMENT METHODS
+        // =============================================
+        function togglePaystack() {
+            const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+            settings.paystackEnabled = !settings.paystackEnabled;
+            localStorage.setItem('cashvista_settings', JSON.stringify(settings));
+            updatePaymentStatus('paystack', settings.paystackEnabled);
+            showNotification('✅ Paystack status updated!', 'success');
+        }
+
+        function toggleBank() {
+            const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+            settings.bankEnabled = settings.bankEnabled === false ? true : false;
+            localStorage.setItem('cashvista_settings', JSON.stringify(settings));
+            updatePaymentStatus('bank', settings.bankEnabled);
+            showNotification('✅ Bank Transfer status updated!', 'success');
+        }
+
+        // =============================================
+        // SAVE BANK SETTINGS
+        // =============================================
+        document.getElementById('bankSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const bankName = document.getElementById('bankName').value.trim();
+            const accountName = document.getElementById('accountName').value.trim();
+            const accountNumber = document.getElementById('accountNumber').value.trim();
+
+            if (!bankName || !accountName || !accountNumber) {
+                showNotification('❌ Please fill in all bank details fields.', 'error');
+                return;
+            }
+
+            if (accountNumber.length < 10) {
+                showNotification('❌ Please enter a valid 10-digit account number.', 'error');
+                return;
+            }
+
+            const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+            settings.bankName = bankName;
+            settings.accountName = accountName;
+            settings.accountNumber = accountNumber;
+            localStorage.setItem('cashvista_settings', JSON.stringify(settings));
+
+            // Update current values
+            document.getElementById('currentBankName').textContent = bankName;
+            document.getElementById('currentAccountName').textContent = accountName;
+            document.getElementById('currentAccountNumber').textContent = accountNumber;
+
+            showNotification('✅ Bank settings saved successfully! All user pages will update automatically.', 'success');
+        });
+
+        // =============================================
+        // SAVE COMMISSION SETTINGS
+        // =============================================
+        document.getElementById('commissionSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const direct = parseFloat(document.getElementById('directCommission').value);
+            const d1 = parseFloat(document.getElementById('downline1').value);
+            const d2 = parseFloat(document.getElementById('downline2').value);
+            const d3 = parseFloat(document.getElementById('downline3').value);
+
+            if (isNaN(direct) || isNaN(d1) || isNaN(d2) || isNaN(d3)) {
+                showNotification('❌ Please enter valid numbers for commission rates.', 'error');
+                return;
+            }
+
+            const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+            settings.directCommission = direct;
+            settings.downline1 = d1;
+            settings.downline2 = d2;
+            settings.downline3 = d3;
+            localStorage.setItem('cashvista_settings', JSON.stringify(settings));
+
+            document.getElementById('currentDirectCommission').textContent = direct + '%';
+            document.getElementById('currentDownline1').textContent = d1 + '%';
+            document.getElementById('currentDownline2').textContent = d2 + '%';
+            document.getElementById('currentDownline3').textContent = d3 + '%';
+
+            showNotification('✅ Commission settings saved successfully!', 'success');
+        });
+
+        // =============================================
+        // SAVE INVEST SETTINGS
+        // =============================================
+        document.getElementById('investSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const amount = parseInt(document.getElementById('investAmount').value);
+
+            if (isNaN(amount) || amount < 1000) {
+                showNotification('❌ Please enter a valid amount (minimum ₦1,000).', 'error');
+                return;
+            }
+
+            const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
+            settings.investAmount = amount;
+            localStorage.setItem('cashvista_settings', JSON.stringify(settings));
+
+            document.getElementById('currentInvestAmount').textContent = '₦' + amount.toLocaleString();
+
+            showNotification('✅ Invest amount updated to ₦' + amount.toLocaleString() + '!', 'success');
+        });
+
+        // =============================================
+        // NOTIFICATION SYSTEM
+        // =============================================
+        function showNotification(message, type) {
+            const el = document.getElementById('notification');
+            const msg = document.getElementById('notificationMessage');
+            el.className = 'notification show ' + (type || 'info');
+            msg.textContent = message;
+            setTimeout(() => {
+                el.classList.remove('show');
+            }, 4000);
+        }
+
+        // =============================================
+        // ADMIN LOGOUT
+        // =============================================
+        function adminLogout() {
+            if (confirm('Logout from admin panel?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminEmail');
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        // =============================================
+        // LOAD ON PAGE LOAD
+        // =============================================
+        document.addEventListener('DOMContentLoaded', loadSettings);
+    </script>
+</body>
+</html>
