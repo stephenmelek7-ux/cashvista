@@ -438,32 +438,29 @@
             </select>
           </div>
 
-          <!-- Bank Transfer Details -->
+          <!-- ===== UPDATED: DYNAMIC BANK DETAILS ===== -->
           <div id="bankTransferDetails" class="bank-details">
-            <p><strong>🏦 Bank:</strong> United Bank for Africa (UBA)</p>
-            <p>
-              <strong>📋 Account Name:</strong> Stephenmelek Global Business
-              Enterprise
-            </p>
-            <p>
-              <strong>🔢 Account Number:</strong>
-              <span class="number">1023456789</span>
-            </p>
+            <p><strong>🏦 Bank:</strong> <span id="displayBankName">Loading...</span></p>
+            <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Loading...</span></p>
+            <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">Loading...</span></p>
             <p style="font-size: 13px; color: #555; margin-top: 8px">
-              After payment, upload your payment slip below and click "Submit
-              Campaign".
+              After payment, upload your payment slip below and click "Submit Campaign".
             </p>
           </div>
 
-          <!-- Paystack Button -->
+          <!-- ===== UPDATED: PAYSTACK "COMING SOON" ===== -->
           <div id="paystackSection">
             <button
               type="button"
               class="btn btn-gold btn-block"
               onclick="payWithPaystack()"
+              id="paystackBtn"
             >
               💳 Pay Now with Paystack
             </button>
+            <p style="font-size:12px; color:#888; text-align:center; margin-top:4px;" id="paystackNote">
+              ⏳ Paystack is coming soon. Please use Bank Transfer.
+            </p>
           </div>
 
           <!-- Payment Slip Upload (Bank Transfer) -->
@@ -576,8 +573,34 @@
         document.getElementById('userBalance').textContent =
           '₦' + (currentUser.balance || 0).toLocaleString();
 
+        loadBankDetails();
         loadCampaignHistory();
       });
+
+      // =============================================
+      // LOAD BANK DETAILS FROM SETTINGS
+      // =============================================
+      function loadBankDetails() {
+        try {
+          const settings = JSON.parse(
+            localStorage.getItem('cashvista_settings') || '{}'
+          );
+          document.getElementById('displayBankName').textContent =
+            settings.bankName || 'United Bank for Africa (UBA)';
+          document.getElementById('displayAccountName').textContent =
+            settings.accountName ||
+            'Stephenmelek Global Business Enterprise';
+          document.getElementById('displayAccountNumber').textContent =
+            settings.accountNumber || '1023456789';
+        } catch (e) {
+          document.getElementById('displayBankName').textContent =
+            'United Bank for Africa (UBA)';
+          document.getElementById('displayAccountName').textContent =
+            'Stephenmelek Global Business Enterprise';
+          document.getElementById('displayAccountNumber').textContent =
+            '1023456789';
+        }
+      }
 
       // =============================================
       // PAYMENT METHOD TOGGLE
@@ -602,26 +625,10 @@
         });
 
       // =============================================
-      // PAY WITH PAYSTACK
+      // PAY WITH PAYSTACK (UPDATED: COMING SOON)
       // =============================================
       function payWithPaystack() {
-        const title = document.getElementById('videoTitle').value.trim();
-        const link = document.getElementById('videoLink').value.trim();
-        const amount = document.getElementById('amountPay').value.trim();
-        const viewers = document.getElementById('viewerCount').value.trim();
-
-        if (!title || !link || !amount || !viewers) {
-          showNotification('❌ Please fill all required fields.', 'error');
-          return;
-        }
-
-        showNotification(
-          '🔐 Redirecting to Paystack to complete payment...',
-          'info'
-        );
-        setTimeout(() => {
-          submitCampaign('paystack');
-        }, 1500);
+        showNotification('⏳ Paystack is coming soon. Please use Bank Transfer for now.', 'info');
       }
 
       // =============================================
