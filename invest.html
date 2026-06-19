@@ -37,13 +37,8 @@
             font-weight: 800;
             color: #f5c842;
         }
-        .topbar .logo span {
-            color: #fff;
-        }
-        .topbar .logo .play-icon {
-            color: #f5c842;
-            margin-right: 5px;
-        }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .user-info {
             display: flex;
             align-items: center;
@@ -415,7 +410,7 @@
                     <span class="badge badge-warning">⚠️ Not Activated</span>
                 </p>
                 <p style="color:#555; font-size:14px; margin-top:6px;">
-                    Pay <span id="investAmountStatus">₦5,000</span> to activate your referral link and start earning.
+                    Pay to activate your referral link and start earning.
                 </p>
             </div>
 
@@ -431,7 +426,7 @@
                 </select>
             </div>
 
-            <!-- ===== UPDATED: DYNAMIC BANK DETAILS ===== -->
+            <!-- Bank Transfer Details (Loaded from Supabase) -->
             <div id="bankTransferDetails" class="bank-details">
                 <p><strong>🏦 Bank:</strong> <span id="displayBankName">Loading...</span></p>
                 <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Loading...</span></p>
@@ -441,14 +436,14 @@
                 </p>
             </div>
 
-            <!-- ===== UPDATED: PAYSTACK "COMING SOON" ===== -->
+            <!-- Paystack Section -->
             <div id="paystackSection">
-                <button class="btn btn-gold btn-block" onclick="payWithPaystack()" id="paystackBtn">
-                    💳 Pay <span id="paystackAmount">₦5,000</span> with Paystack
-                </button>
-                <p style="font-size:12px; color:#888; text-align:center; margin-top:4px;" id="paystackNote">
-                    ⏳ Paystack is coming soon. Please use Bank Transfer.
+                <p style="font-size:12px; color:#e65100; margin-top:4px;">
+                    ⚠️ Paystack is coming soon. Please use Bank Transfer for now.
                 </p>
+                <button class="btn btn-gold btn-block" onclick="payWithPaystack()" disabled>
+                    💳 Pay with Paystack (Coming Soon)
+                </button>
             </div>
 
             <!-- I Have Paid (Bank Transfer) -->
@@ -470,29 +465,29 @@
                     <tr>
                         <th>Level</th>
                         <th>Percentage</th>
-                        <th>Amount (<span id="commissionAmount">₦5,000</span>)</th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><strong>Direct Referral</strong></td>
-                        <td id="directCommPct">55%</td>
-                        <td id="directCommAmount">₦2,750</td>
+                        <td id="displayDirectCommission">55%</td>
+                        <td id="displayDirectAmount">₦2,750</td>
                     </tr>
                     <tr>
                         <td><strong>Downline (1-20)</strong></td>
-                        <td id="downline1Pct">0.5%</td>
-                        <td id="downline1Amount">₦25</td>
+                        <td id="displayDownline1">0.5%</td>
+                        <td id="displayDownline1Amount">₦25</td>
                     </tr>
                     <tr>
                         <td><strong>Downline (21-50)</strong></td>
-                        <td id="downline2Pct">0.3%</td>
-                        <td id="downline2Amount">₦15</td>
+                        <td id="displayDownline2">0.3%</td>
+                        <td id="displayDownline2Amount">₦15</td>
                     </tr>
                     <tr>
                         <td><strong>Downline (51-200)</strong></td>
-                        <td id="downline3Pct">0.1%</td>
-                        <td id="downline3Amount">₦5</td>
+                        <td id="displayDownline3">0.1%</td>
+                        <td id="displayDownline3Amount">₦5</td>
                     </tr>
                 </tbody>
             </table>
@@ -510,7 +505,7 @@
 
             <div id="referralLinkDisplay" style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100; margin-bottom:15px;">
                 <p style="color:#e65100; font-weight:600;">
-                    ⚠️ You need to activate your membership first. Pay <span id="referralLinkAmount">₦5,000</span> to unlock your referral link.
+                    ⚠️ You need to activate your membership first. Pay to unlock your referral link.
                 </p>
             </div>
 
@@ -558,26 +553,65 @@
         </div>
     </div>
 
+    <!-- ===== SUPABASE CDN ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+        let platformSettings = {};
+
         // =============================================
         // GET LOGGED-IN USER
         // =============================================
-        function getLoggedInUser() {
+        async function getLoggedInUser() {
             const userEmail = sessionStorage.getItem('userEmail');
             if (!userEmail) {
                 window.location.href = 'login.html';
                 return null;
             }
             try {
-                const users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-                const user = users.find(u => u.email === userEmail);
-                if (!user) {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', userEmail)
+                    .single();
+
+                if (error || !data) {
                     window.location.href = 'login.html';
                     return null;
                 }
-                return user;
+                return data;
             } catch (e) {
                 window.location.href = 'login.html';
+                return null;
+            }
+        }
+
+        // =============================================
+        // LOAD PLATFORM SETTINGS FROM SUPABASE
+        // =============================================
+        async function loadPlatformSettings() {
+            try {
+                const { data, error } = await supabase
+                    .from('platform_settings')
+                    .select('*')
+                    .limit(1);
+
+                if (error || !data || data.length === 0) {
+                    return;
+                }
+
+                platformSettings = data[0];
+                return platformSettings;
+            } catch (e) {
+                console.error('Error loading settings:', e);
                 return null;
             }
         }
@@ -585,62 +619,46 @@
         // =============================================
         // LOAD PAGE
         // =============================================
-        let currentUser = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            currentUser = getLoggedInUser();
+        document.addEventListener('DOMContentLoaded', async function() {
+            currentUser = await getLoggedInUser();
             if (!currentUser) return;
 
             document.getElementById('userName').textContent = currentUser.name || 'User';
             document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
 
-            loadSettingsAndUpdate();
+            // Load settings from Supabase
+            await loadPlatformSettings();
+
+            // Update Invest amount
+            const investAmount = platformSettings.invest_amount || 5000;
+            document.getElementById('investAmountDisplay').textContent = '₦' + investAmount.toLocaleString();
+            document.getElementById('investPriceTag').textContent = '₦' + investAmount.toLocaleString();
+            document.getElementById('amountPaid').value = '₦' + investAmount.toLocaleString();
+
+            // Update Bank Details
+            document.getElementById('displayBankName').textContent = platformSettings.bank_name || 'United Bank for Africa (UBA)';
+            document.getElementById('displayAccountName').textContent = platformSettings.account_name || 'Stephen Melek';
+            document.getElementById('displayAccountNumber').textContent = platformSettings.account_number || '2355380747';
+
+            // Update Commission Rates
+            const direct = platformSettings.direct_commission || 55;
+            const d1 = platformSettings.downline1 || 0.5;
+            const d2 = platformSettings.downline2 || 0.3;
+            const d3 = platformSettings.downline3 || 0.1;
+            const investAmt = platformSettings.invest_amount || 5000;
+
+            document.getElementById('displayDirectCommission').textContent = direct + '%';
+            document.getElementById('displayDirectAmount').textContent = '₦' + ((investAmt * direct) / 100).toLocaleString();
+            document.getElementById('displayDownline1').textContent = d1 + '%';
+            document.getElementById('displayDownline1Amount').textContent = '₦' + ((investAmt * d1) / 100).toLocaleString();
+            document.getElementById('displayDownline2').textContent = d2 + '%';
+            document.getElementById('displayDownline2Amount').textContent = '₦' + ((investAmt * d2) / 100).toLocaleString();
+            document.getElementById('displayDownline3').textContent = d3 + '%';
+            document.getElementById('displayDownline3Amount').textContent = '₦' + ((investAmt * d3) / 100).toLocaleString();
+
+            // Update membership status
             updateMembershipStatus();
         });
-
-        // =============================================
-        // LOAD SETTINGS AND UPDATE ALL DISPLAYS
-        // =============================================
-        function loadSettingsAndUpdate() {
-            try {
-                const settings = JSON.parse(localStorage.getItem('cashvista_settings') || '{}');
-                const investAmount = settings.investAmount || 5000;
-                const directComm = settings.directCommission || 55;
-                const d1 = settings.downline1 || 0.5;
-                const d2 = settings.downline2 || 0.3;
-                const d3 = settings.downline3 || 0.1;
-
-                // Bank Details
-                document.getElementById('displayBankName').textContent = settings.bankName || 'United Bank for Africa (UBA)';
-                document.getElementById('displayAccountName').textContent = settings.accountName || 'Stephenmelek Global Business Enterprise';
-                document.getElementById('displayAccountNumber').textContent = settings.accountNumber || '1023456789';
-
-                // Invest Amount
-                document.getElementById('investAmountDisplay').textContent = '₦' + investAmount.toLocaleString();
-                document.getElementById('investPriceTag').textContent = '₦' + investAmount.toLocaleString();
-                document.getElementById('investAmountStatus').textContent = '₦' + investAmount.toLocaleString();
-                document.getElementById('paystackAmount').textContent = '₦' + investAmount.toLocaleString();
-                document.getElementById('commissionAmount').textContent = '₦' + investAmount.toLocaleString();
-                document.getElementById('referralLinkAmount').textContent = '₦' + investAmount.toLocaleString();
-                document.getElementById('amountPaid').value = '₦' + investAmount.toLocaleString();
-
-                // Commission Amounts
-                document.getElementById('directCommPct').textContent = directComm + '%';
-                document.getElementById('directCommAmount').textContent = '₦' + ((investAmount * directComm) / 100).toLocaleString();
-                document.getElementById('downline1Pct').textContent = d1 + '%';
-                document.getElementById('downline1Amount').textContent = '₦' + ((investAmount * d1) / 100).toLocaleString();
-                document.getElementById('downline2Pct').textContent = d2 + '%';
-                document.getElementById('downline2Amount').textContent = '₦' + ((investAmount * d2) / 100).toLocaleString();
-                document.getElementById('downline3Pct').textContent = d3 + '%';
-                document.getElementById('downline3Amount').textContent = '₦' + ((investAmount * d3) / 100).toLocaleString();
-
-            } catch (e) {
-                // Use defaults if settings not found
-                document.getElementById('displayBankName').textContent = 'United Bank for Africa (UBA)';
-                document.getElementById('displayAccountName').textContent = 'Stephenmelek Global Business Enterprise';
-                document.getElementById('displayAccountNumber').textContent = '1023456789';
-            }
-        }
 
         // =============================================
         // PAYMENT METHOD TOGGLE
@@ -659,10 +677,10 @@
         });
 
         // =============================================
-        // PAY WITH PAYSTACK (UPDATED: COMING SOON)
+        // PAY WITH PAYSTACK
         // =============================================
         function payWithPaystack() {
-            showNotification('⏳ Paystack is coming soon. Please use Bank Transfer for now.', 'info');
+            showNotification('🔐 Paystack is coming soon. Please use Bank Transfer for now.', 'info');
         }
 
         // =============================================
@@ -676,7 +694,7 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
-        function submitPaymentConfirmation() {
+        async function submitPaymentConfirmation() {
             const ref = document.getElementById('transactionRef').value.trim();
             if (!ref) {
                 showNotification('❌ Please enter your transaction reference.', 'error');
@@ -686,50 +704,21 @@
             closePaymentModal();
             showNotification('✅ Payment submitted for admin approval. You will be notified once approved.', 'success');
 
-            // Send notification to admin
-            sendAdminNotification('New Invest & Grow payment submitted by ' + currentUser.name + '. Reference: ' + ref);
-        }
-
-        // =============================================
-        // SEND NOTIFICATION TO ADMIN
-        // =============================================
-        function sendAdminNotification(message) {
-            console.log('🔔 Admin Notification:', message);
-            // In production, this would be saved to database
-        }
-
-        // =============================================
-        // ACTIVATE MEMBERSHIP (Called by Admin or Paystack)
-        // =============================================
-        function activateMembership() {
-            currentUser.isInvestMember = true;
-            currentUser.referralLink = 'https://cashvista.com/ref/' + currentUser.email.split('@')[0] + '_' + Date.now();
-
-            // Update user in localStorage
-            let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-            const index = users.findIndex(u => u.email === currentUser.email);
-            if (index !== -1) {
-                users[index].isInvestMember = true;
-                users[index].referralLink = currentUser.referralLink;
-                localStorage.setItem('cashvista_users', JSON.stringify(users));
-            }
-
-            // Update Invest Members list
-            let investMembers = JSON.parse(localStorage.getItem('cashvista_invest_members') || '[]');
-            investMembers.push({
-                user: currentUser.name,
-                userEmail: currentUser.email,
-                amount: 5000,
-                status: 'active',
+            // Save to Supabase
+            await supabase.from('invest_members').insert([{
+                user_email: currentUser.email,
+                amount: platformSettings.invest_amount || 5000,
+                status: 'pending',
                 date: new Date().toISOString()
-            });
-            localStorage.setItem('cashvista_invest_members', JSON.stringify(investMembers));
+            }]);
 
             // Add activity
-            addActivity(currentUser.name, 'Invest & Grow activated', 5000);
-
-            updateMembershipStatus();
-            showNotification('✅ Congratulations! Your referral link is now active.', 'success');
+            await supabase.from('activity').insert([{
+                user: currentUser.name,
+                action: 'Submitted Invest & Grow payment',
+                amount: platformSettings.invest_amount || 5000,
+                date: new Date().toISOString()
+            }]);
         }
 
         // =============================================
@@ -738,20 +727,20 @@
         function updateMembershipStatus() {
             const statusEl = document.getElementById('membershipStatus');
 
-            if (currentUser.isInvestMember) {
+            if (currentUser.is_invest_member) {
                 statusEl.innerHTML = '<span class="badge badge-success">✅ Active</span>';
                 document.getElementById('referralLinkDisplay').innerHTML =
                     `<div style="background:#e8f5e9; padding:15px; border-radius:12px; border-left:5px solid #2e7d32;">
                         <p style="color:#2e7d32; font-weight:600;">✅ Your referral link is active! Share it to start earning.</p>
                     </div>`;
                 document.getElementById('referralLinkBox').style.display = 'flex';
-                document.getElementById('referralLinkText').textContent = currentUser.referralLink ||
+                document.getElementById('referralLinkText').textContent = currentUser.referral_link ||
                     'https://cashvista.com/ref/' + currentUser.email.split('@')[0];
             } else {
                 statusEl.innerHTML = '<span class="badge badge-warning">⚠️ Not Activated</span>';
                 document.getElementById('referralLinkDisplay').innerHTML =
                     `<div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
-                        <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay <span id="referralLinkAmount">₦5,000</span> to unlock your referral link.</p>
+                        <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay to unlock your referral link.</p>
                     </div>`;
                 document.getElementById('referralLinkBox').style.display = 'none';
             }
@@ -804,21 +793,6 @@
         }
 
         // =============================================
-        // ADD ACTIVITY
-        // =============================================
-        function addActivity(user, action, amount = 0) {
-            const activity = JSON.parse(localStorage.getItem('cashvista_activity') || '[]');
-            activity.unshift({
-                user: user,
-                action: action,
-                amount: amount,
-                date: new Date().toLocaleString()
-            });
-            if (activity.length > 100) activity.pop();
-            localStorage.setItem('cashvista_activity', JSON.stringify(activity));
-        }
-
-        // =============================================
         // LOGOUT
         // =============================================
         function logout() {
@@ -831,18 +805,30 @@
         // =============================================
         // ADMIN FUNCTIONS (Called from Admin Dashboard)
         // =============================================
-        function adminApproveInvest(userEmail) {
-            let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-            const index = users.findIndex(u => u.email === userEmail);
-            if (index !== -1) {
-                users[index].isInvestMember = true;
-                users[index].referralLink = 'https://cashvista.com/ref/' + userEmail.split('@')[0] + '_' + Date.now();
-                localStorage.setItem('cashvista_users', JSON.stringify(users));
-                alert('✅ User ' + userEmail + ' has been approved for Invest & Grow!');
-            }
+        async function adminApproveInvest(userEmail) {
+            await supabase
+                .from('invest_members')
+                .update({ status: 'approved' })
+                .eq('user_email', userEmail);
+
+            // Generate referral link
+            const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
+            await supabase
+                .from('users')
+                .update({
+                    is_invest_member: true,
+                    referral_link: 'https://cashvista.com/ref/' + uniqueId
+                })
+                .eq('email', userEmail);
+
+            alert('✅ User ' + userEmail + ' has been approved for Invest & Grow!');
         }
 
-        function adminRejectInvest(userEmail) {
+        async function adminRejectInvest(userEmail) {
+            await supabase
+                .from('invest_members')
+                .update({ status: 'rejected' })
+                .eq('user_email', userEmail);
             alert('❌ User ' + userEmail + ' has been rejected for Invest & Grow.');
         }
     </script>
