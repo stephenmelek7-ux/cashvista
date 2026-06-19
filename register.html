@@ -137,7 +137,10 @@
 
     <script>
         // =============================================
-        // SUPABASE - SIMPLE CONNECTION
+        // SUPABASE - COPY YOUR EXACT KEYS FROM SUPABASE
+        // =============================================
+        // GO TO: Supabase Dashboard → Settings → API
+        // COPY the "Project URL" and "anon public" key
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
@@ -172,13 +175,31 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Creating your account...';
 
-                // Use fetch directly to Supabase
+                // Check if user exists
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+
+                const existingUsers = await checkResponse.json();
+
+                if (existingUsers && existingUsers.length > 0) {
+                    notification.className = 'notification error';
+                    notification.textContent = '❌ This email is already registered. Please login.';
+                    return;
+                }
+
+                // Create user
                 const response = await fetch(SUPABASE_URL + '/rest/v1/users', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify({
                         name: name,
@@ -195,41 +216,17 @@
                     })
                 });
 
-                const result = await response.json();
-
-                if (response.status === 409) {
-                    notification.className = 'notification error';
-                    notification.textContent = '❌ This email is already registered. Please login.';
-                    return;
-                }
-
                 if (!response.ok) {
+                    const errorData = await response.text();
                     notification.className = 'notification error';
-                    notification.textContent = '❌ ' + (result.message || 'Registration failed. Please try again.');
+                    notification.textContent = '❌ Registration failed. Please try again.';
+                    console.error('Error:', errorData);
                     return;
                 }
 
                 sessionStorage.setItem('userEmail', email);
                 notification.className = 'notification success';
                 notification.textContent = '✅ Account created! Redirecting...';
-
-                // Add to activity log
-                try {
-                    await fetch(SUPABASE_URL + '/rest/v1/activity', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_KEY
-                        },
-                        body: JSON.stringify({
-                            user_name: name,
-                            action: 'Registered',
-                            amount: 0,
-                            date: new Date().toISOString()
-                        })
-                    });
-                } catch (e) {}
 
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
