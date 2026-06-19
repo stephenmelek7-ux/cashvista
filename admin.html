@@ -33,13 +33,8 @@
             font-weight: 800;
             color: #f5c842;
         }
-        .topbar .logo span {
-            color: #fff;
-        }
-        .topbar .logo .play-icon {
-            color: #f5c842;
-            margin-right: 5px;
-        }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .admin-info {
             display: flex;
             align-items: center;
@@ -55,10 +50,7 @@
             font-weight: 600;
             color: #f5c842;
         }
-        .topbar .admin-info .email {
-            color: #ddd;
-            font-size: 14px;
-        }
+        .topbar .admin-info .email { color: #ddd; font-size: 14px; }
         .topbar .admin-info .logout {
             background: rgba(231, 76, 60, 0.2);
             color: #e74c3c;
@@ -74,6 +66,13 @@
             background: #e74c3c;
             color: #fff;
         }
+        .topbar .admin-info a {
+            color: #f5c842;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .topbar .admin-info a:hover { text-decoration: underline; }
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -97,32 +96,17 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         }
-        .stat-card .icon {
-            font-size: 24px;
-            margin-bottom: 4px;
-        }
+        .stat-card .icon { font-size: 24px; margin-bottom: 4px; }
         .stat-card .number {
             font-size: 28px;
             font-weight: 800;
             color: #0d1b2a;
         }
-        .stat-card .number.gold {
-            color: #f5c842;
-        }
-        .stat-card .number.green {
-            color: #2e7d32;
-        }
-        .stat-card .number.red {
-            color: #c62828;
-        }
-        .stat-card .number.blue {
-            color: #0d47a1;
-        }
-        .stat-card .label {
-            font-size: 13px;
-            color: #888;
-            font-weight: 500;
-        }
+        .stat-card .number.gold { color: #f5c842; }
+        .stat-card .number.green { color: #2e7d32; }
+        .stat-card .number.red { color: #c62828; }
+        .stat-card .number.blue { color: #0d47a1; }
+        .stat-card .label { font-size: 13px; color: #888; font-weight: 500; }
         .section-card {
             background: #fff;
             border-radius: 20px;
@@ -176,17 +160,7 @@
             background: #0d47a1;
             color: #fff;
         }
-        .btn-settings {
-            background: #fef7e0;
-            color: #e65100;
-        }
-        .btn-settings:hover {
-            background: #e65100;
-            color: #fff;
-        }
-        .table-wrapper {
-            overflow-x: auto;
-        }
+        .table-wrapper { overflow-x: auto; }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -208,18 +182,13 @@
             color: #333;
             vertical-align: middle;
         }
-        tr:hover td {
-            background: #f8fafc;
-        }
+        tr:hover td { background: #f8fafc; }
         .empty-state {
             text-align: center;
             padding: 30px;
             color: #999;
         }
-        .empty-state .icon {
-            font-size: 36px;
-            margin-bottom: 6px;
-        }
+        .empty-state .icon { font-size: 36px; margin-bottom: 6px; }
         .badge {
             padding: 4px 14px;
             border-radius: 30px;
@@ -227,18 +196,9 @@
             font-weight: 600;
             display: inline-block;
         }
-        .badge-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        .badge-warning {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        .badge-danger {
-            background: #fce4ec;
-            color: #c62828;
-        }
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #e65100; }
+        .badge-danger { background: #fce4ec; color: #c62828; }
         .btn-sm {
             padding: 4px 14px;
             border: none;
@@ -249,57 +209,19 @@
             transition: 0.3s;
             margin: 2px;
         }
-        .btn-sm:hover {
-            transform: scale(1.05);
-        }
-        .btn-approve {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        .btn-approve:hover {
-            background: #2e7d32;
-            color: #fff;
-        }
-        .btn-reject {
-            background: #fce4ec;
-            color: #c62828;
-        }
-        .btn-reject:hover {
-            background: #c62828;
-            color: #fff;
-        }
-        .btn-view {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-        .btn-view:hover {
-            background: #0d47a1;
-            color: #fff;
-        }
-        .btn-delete {
-            background: #fce4ec;
-            color: #c62828;
-        }
-        .btn-delete:hover {
-            background: #c62828;
-            color: #fff;
-        }
-        .btn-suspend {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        .btn-suspend:hover {
-            background: #e65100;
-            color: #fff;
-        }
-        .btn-activate {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        .btn-activate:hover {
-            background: #2e7d32;
-            color: #fff;
-        }
+        .btn-sm:hover { transform: scale(1.05); }
+        .btn-approve { background: #e8f5e9; color: #2e7d32; }
+        .btn-approve:hover { background: #2e7d32; color: #fff; }
+        .btn-reject { background: #fce4ec; color: #c62828; }
+        .btn-reject:hover { background: #c62828; color: #fff; }
+        .btn-view { background: #e3f2fd; color: #0d47a1; }
+        .btn-view:hover { background: #0d47a1; color: #fff; }
+        .btn-delete { background: #fce4ec; color: #c62828; }
+        .btn-delete:hover { background: #c62828; color: #fff; }
+        .btn-suspend { background: #fff3e0; color: #e65100; }
+        .btn-suspend:hover { background: #e65100; color: #fff; }
+        .btn-activate { background: #e8f5e9; color: #2e7d32; }
+        .btn-activate:hover { background: #2e7d32; color: #fff; }
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -308,10 +230,7 @@
             margin-top: 30px;
             border-radius: 20px 20px 0 0;
         }
-        .footer .founder {
-            color: #f5c842;
-            font-weight: 600;
-        }
+        .footer .founder { color: #f5c842; font-weight: 600; }
         @media (max-width: 768px) {
             .topbar {
                 flex-direction: column;
@@ -319,40 +238,24 @@
                 text-align: center;
                 padding: 15px;
             }
-            .topbar .admin-info {
-                justify-content: center;
-            }
+            .topbar .admin-info { justify-content: center; }
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
             }
-            .stat-card .number {
-                font-size: 22px;
-            }
-            .section-card {
-                padding: 18px 16px;
-            }
+            .stat-card .number { font-size: 22px; }
+            .section-card { padding: 18px 16px; }
             .section-card .header {
                 flex-direction: column;
                 gap: 10px;
                 align-items: flex-start;
             }
-            table {
-                font-size: 12px;
-            }
-            th,
-            td {
-                padding: 8px 10px;
-            }
-            .btn-sm {
-                font-size: 10px;
-                padding: 3px 10px;
-            }
+            table { font-size: 12px; }
+            th, td { padding: 8px 10px; }
+            .btn-sm { font-size: 10px; padding: 3px 10px; }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -365,7 +268,7 @@
         <div class="admin-info">
             <span class="badge">🔐 ADMIN</span>
             <span class="email" id="adminEmail">admin@cashvista.com</span>
-            <a href="settings.html" style="color:#f5c842; text-decoration:none; font-weight:600; font-size:13px;">⚙️ Settings</a>
+            <a href="settings.html">⚙️ Settings</a>
             <button class="logout" onclick="adminLogout()">🚪 Logout</button>
         </div>
     </div>
@@ -503,7 +406,17 @@
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
+    <!-- ===== SUPABASE CDN ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         // =============================================
         // ADMIN SESSION CHECK
         // =============================================
@@ -513,230 +426,181 @@
         document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
 
         // =============================================
-        // DATA HELPERS
+        // RENDER DASHBOARD - FETCH FROM SUPABASE
         // =============================================
-        function getUsers() {
+        async function renderDashboard() {
             try {
-                return JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-            } catch (e) {
-                return [];
-            }
-        }
+                // --- FETCH ALL USERS FROM SUPABASE ---
+                const { data: users, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .order('joined_date', { ascending: false });
 
-        function saveUsers(users) {
-            localStorage.setItem('cashvista_users', JSON.stringify(users));
-        }
-
-        function getInvestMembers() {
-            try {
-                return JSON.parse(localStorage.getItem('cashvista_invest_members') || '[]');
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function getCampaigns() {
-            try {
-                return JSON.parse(localStorage.getItem('cashvista_campaigns') || '[]');
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function getWithdrawals() {
-            try {
-                return JSON.parse(localStorage.getItem('cashvista_withdrawals') || '[]');
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function getActivity() {
-            try {
-                return JSON.parse(localStorage.getItem('cashvista_activity') || '[]');
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function addActivity(user, action, amount = 0) {
-            const activity = getActivity();
-            activity.unshift({
-                user: user,
-                action: action,
-                amount: amount,
-                date: new Date().toLocaleString()
-            });
-            if (activity.length > 100) activity.pop();
-            localStorage.setItem('cashvista_activity', JSON.stringify(activity));
-        }
-
-        // =============================================
-        // RENDER DASHBOARD
-        // =============================================
-        function renderDashboard() {
-            const users = getUsers();
-            const investMembers = getInvestMembers();
-            const campaigns = getCampaigns();
-            const withdrawals = getWithdrawals();
-            const activity = getActivity();
-
-            // --- STATS ---
-            const totalUsers = users.length;
-            const totalInvest = investMembers.length;
-            const pendingCampaigns = campaigns.filter(c => c.status === 'pending').length;
-            const pendingInvest = investMembers.filter(i => i.status === 'pending').length;
-            const pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
-            const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
-
-            let totalRevenue = 0;
-            let totalWallet = 0;
-            users.forEach(u => {
-                totalWallet += (u.balance || 0);
-                totalRevenue += (u.totalPaid || 0);
-            });
-
-            const today = new Date().toDateString();
-            const todaySignups = users.filter(u => {
-                if (!u.joinedDate) return false;
-                try {
-                    const d = new Date(u.joinedDate);
-                    return d.toDateString() === today;
-                } catch (e) {
-                    return false;
+                if (userError) {
+                    console.error('Error fetching users:', userError);
+                    return;
                 }
-            }).length;
 
-            document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
-            document.getElementById('totalRevenue').textContent = '₦' + totalRevenue.toLocaleString();
-            document.getElementById('totalWallet').textContent = '₦' + totalWallet.toLocaleString();
-            document.getElementById('investMembers').textContent = totalInvest;
-            document.getElementById('pendingCount').textContent = totalPending;
-            document.getElementById('todaySignups').textContent = todaySignups;
-            document.getElementById('userCountBadge').textContent = totalUsers;
-            document.getElementById('pendingBadge').textContent = totalPending;
+                // --- FETCH OTHER DATA ---
+                const { data: campaigns } = await supabase.from('campaigns').select('*');
+                const { data: investMembers } = await supabase.from('invest_members').select('*');
+                const { data: withdrawals } = await supabase.from('withdrawals').select('*');
+                const { data: activity } = await supabase.from('activity').select('*').order('date', { ascending: false }).limit(20);
 
-            // --- USERS TABLE ---
-            const userBody = document.getElementById('userTableBody');
-            if (users.length === 0) {
-                userBody.innerHTML =
-                    `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
-            } else {
-                userBody.innerHTML = users.map((user, index) =>
-                    `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td><strong>${user.name || 'Unknown'}</strong></td>
-                        <td>${user.email || 'No email'}</td>
-                        <td>${user.phone || 'N/A'}</td>
-                        <td>₦${(user.balance || 0).toLocaleString()}</td>
-                        <td>${user.isInvestMember ? '✅' : '❌'}</td>
-                        <td>${user.joinedDate ? new Date(user.joinedDate).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <span class="badge ${user.isActive !== false ? 'badge-success' : 'badge-danger'}">
-                                ${user.isActive !== false ? '✅ Active' : '🚫 Suspended'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
-                            <button class="btn-sm ${user.isActive !== false ? 'btn-suspend' : 'btn-activate'}" 
-                                    onclick="toggleUser('${user.email}')">
-                                ${user.isActive !== false ? '🔒' : '🔓'}
-                            </button>
-                            <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
-                        </td>
-                    </tr>
-                `
-                ).join('');
-            }
+                // --- CALCULATE STATS ---
+                const totalUsers = users ? users.length : 0;
+                const totalInvest = investMembers ? investMembers.length : 0;
+                const pendingCampaigns = campaigns ? campaigns.filter(c => c.status === 'pending').length : 0;
+                const pendingInvest = investMembers ? investMembers.filter(i => i.status === 'pending').length : 0;
+                const pendingWithdrawals = withdrawals ? withdrawals.filter(w => w.status === 'pending').length : 0;
+                const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
 
-            // --- PENDING TABLE ---
-            const pendingBody = document.getElementById('pendingTableBody');
-            const pendingItems = [];
+                let totalWallet = 0;
+                let totalRevenue = 0;
+                if (users) {
+                    users.forEach(u => {
+                        totalWallet += (u.balance || 0);
+                        totalRevenue += (u.total_paid || 0);
+                    });
+                }
 
-            campaigns.filter(c => c.status === 'pending').forEach(c => {
-                pendingItems.push({ type: '📹 Campaign', user: c.userName || c.user || 'Unknown',
-                    details: c.title || 'Video', date: c.date || 'N/A' });
-            });
-            investMembers.filter(i => i.status === 'pending').forEach(i => {
-                pendingItems.push({ type: '📈 Invest', user: i.userName || i.user || 'Unknown',
-                    details: '₦5,000', date: i.date || 'N/A' });
-            });
-            withdrawals.filter(w => w.status === 'pending').forEach(w => {
-                pendingItems.push({ type: '💰 Withdraw', user: w.userName || w.user || 'Unknown',
-                    details: '₦' + (w.amount || 0), date: w.date || 'N/A' });
-            });
+                const today = new Date().toDateString();
+                const todaySignups = users ? users.filter(u => {
+                    if (!u.joined_date) return false;
+                    try {
+                        const d = new Date(u.joined_date);
+                        return d.toDateString() === today;
+                    } catch (e) { return false; }
+                }).length : 0;
 
-            if (pendingItems.length === 0) {
-                pendingBody.innerHTML =
-                    `<tr><td colspan="5" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
-            } else {
-                pendingBody.innerHTML = pendingItems.map(item =>
-                    `
-                    <tr>
-                        <td><span class="badge badge-warning">${item.type}</span></td>
-                        <td><strong>${item.user}</strong></td>
-                        <td>${item.details}</td>
-                        <td>${item.date}</td>
-                        <td>
-                            <button class="btn-sm btn-approve" onclick="alert('✅ Approved ${item.type}')">✅</button>
-                            <button class="btn-sm btn-reject" onclick="alert('❌ Rejected ${item.type}')">❌</button>
-                            <button class="btn-sm btn-view" onclick="alert('👁️ Viewing ${item.type}')">👁️</button>
-                        </td>
-                    </tr>
-                `
-                ).join('');
-            }
+                // --- UPDATE STATS CARDS ---
+                document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+                document.getElementById('totalRevenue').textContent = '₦' + totalRevenue.toLocaleString();
+                document.getElementById('totalWallet').textContent = '₦' + totalWallet.toLocaleString();
+                document.getElementById('investMembers').textContent = totalInvest;
+                document.getElementById('pendingCount').textContent = totalPending;
+                document.getElementById('todaySignups').textContent = todaySignups;
+                document.getElementById('userCountBadge').textContent = totalUsers;
+                document.getElementById('pendingBadge').textContent = totalPending;
 
-            // --- ACTIVITY TABLE ---
-            const activityBody = document.getElementById('activityTableBody');
-            if (activity.length === 0) {
-                activityBody.innerHTML =
-                    `<tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr>`;
-            } else {
-                activityBody.innerHTML = activity.slice(0, 20).map(a =>
-                    `
-                    <tr>
-                        <td><strong>${a.user || 'Unknown'}</strong></td>
-                        <td>${a.action || 'N/A'}</td>
-                        <td>${a.amount ? '₦' + a.amount.toLocaleString() : '₦0'}</td>
-                        <td>${a.date || 'N/A'}</td>
-                    </tr>
-                `
-                ).join('');
+                // --- USERS TABLE ---
+                const userBody = document.getElementById('userTableBody');
+                if (!users || users.length === 0) {
+                    userBody.innerHTML =
+                        `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
+                } else {
+                    userBody.innerHTML = users.map((user, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${user.name || 'Unknown'}</strong></td>
+                            <td>${user.email || 'No email'}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>₦${(user.balance || 0).toLocaleString()}</td>
+                            <td>${user.is_invest_member ? '✅' : '❌'}</td>
+                            <td>${user.joined_date ? new Date(user.joined_date).toLocaleDateString() : 'N/A'}</td>
+                            <td>
+                                <span class="badge ${user.is_active !== false ? 'badge-success' : 'badge-danger'}">
+                                    ${user.is_active !== false ? '✅ Active' : '🚫 Suspended'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
+                                <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" 
+                                        onclick="toggleUser('${user.email}')">
+                                    ${user.is_active !== false ? '🔒' : '🔓'}
+                                </button>
+                                <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                // --- PENDING TABLE ---
+                const pendingBody = document.getElementById('pendingTableBody');
+                const pendingItems = [];
+
+                if (campaigns) {
+                    campaigns.filter(c => c.status === 'pending').forEach(c => {
+                        pendingItems.push({ type: '📹 Campaign', user: c.user_email || 'Unknown',
+                            details: c.title || 'Video', date: c.date || 'N/A' });
+                    });
+                }
+                if (investMembers) {
+                    investMembers.filter(i => i.status === 'pending').forEach(i => {
+                        pendingItems.push({ type: '📈 Invest', user: i.user_email || 'Unknown',
+                            details: '₦' + (i.amount || 5000), date: i.date || 'N/A' });
+                    });
+                }
+                if (withdrawals) {
+                    withdrawals.filter(w => w.status === 'pending').forEach(w => {
+                        pendingItems.push({ type: '💰 Withdraw', user: w.user_email || 'Unknown',
+                            details: '₦' + (w.amount || 0), date: w.date || 'N/A' });
+                    });
+                }
+
+                if (pendingItems.length === 0) {
+                    pendingBody.innerHTML =
+                        `<tr><td colspan="5" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
+                } else {
+                    pendingBody.innerHTML = pendingItems.map(item => `
+                        <tr>
+                            <td><span class="badge badge-warning">${item.type}</span></td>
+                            <td><strong>${item.user}</strong></td>
+                            <td>${item.details}</td>
+                            <td>${item.date}</td>
+                            <td>
+                                <button class="btn-sm btn-approve" onclick="alert('✅ Approved')">✅</button>
+                                <button class="btn-sm btn-reject" onclick="alert('❌ Rejected')">❌</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                // --- ACTIVITY TABLE ---
+                const activityBody = document.getElementById('activityTableBody');
+                if (!activity || activity.length === 0) {
+                    activityBody.innerHTML =
+                        `<tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr>`;
+                } else {
+                    activityBody.innerHTML = activity.slice(0, 20).map(a => `
+                        <tr>
+                            <td><strong>${a.user || 'Unknown'}</strong></td>
+                            <td>${a.action || 'N/A'}</td>
+                            <td>${a.amount ? '₦' + a.amount.toLocaleString() : '₦0'}</td>
+                            <td>${a.date ? new Date(a.date).toLocaleString() : 'N/A'}</td>
+                        </tr>
+                    `).join('');
+                }
+
+            } catch (error) {
+                console.error('Error rendering dashboard:', error);
             }
         }
 
         // =============================================
-        // USER ACTIONS
+        // USER ACTIONS (Supabase)
         // =============================================
-        function viewUser(email) {
-            const users = getUsers();
-            const user = users.find(u => u.email === email);
-            if (!user) { alert('User not found.'); return; }
-            alert(
-                `👤 USER DETAILS\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email || 'N/A'}\nPhone: ${user.phone || 'N/A'}\nBalance: ₦${(user.balance || 0).toLocaleString()}\nInvest Member: ${user.isInvestMember ? 'Yes' : 'No'}\nStatus: ${user.isActive !== false ? 'Active' : 'Suspended'}\nJoined: ${user.joinedDate ? new Date(user.joinedDate).toLocaleString() : 'N/A'}`
-                );
+        async function viewUser(email) {
+            const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+            if (error || !data) { alert('User not found.'); return; }
+            alert(`👤 USER DETAILS\n\nName: ${data.name || 'N/A'}\nEmail: ${data.email || 'N/A'}\nPhone: ${data.phone || 'N/A'}\nBalance: ₦${(data.balance || 0).toLocaleString()}\nInvest Member: ${data.is_invest_member ? 'Yes' : 'No'}\nStatus: ${data.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${data.joined_date ? new Date(data.joined_date).toLocaleString() : 'N/A'}`);
         }
 
-        function toggleUser(email) {
+        async function toggleUser(email) {
             if (!confirm(`Toggle status for ${email}?`)) return;
-            const users = getUsers();
-            const user = users.find(u => u.email === email);
-            if (!user) { alert('User not found.'); return; }
-            user.isActive = user.isActive === false ? true : false;
-            saveUsers(users);
-            renderDashboard();
+            const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+            if (error || !data) { alert('User not found.'); return; }
+            const newStatus = data.is_active === false ? true : false;
+            await supabase.from('users').update({ is_active: newStatus }).eq('email', email);
             alert(`✅ User status updated.`);
+            renderDashboard();
         }
 
-        function deleteUser(email) {
-            if (!confirm(`⚠️ Are you sure you want to DELETE ${email}? This cannot be undone!`)) return;
-            let users = getUsers();
-            users = users.filter(u => u.email !== email);
-            saveUsers(users);
-            renderDashboard();
+        async function deleteUser(email) {
+            if (!confirm(`⚠️ Delete ${email}? This cannot be undone!`)) return;
+            await supabase.from('users').delete().eq('email', email);
             alert(`✅ User ${email} deleted.`);
+            renderDashboard();
         }
 
         // =============================================
@@ -755,8 +619,8 @@
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             renderDashboard();
-            // Auto-refresh every 5 seconds to show new users instantly
-            setInterval(renderDashboard, 5000);
+            // Auto-refresh every 10 seconds to show new users instantly
+            setInterval(renderDashboard, 10000);
         });
     </script>
 
