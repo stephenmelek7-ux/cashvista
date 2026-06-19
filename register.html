@@ -127,6 +127,12 @@
             display: block;
             border-left: 4px solid #2e7d32;
         }
+        .notification.info {
+            background: #e3f2fd;
+            color: #0d47a1;
+            display: block;
+            border-left: 4px solid #0d47a1;
+        }
         @media (max-width: 480px) {
             .register-container {
                 padding: 25px 20px;
@@ -160,35 +166,24 @@
             <p class="founder">Designed by Stephen Melek Elisha</p>
         </div>
     </div>
-    <script>
-        function saveUserToLocalStorage(userData) {
-            try {
-                let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-                if (users.some(u => u.email === userData.email)) {
-                    return { success: false, message: 'User with this email already exists.' };
-                }
-                users.push({
-                    name: userData.name,
-                    email: userData.email,
-                    phone: userData.phone || '',
-                    username: userData.username || '',
-                    password: userData.password,
-                    balance: 0,
-                    totalEarned: 0,
-                    referrals: 0,
-                    isInvestMember: false,
-                    isActive: true,
-                    joinedDate: new Date().toISOString()
-                });
-                localStorage.setItem('cashvista_users', JSON.stringify(users));
-                return { success: true, message: 'Account created successfully!' };
-            } catch (e) {
-                return { success: false, message: 'Error saving user data.' };
-            }
-        }
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+    <!-- ===== SUPABASE CDN ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // =============================================
+        // REGISTER FORM SUBMIT
+        // =============================================
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+
             const name = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
@@ -196,6 +191,7 @@
             const password = document.getElementById('password').value.trim();
             const notification = document.getElementById('notification');
 
+            // --- VALIDATION ---
             if (!name) {
                 notification.className = 'notification error';
                 notification.textContent = '❌ Please enter your full name.';
@@ -217,24 +213,71 @@
                 return;
             }
 
-            const result = saveUserToLocalStorage({
-                name,
-                email,
-                phone,
-                username: username || '',
-                password
-            });
+            try {
+                notification.className = 'notification info';
+                notification.textContent = '⏳ Creating your account...';
 
-            if (result.success) {
-                notification.className = 'notification success';
-                notification.textContent = '✅ ' + result.message + ' Redirecting to dashboard...';
+                // --- CHECK IF USER ALREADY EXISTS ---
+                const { data: existingUser, error: checkError } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('email', email)
+                    .single();
+
+                if (existingUser) {
+                    notification.className = 'notification error';
+                    notification.textContent = '❌ User with this email already exists. Please login.';
+                    return;
+                }
+
+                // --- SAVE USER TO SUPABASE ---
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([{
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        username: username || '',
+                        password: password,
+                        balance: 0,
+                        total_earned: 0,
+                        referrals: 0,
+                        is_invest_member: false,
+                        is_active: true,
+                        joined_date: new Date().toISOString()
+                    }]);
+
+                if (error) {
+                    console.error('Supabase Error:', error);
+                    notification.className = 'notification error';
+                    notification.textContent = '❌ Error saving user data. Please try again.';
+                    return;
+                }
+
+                // --- SAVE SESSION ---
                 sessionStorage.setItem('userEmail', email);
+
+                notification.className = 'notification success';
+                notification.textContent = '✅ Account created successfully! Redirecting to dashboard...';
+
+                // --- ADD TO ACTIVITY LOG ---
+                await supabase
+                    .from('activity')
+                    .insert([{
+                        user: name,
+                        action: 'Registered',
+                        amount: 0,
+                        date: new Date().toISOString()
+                    }]);
+
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1500);
-            } else {
+
+            } catch (error) {
+                console.error('Error:', error);
                 notification.className = 'notification error';
-                notification.textContent = '❌ ' + result.message;
+                notification.textContent = '❌ An error occurred. Please try again.';
             }
         });
     </script>
