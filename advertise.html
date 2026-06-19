@@ -1,893 +1,746 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advertise Video - CashVista</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-      /* ===== RESET & BASE ===== */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        background: #f0f4f8;
-        color: #1a1a2e;
-      }
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
 
-      /* ===== TOP BAR ===== */
-      .topbar {
-        background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
-        color: #fff;
-        padding: 15px 25px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      .topbar .logo {
-        font-size: 28px;
-        font-weight: 800;
-        color: #f5c842;
-      }
-      .topbar .logo span {
-        color: #fff;
-      }
-      .topbar .logo .play-icon {
-        color: #f5c842;
-        margin-right: 5px;
-      }
-      .topbar .user-info {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        flex-wrap: wrap;
-      }
-      .topbar .user-info .greeting {
-        color: #ddd;
-        font-size: 14px;
-      }
-      .topbar .user-info .greeting strong {
-        color: #f5c842;
-        font-weight: 700;
-      }
-      .topbar .user-info .balance-badge {
-        background: rgba(245, 200, 66, 0.15);
-        border: 1px solid #f5c842;
-        padding: 6px 18px;
-        border-radius: 30px;
-        font-weight: 700;
-        font-size: 15px;
-        color: #f5c842;
-      }
-      .topbar .user-info .logout {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-        border: 1px solid #e74c3c;
-        padding: 6px 18px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        transition: 0.3s;
-      }
-      .topbar .user-info .logout:hover {
-        background: #e74c3c;
-        color: #fff;
-      }
-      .topbar .back-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 6px 18px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        text-decoration: none;
-        transition: 0.3s;
-      }
-      .topbar .back-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      /* ===== CONTAINER ===== */
-      .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 25px 20px;
-      }
-
-      /* ===== CARDS ===== */
-      .card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 30px 35px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-        margin-bottom: 25px;
-        border: 1px solid rgba(0, 0, 0, 0.03);
-      }
-      .card h2 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #0d1b2a;
-        margin-bottom: 6px;
-      }
-      .card .subtitle {
-        color: #888;
-        font-size: 15px;
-        margin-bottom: 20px;
-      }
-      .card p {
-        color: #555;
-        font-size: 15px;
-        line-height: 1.7;
-      }
-
-      /* ===== FORM ELEMENTS ===== */
-      .form-group {
-        margin-bottom: 18px;
-      }
-      .form-group label {
-        font-weight: 600;
-        color: #333;
-        display: block;
-        margin-bottom: 5px;
-        font-size: 14px;
-      }
-      .form-group label .optional {
-        font-weight: 400;
-        color: #999;
-        font-size: 12px;
-      }
-      .form-group input,
-      .form-group textarea,
-      .form-group select {
-        width: 100%;
-        padding: 12px 15px;
-        border: 2px solid #e8ecf0;
-        border-radius: 12px;
-        font-size: 15px;
-        transition: 0.3s;
-        background: #fafbfc;
-        font-family: inherit;
-      }
-      .form-group input:focus,
-      .form-group textarea:focus,
-      .form-group select:focus {
-        border-color: #f5c842;
-        outline: none;
-        background: #fff;
-        box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
-      }
-      .form-group textarea {
-        min-height: 80px;
-        resize: vertical;
-      }
-      .form-group .hint {
-        font-size: 12px;
-        color: #aaa;
-        margin-top: 4px;
-      }
-
-      /* ===== BANK DETAILS ===== */
-      .bank-details {
-        background: #e8f5e9;
-        padding: 20px 25px;
-        border-radius: 16px;
-        border-left: 5px solid #2e7d32;
-        margin: 15px 0;
-      }
-      .bank-details p {
-        font-size: 15px;
-        margin: 5px 0;
-        color: #1a1a2e;
-      }
-      .bank-details strong {
-        color: #0d1b2a;
-      }
-      .bank-details .number {
-        font-size: 24px;
-        font-weight: 800;
-        color: #0d1b2a;
-        letter-spacing: 2px;
-      }
-
-      /* ===== BUTTONS ===== */
-      .btn {
-        display: inline-block;
-        padding: 14px 35px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-        transition: 0.3s;
-        text-align: center;
-        text-decoration: none;
-      }
-      .btn-gold {
-        background: #f5c842;
-        color: #0d1b2a;
-      }
-      .btn-gold:hover {
-        background: #e6b800;
-        transform: scale(1.02);
-      }
-      .btn-green {
-        background: #2e7d32;
-        color: #fff;
-      }
-      .btn-green:hover {
-        background: #1b5e20;
-      }
-      .btn-block {
-        width: 100%;
-      }
-      .btn-outline {
-        background: transparent;
-        color: #0d1b2a;
-        border: 2px solid #0d1b2a;
-      }
-      .btn-outline:hover {
-        background: #0d1b2a;
-        color: #fff;
-      }
-
-      /* ===== PRICE TAG ===== */
-      .price-tag {
-        font-size: 28px;
-        font-weight: 700;
-        color: #f5c842;
-        background: #fef7e0;
-        padding: 10px 20px;
-        border-radius: 12px;
-        display: inline-block;
-        margin: 10px 0;
-      }
-
-      /* ===== STATUS BADGE ===== */
-      .badge {
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        display: inline-block;
-      }
-      .badge-success {
-        background: #e8f5e9;
-        color: #2e7d32;
-      }
-      .badge-warning {
-        background: #fff3e0;
-        color: #e65100;
-      }
-      .badge-danger {
-        background: #fce4ec;
-        color: #c62828;
-      }
-
-      /* ===== NOTIFICATION ===== */
-      .notification {
-        padding: 15px 20px;
-        border-radius: 16px;
-        margin-bottom: 20px;
-        display: none;
-        font-weight: 500;
-      }
-      .notification.show {
-        display: block;
-      }
-      .notification.success {
-        background: #e8f5e9;
-        color: #1b5e20;
-        border-left: 5px solid #2e7d32;
-      }
-      .notification.error {
-        background: #fce4ec;
-        color: #b71c1c;
-        border-left: 5px solid #c62828;
-      }
-      .notification.info {
-        background: #e3f2fd;
-        color: #0d47a1;
-        border-left: 5px solid #0d47a1;
-      }
-
-      /* ===== FOOTER ===== */
-      .footer {
-        background: #0d1b2a;
-        color: #aaa;
-        text-align: center;
-        padding: 20px;
-        margin-top: 30px;
-        border-radius: 20px 20px 0 0;
-      }
-      .footer .founder {
-        color: #f5c842;
-        font-weight: 600;
-      }
-
-      /* ===== RESPONSIVE ===== */
-      @media (max-width: 768px) {
+        /* ===== TOP BAR ===== */
         .topbar {
-          flex-direction: column;
-          gap: 12px;
-          text-align: center;
-          padding: 15px;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .user-info {
-          justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
         }
+        .topbar .user-info .greeting {
+            color: #ddd;
+            font-size: 14px;
+        }
+        .topbar .user-info .greeting strong {
+            color: #f5c842;
+            font-weight: 700;
+        }
+        .topbar .user-info .balance-badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #f5c842;
+        }
+        .topbar .user-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .user-info .logout:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .topbar .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .topbar .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+
+        /* ===== CARDS ===== */
         .card {
-          padding: 20px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px 35px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0d1b2a;
+            margin-bottom: 6px;
+        }
+        .card .subtitle {
+            color: #888;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .card p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-group label .optional {
+            font-weight: 400;
+            color: #999;
+            font-size: 12px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: 0.3s;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-group .hint {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+
+        /* ===== BANK DETAILS ===== */
+        .bank-details {
+            background: #e8f5e9;
+            padding: 20px 25px;
+            border-radius: 16px;
+            border-left: 5px solid #2e7d32;
+            margin: 15px 0;
+        }
+        .bank-details p {
+            font-size: 15px;
+            margin: 5px 0;
+            color: #1a1a2e;
+        }
+        .bank-details strong {
+            color: #0d1b2a;
         }
         .bank-details .number {
-          font-size: 18px;
+            font-size: 24px;
+            font-weight: 800;
+            color: #0d1b2a;
+            letter-spacing: 2px;
         }
-        .price-tag {
-          font-size: 22px;
-          padding: 8px 16px;
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            text-decoration: none;
         }
-      }
+        .btn-gold {
+            background: #f5c842;
+            color: #0d1b2a;
+        }
+        .btn-gold:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+        }
+        .btn-green {
+            background: #2e7d32;
+            color: #fff;
+        }
+        .btn-green:hover {
+            background: #1b5e20;
+        }
+        .btn-block {
+            width: 100%;
+        }
+
+        /* ===== STATUS BADGE ===== */
+        .badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .badge-warning {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .badge-danger {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+        .notification.show {
+            display: block;
+        }
+        .notification.success {
+            background: #e8f5e9;
+            color: #1b5e20;
+            border-left: 5px solid #2e7d32;
+        }
+        .notification.error {
+            background: #fce4ec;
+            color: #b71c1c;
+            border-left: 5px solid #c62828;
+        }
+        .notification.info {
+            background: #e3f2fd;
+            color: #0d47a1;
+            border-left: 5px solid #0d47a1;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder {
+            color: #f5c842;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+                padding: 15px;
+            }
+            .topbar .user-info {
+                justify-content: center;
+            }
+            .card {
+                padding: 20px;
+            }
+            .bank-details .number {
+                font-size: 18px;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+
     <!-- ===== TOP BAR ===== -->
     <div class="topbar">
-      <div class="logo">
-        <span class="play-icon">▶</span>Cash<span>Vista</span>
-      </div>
-      <div class="user-info">
-        <span class="greeting"
-          >👋 Welcome, <strong id="userName">User</strong></span
-        >
-        <span class="balance-badge"
-          >💰 <span id="userBalance">₦0.00</span></span
-        >
-        <a href="dashboard.html" class="back-btn">← Dashboard</a>
-        <button class="logout" onclick="logout()">🚪 Logout</button>
-      </div>
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="user-info">
+            <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
+            <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
+            <a href="dashboard.html" class="back-btn">← Dashboard</a>
+            <button class="logout" onclick="logout()">🚪 Logout</button>
+        </div>
     </div>
 
     <div class="container">
-      <!-- ===== NOTIFICATION ===== -->
-      <div id="notification" class="notification">
-        <span id="notificationMessage">Welcome to Advertise!</span>
-      </div>
 
-      <!-- ===== ADVERTISE FORM ===== -->
-      <div class="card">
-        <h2>📹 Advertise Your Video</h2>
-        <p class="subtitle">
-          Submit your video link below. Admin will review and publish to
-          viewers.
-        </p>
-
-        <form id="advertiseForm">
-          <div class="form-group">
-            <label>Video Title *</label>
-            <input
-              type="text"
-              id="videoTitle"
-              placeholder="Enter video title"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label>Video Link (YouTube, Google Drive, Vimeo, etc.) *</label>
-            <input
-              type="url"
-              id="videoLink"
-              placeholder="https://www.youtube.com/watch?v=..."
-              required
-            />
-            <div class="hint">
-              Make sure the video link is accessible to viewers.
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Video Description</label>
-            <textarea
-              id="videoDescription"
-              placeholder="Describe your video content briefly..."
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Amount You Want to Pay (₦) *</label>
-            <input
-              type="number"
-              id="amountPay"
-              placeholder="e.g., 10000"
-              required
-            />
-            <div class="hint">
-              Enter the amount you want to pay for this campaign.
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Number of Viewers You Want to Reach *</label>
-            <input
-              type="number"
-              id="viewerCount"
-              placeholder="e.g., 1000"
-              required
-            />
-            <div class="hint">How many people should see your video?</div>
-          </div>
-
-          <div class="form-group">
-            <label>Payment Method</label>
-            <select id="paymentMethod">
-              <option value="paystack">💳 Paystack (Card)</option>
-              <option value="bank">🏦 Bank Transfer</option>
-            </select>
-          </div>
-
-          <!-- ===== UPDATED: DYNAMIC BANK DETAILS ===== -->
-          <div id="bankTransferDetails" class="bank-details">
-            <p><strong>🏦 Bank:</strong> <span id="displayBankName">Loading...</span></p>
-            <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Loading...</span></p>
-            <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">Loading...</span></p>
-            <p style="font-size: 13px; color: #555; margin-top: 8px">
-              After payment, upload your payment slip below and click "Submit Campaign".
-            </p>
-          </div>
-
-          <!-- ===== UPDATED: PAYSTACK "COMING SOON" ===== -->
-          <div id="paystackSection">
-            <button
-              type="button"
-              class="btn btn-gold btn-block"
-              onclick="payWithPaystack()"
-              id="paystackBtn"
-            >
-              💳 Pay Now with Paystack
-            </button>
-            <p style="font-size:12px; color:#888; text-align:center; margin-top:4px;" id="paystackNote">
-              ⏳ Paystack is coming soon. Please use Bank Transfer.
-            </p>
-          </div>
-
-          <!-- Payment Slip Upload (Bank Transfer) -->
-          <div id="bankUploadSection" style="display: none">
-            <div class="form-group">
-              <label>Upload Payment Slip/Receipt</label>
-              <input type="file" id="paymentSlip" accept="image/*" />
-              <div class="hint">
-                Upload a clear image of your payment receipt.
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Transaction Reference</label>
-              <input
-                type="text"
-                id="transactionRef"
-                placeholder="Enter transaction reference"
-              />
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            class="btn btn-gold btn-block"
-            style="margin-top: 15px"
-          >
-            📤 Submit Campaign
-          </button>
-        </form>
-      </div>
-
-      <!-- ===== MY CAMPAIGNS ===== -->
-      <div class="card">
-        <h3>📋 My Campaigns</h3>
-        <p style="color: #888; font-size: 14px; margin-bottom: 15px">
-          View all your submitted campaigns and their status.
-        </p>
-
-        <div style="overflow-x: auto">
-          <table
-            style="width: 100%; border-collapse: collapse; font-size: 14px"
-          >
-            <thead>
-              <tr style="background: #0d1b2a; color: #fff">
-                <th style="padding: 10px; text-align: left">Title</th>
-                <th style="padding: 10px; text-align: left">Amount</th>
-                <th style="padding: 10px; text-align: left">Viewers</th>
-                <th style="padding: 10px; text-align: left">Status</th>
-              </tr>
-            </thead>
-            <tbody id="campaignHistory">
-              <tr>
-                <td
-                  colspan="4"
-                  style="text-align: center; padding: 20px; color: #888"
-                >
-                  No campaigns yet.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- ===== NOTIFICATION ===== -->
+        <div id="notification" class="notification">
+            <span id="notificationMessage">Welcome to Advertise!</span>
         </div>
-      </div>
+
+        <!-- ===== ADVERTISE FORM ===== -->
+        <div class="card">
+            <h2>📹 Advertise Your Video</h2>
+            <p class="subtitle">Submit your video link below. Admin will review and publish to viewers.</p>
+
+            <form id="advertiseForm">
+                <div class="form-group">
+                    <label>Video Title *</label>
+                    <input type="text" id="videoTitle" placeholder="Enter video title" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Video Link (YouTube, Google Drive, Vimeo, etc.) *</label>
+                    <input type="url" id="videoLink" placeholder="https://www.youtube.com/watch?v=..." required />
+                    <div class="hint">Make sure the video link is accessible to viewers.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Video Description</label>
+                    <textarea id="videoDescription" placeholder="Describe your video content briefly..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount You Want to Pay (₦) *</label>
+                    <input type="number" id="amountPay" placeholder="e.g., 10000" required />
+                    <div class="hint">Enter the amount you want to pay for this campaign.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Number of Viewers You Want to Reach *</label>
+                    <input type="number" id="viewerCount" placeholder="e.g., 1000" required />
+                    <div class="hint">How many people should see your video?</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="paystack">💳 Paystack (Card)</option>
+                        <option value="bank">🏦 Bank Transfer</option>
+                    </select>
+                </div>
+
+                <!-- Bank Transfer Details (Loaded from Supabase) -->
+                <div id="bankTransferDetails" class="bank-details">
+                    <p><strong>🏦 Bank:</strong> <span id="displayBankName">Loading...</span></p>
+                    <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Loading...</span></p>
+                    <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">Loading...</span></p>
+                    <p style="font-size:13px; color:#555; margin-top:8px;">
+                        After payment, upload your payment slip below and click "Submit Campaign".
+                    </p>
+                </div>
+
+                <!-- Paystack Section -->
+                <div id="paystackSection">
+                    <p style="font-size:12px; color:#e65100; margin-top:4px;">
+                        ⚠️ Paystack is coming soon. Please use Bank Transfer for now.
+                    </p>
+                    <button type="button" class="btn btn-gold btn-block" onclick="payWithPaystack()" disabled>
+                        💳 Pay Now with Paystack (Coming Soon)
+                    </button>
+                </div>
+
+                <!-- Payment Slip Upload (Bank Transfer) -->
+                <div id="bankUploadSection" style="display:none;">
+                    <div class="form-group">
+                        <label>Upload Payment Slip/Receipt</label>
+                        <input type="file" id="paymentSlip" accept="image/*" />
+                        <div class="hint">Upload a clear image of your payment receipt.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction Reference</label>
+                        <input type="text" id="transactionRef" placeholder="Enter transaction reference" />
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-gold btn-block" style="margin-top:15px;">
+                    📤 Submit Campaign
+                </button>
+            </form>
+        </div>
+
+        <!-- ===== MY CAMPAIGNS ===== -->
+        <div class="card">
+            <h3>📋 My Campaigns</h3>
+            <p style="color:#888; font-size:14px; margin-bottom:15px;">View all your submitted campaigns and their status.</p>
+
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                    <thead>
+                        <tr style="background:#0d1b2a; color:#fff;">
+                            <th style="padding:10px; text-align:left;">Title</th>
+                            <th style="padding:10px; text-align:left;">Amount</th>
+                            <th style="padding:10px; text-align:left;">Viewers</th>
+                            <th style="padding:10px; text-align:left;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="campaignHistory">
+                        <tr>
+                            <td colspan="4" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
-      <p>&copy; 2026 CashVista. All rights reserved.</p>
-      <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
+    <!-- ===== SUPABASE CDN ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-      // =============================================
-      // GET LOGGED-IN USER
-      // =============================================
-      function getLoggedInUser() {
-        const userEmail = sessionStorage.getItem('userEmail');
-        if (!userEmail) {
-          window.location.href = 'login.html';
-          return null;
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+        let platformSettings = {};
+
+        // =============================================
+        // GET LOGGED-IN USER
+        // =============================================
+        async function getLoggedInUser() {
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', userEmail)
+                    .single();
+
+                if (error || !data) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                return data;
+            } catch (e) {
+                window.location.href = 'login.html';
+                return null;
+            }
         }
-        try {
-          const users = JSON.parse(
-            localStorage.getItem('cashvista_users') || '[]'
-          );
-          const user = users.find((u) => u.email === userEmail);
-          if (!user) {
-            window.location.href = 'login.html';
-            return null;
-          }
-          return user;
-        } catch (e) {
-          window.location.href = 'login.html';
-          return null;
+
+        // =============================================
+        // LOAD PLATFORM SETTINGS FROM SUPABASE
+        // =============================================
+        async function loadPlatformSettings() {
+            try {
+                const { data, error } = await supabase
+                    .from('platform_settings')
+                    .select('*')
+                    .limit(1);
+
+                if (error || !data || data.length === 0) {
+                    return;
+                }
+
+                platformSettings = data[0];
+                return platformSettings;
+            } catch (e) {
+                console.error('Error loading settings:', e);
+                return null;
+            }
         }
-      }
 
-      let currentUser = null;
+        // =============================================
+        // LOAD PAGE
+        // =============================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            currentUser = await getLoggedInUser();
+            if (!currentUser) return;
 
-      // =============================================
-      // LOAD PAGE
-      // =============================================
-      document.addEventListener('DOMContentLoaded', function () {
-        currentUser = getLoggedInUser();
-        if (!currentUser) return;
+            document.getElementById('userName').textContent = currentUser.name || 'User';
+            document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
 
-        document.getElementById('userName').textContent =
-          currentUser.name || 'User';
-        document.getElementById('userBalance').textContent =
-          '₦' + (currentUser.balance || 0).toLocaleString();
+            // Load settings from Supabase
+            await loadPlatformSettings();
 
-        loadBankDetails();
-        loadCampaignHistory();
-      });
+            // Update Bank Details
+            document.getElementById('displayBankName').textContent = platformSettings.bank_name || 'United Bank for Africa (UBA)';
+            document.getElementById('displayAccountName').textContent = platformSettings.account_name || 'Stephen Melek';
+            document.getElementById('displayAccountNumber').textContent = platformSettings.account_number || '2355380747';
 
-      // =============================================
-      // LOAD BANK DETAILS FROM SETTINGS
-      // =============================================
-      function loadBankDetails() {
-        try {
-          const settings = JSON.parse(
-            localStorage.getItem('cashvista_settings') || '{}'
-          );
-          document.getElementById('displayBankName').textContent =
-            settings.bankName || 'United Bank for Africa (UBA)';
-          document.getElementById('displayAccountName').textContent =
-            settings.accountName ||
-            'Stephenmelek Global Business Enterprise';
-          document.getElementById('displayAccountNumber').textContent =
-            settings.accountNumber || '1023456789';
-        } catch (e) {
-          document.getElementById('displayBankName').textContent =
-            'United Bank for Africa (UBA)';
-          document.getElementById('displayAccountName').textContent =
-            'Stephenmelek Global Business Enterprise';
-          document.getElementById('displayAccountNumber').textContent =
-            '1023456789';
-        }
-      }
-
-      // =============================================
-      // PAYMENT METHOD TOGGLE
-      // =============================================
-      document
-        .getElementById('paymentMethod')
-        .addEventListener('change', function () {
-          const bankDetails = document.getElementById('bankTransferDetails');
-          const paystackSection = document.getElementById('paystackSection');
-          const bankUploadSection =
-            document.getElementById('bankUploadSection');
-
-          if (this.value === 'bank') {
-            bankDetails.style.display = 'block';
-            paystackSection.style.display = 'none';
-            bankUploadSection.style.display = 'block';
-          } else {
-            bankDetails.style.display = 'none';
-            paystackSection.style.display = 'block';
-            bankUploadSection.style.display = 'none';
-          }
+            // Load campaign history
+            await loadCampaignHistory();
         });
 
-      // =============================================
-      // PAY WITH PAYSTACK (UPDATED: COMING SOON)
-      // =============================================
-      function payWithPaystack() {
-        showNotification('⏳ Paystack is coming soon. Please use Bank Transfer for now.', 'info');
-      }
+        // =============================================
+        // LOAD CAMPAIGN HISTORY FROM SUPABASE
+        // =============================================
+        async function loadCampaignHistory() {
+            try {
+                const { data, error } = await supabase
+                    .from('campaigns')
+                    .select('*')
+                    .eq('user_email', currentUser.email)
+                    .order('date', { ascending: false });
 
-      // =============================================
-      // SUBMIT CAMPAIGN
-      // =============================================
-      document
-        .getElementById('advertiseForm')
-        .addEventListener('submit', function (e) {
-          e.preventDefault();
+                const tbody = document.getElementById('campaignHistory');
 
-          const title = document.getElementById('videoTitle').value.trim();
-          const link = document.getElementById('videoLink').value.trim();
-          const description = document
-            .getElementById('videoDescription')
-            .value.trim();
-          const amount = document.getElementById('amountPay').value.trim();
-          const viewers = document.getElementById('viewerCount').value.trim();
-          const method = document.getElementById('paymentMethod').value;
+                if (!data || data.length === 0) {
+                    tbody.innerHTML =
+                        `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td></tr>`;
+                    return;
+                }
 
-          // Validation
-          if (!title) {
-            showNotification('❌ Please enter a video title.', 'error');
-            return;
-          }
-          if (!link) {
-            showNotification('❌ Please enter a video link.', 'error');
-            return;
-          }
-          if (!amount || isNaN(amount) || Number(amount) <= 0) {
-            showNotification('❌ Please enter a valid amount.', 'error');
-            return;
-          }
-          if (!viewers || isNaN(viewers) || Number(viewers) <= 0) {
-            showNotification(
-              '❌ Please enter a valid number of viewers.',
-              'error'
-            );
-            return;
-          }
+                tbody.innerHTML = data.map(c => {
+                    let statusBadge = '';
+                    if (c.status === 'pending') {
+                        statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                    } else if (c.status === 'approved') {
+                        statusBadge = '<span class="badge badge-success">✅ Live</span>';
+                    } else if (c.status === 'rejected') {
+                        statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                    }
 
-          // If bank transfer, check for payment slip
-          if (method === 'bank') {
-            const slip = document.getElementById('paymentSlip').files[0];
-            const ref = document.getElementById('transactionRef').value.trim();
+                    return `
+                        <tr>
+                            <td style="padding:10px;"><strong>${c.title}</strong></td>
+                            <td style="padding:10px;">₦${Number(c.amount).toLocaleString()}</td>
+                            <td style="padding:10px;">${c.viewers}</td>
+                            <td style="padding:10px;">${statusBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
 
-            if (!slip) {
-              showNotification('❌ Please upload your payment slip.', 'error');
-              return;
+            } catch (e) {
+                console.error('Error loading campaigns:', e);
             }
-            if (!ref) {
-              showNotification(
-                '❌ Please enter your transaction reference.',
-                'error'
-              );
-              return;
-            }
-          }
-
-          submitCampaign(method);
-        });
-
-      function submitCampaign(method) {
-        const title = document.getElementById('videoTitle').value.trim();
-        const link = document.getElementById('videoLink').value.trim();
-        const description = document
-          .getElementById('videoDescription')
-          .value.trim();
-        const amount = document.getElementById('amountPay').value.trim();
-        const viewers = document.getElementById('viewerCount').value.trim();
-
-        // Create campaign object
-        const campaign = {
-          id: 'camp_' + Date.now(),
-          title: title,
-          link: link,
-          description: description || '',
-          amount: Number(amount),
-          viewers: Number(viewers),
-          user: currentUser.name,
-          userEmail: currentUser.email,
-          status: 'pending',
-          paymentMethod: method,
-          date: new Date().toISOString(),
-        };
-
-        // Save to localStorage
-        let campaigns = JSON.parse(
-          localStorage.getItem('cashvista_campaigns') || '[]'
-        );
-        campaigns.push(campaign);
-        localStorage.setItem('cashvista_campaigns', JSON.stringify(campaigns));
-
-        // Add activity
-        addActivity(
-          currentUser.name,
-          'Submitted campaign: ' + title,
-          Number(amount)
-        );
-
-        // Send notification to admin
-        sendAdminNotification(
-          '📹 New campaign submitted: "' +
-            title +
-            '" by ' +
-            currentUser.name +
-            '. Amount: ₦' +
-            Number(amount).toLocaleString()
-        );
-
-        // Show success message
-        showNotification(
-          '✅ Campaign submitted for admin approval! You will be notified when it goes live.',
-          'success'
-        );
-
-        // Reset form
-        document.getElementById('videoTitle').value = '';
-        document.getElementById('videoLink').value = '';
-        document.getElementById('videoDescription').value = '';
-        document.getElementById('amountPay').value = '';
-        document.getElementById('viewerCount').value = '';
-        document.getElementById('paymentSlip').value = '';
-        document.getElementById('transactionRef').value = '';
-
-        // Reload campaign history
-        loadCampaignHistory();
-      }
-
-      // =============================================
-      // LOAD CAMPAIGN HISTORY
-      // =============================================
-      function loadCampaignHistory() {
-        const campaigns = JSON.parse(
-          localStorage.getItem('cashvista_campaigns') || '[]'
-        );
-        const userCampaigns = campaigns.filter(
-          (c) => c.userEmail === currentUser?.email
-        );
-        const tbody = document.getElementById('campaignHistory');
-
-        if (userCampaigns.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td></tr>`;
-          return;
         }
 
-        tbody.innerHTML = userCampaigns
-          .map((c) => {
-            let statusBadge = '';
-            if (c.status === 'pending') {
-              statusBadge =
-                '<span class="badge badge-warning">⏳ Pending</span>';
-            } else if (c.status === 'approved') {
-              statusBadge = '<span class="badge badge-success">✅ Live</span>';
-            } else if (c.status === 'rejected') {
-              statusBadge =
-                '<span class="badge badge-danger">❌ Rejected</span>';
+        // =============================================
+        // PAYMENT METHOD TOGGLE
+        // =============================================
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            const bankDetails = document.getElementById('bankTransferDetails');
+            const paystackSection = document.getElementById('paystackSection');
+            const bankUploadSection = document.getElementById('bankUploadSection');
+
+            if (this.value === 'bank') {
+                bankDetails.style.display = 'block';
+                paystackSection.style.display = 'none';
+                bankUploadSection.style.display = 'block';
             } else {
-              statusBadge =
-                '<span class="badge badge-warning">⏳ Pending</span>';
+                bankDetails.style.display = 'none';
+                paystackSection.style.display = 'block';
+                bankUploadSection.style.display = 'none';
+            }
+        });
+
+        // =============================================
+        // PAY WITH PAYSTACK
+        // =============================================
+        function payWithPaystack() {
+            showNotification('🔐 Paystack is coming soon. Please use Bank Transfer for now.', 'info');
+        }
+
+        // =============================================
+        // SUBMIT CAMPAIGN TO SUPABASE
+        // =============================================
+        document.getElementById('advertiseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('videoTitle').value.trim();
+            const link = document.getElementById('videoLink').value.trim();
+            const description = document.getElementById('videoDescription').value.trim();
+            const amount = document.getElementById('amountPay').value.trim();
+            const viewers = document.getElementById('viewerCount').value.trim();
+            const method = document.getElementById('paymentMethod').value;
+
+            // Validation
+            if (!title) {
+                showNotification('❌ Please enter a video title.', 'error');
+                return;
+            }
+            if (!link) {
+                showNotification('❌ Please enter a video link.', 'error');
+                return;
+            }
+            if (!amount || isNaN(amount) || Number(amount) <= 0) {
+                showNotification('❌ Please enter a valid amount.', 'error');
+                return;
+            }
+            if (!viewers || isNaN(viewers) || Number(viewers) <= 0) {
+                showNotification('❌ Please enter a valid number of viewers.', 'error');
+                return;
             }
 
-            return `
-                    <tr>
-                        <td style="padding:10px;"><strong>${
-                          c.title
-                        }</strong></td>
-                        <td style="padding:10px;">₦${Number(
-                          c.amount
-                        ).toLocaleString()}</td>
-                        <td style="padding:10px;">${c.viewers}</td>
-                        <td style="padding:10px;">${statusBadge}</td>
-                    </tr>
-                `;
-          })
-          .join('');
-      }
+            // If bank transfer, check for payment slip
+            if (method === 'bank') {
+                const slip = document.getElementById('paymentSlip').files[0];
+                const ref = document.getElementById('transactionRef').value.trim();
 
-      // =============================================
-      // SEND NOTIFICATION TO ADMIN
-      // =============================================
-      function sendAdminNotification(message) {
-        console.log('🔔 Admin Notification:', message);
-        // In production, this would be saved to database
-      }
+                if (!slip) {
+                    showNotification('❌ Please upload your payment slip.', 'error');
+                    return;
+                }
+                if (!ref) {
+                    showNotification('❌ Please enter your transaction reference.', 'error');
+                    return;
+                }
+            }
 
-      // =============================================
-      // ADD ACTIVITY
-      // =============================================
-      function addActivity(user, action, amount = 0) {
-        const activity = JSON.parse(
-          localStorage.getItem('cashvista_activity') || '[]'
-        );
-        activity.unshift({
-          user: user,
-          action: action,
-          amount: amount,
-          date: new Date().toLocaleString(),
+            try {
+                // Save to Supabase
+                const { data, error } = await supabase
+                    .from('campaigns')
+                    .insert([{
+                        user_email: currentUser.email,
+                        title: title,
+                        video_link: link,
+                        description: description || '',
+                        amount: Number(amount),
+                        viewers: Number(viewers),
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    }]);
+
+                if (error) {
+                    showNotification('❌ Error submitting campaign. Please try again.', 'error');
+                    return;
+                }
+
+                // Add activity
+                await supabase
+                    .from('activity')
+                    .insert([{
+                        user: currentUser.name,
+                        action: 'Submitted campaign: ' + title,
+                        amount: Number(amount),
+                        date: new Date().toISOString()
+                    }]);
+
+                showNotification('✅ Campaign submitted for admin approval! You will be notified when it goes live.', 'success');
+
+                // Reset form
+                document.getElementById('videoTitle').value = '';
+                document.getElementById('videoLink').value = '';
+                document.getElementById('videoDescription').value = '';
+                document.getElementById('amountPay').value = '';
+                document.getElementById('viewerCount').value = '';
+                document.getElementById('paymentSlip').value = '';
+                document.getElementById('transactionRef').value = '';
+
+                // Reload campaign history
+                await loadCampaignHistory();
+
+            } catch (e) {
+                showNotification('❌ An error occurred. Please try again.', 'error');
+            }
         });
-        if (activity.length > 100) activity.pop();
-        localStorage.setItem('cashvista_activity', JSON.stringify(activity));
-      }
 
-      // =============================================
-      // NOTIFICATION SYSTEM
-      // =============================================
-      function showNotification(message, type) {
-        const el = document.getElementById('notification');
-        const msg = document.getElementById('notificationMessage');
-        el.className = 'notification show ' + (type || 'info');
-        msg.textContent = message;
-        setTimeout(() => {
-          el.classList.remove('show');
-        }, 5000);
-      }
-
-      // =============================================
-      // LOGOUT
-      // =============================================
-      function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-          sessionStorage.removeItem('userEmail');
-          window.location.href = 'login.html';
+        // =============================================
+        // NOTIFICATION SYSTEM
+        // =============================================
+        function showNotification(message, type) {
+            const el = document.getElementById('notification');
+            const msg = document.getElementById('notificationMessage');
+            el.className = 'notification show ' + (type || 'info');
+            msg.textContent = message;
+            setTimeout(() => {
+                el.classList.remove('show');
+            }, 5000);
         }
-      }
 
-      // =============================================
-      // ADMIN FUNCTIONS (Called from Admin Dashboard)
-      // =============================================
-      function adminApproveCampaign(campaignId) {
-        let campaigns = JSON.parse(
-          localStorage.getItem('cashvista_campaigns') || '[]'
-        );
-        const index = campaigns.findIndex((c) => c.id === campaignId);
-        if (index !== -1) {
-          campaigns[index].status = 'approved';
-          localStorage.setItem(
-            'cashvista_campaigns',
-            JSON.stringify(campaigns)
-          );
-          alert('✅ Campaign approved and published!');
-          loadCampaignHistory();
+        // =============================================
+        // LOGOUT
+        // =============================================
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('userEmail');
+                window.location.href = 'login.html';
+            }
         }
-      }
 
-      function adminRejectCampaign(campaignId) {
-        let campaigns = JSON.parse(
-          localStorage.getItem('cashvista_campaigns') || '[]'
-        );
-        const index = campaigns.findIndex((c) => c.id === campaignId);
-        if (index !== -1) {
-          campaigns[index].status = 'rejected';
-          localStorage.setItem(
-            'cashvista_campaigns',
-            JSON.stringify(campaigns)
-          );
-          alert('❌ Campaign rejected.');
-          loadCampaignHistory();
+        // =============================================
+        // ADMIN FUNCTIONS (Called from Admin Dashboard)
+        // =============================================
+        async function adminApproveCampaign(campaignId) {
+            await supabase
+                .from('campaigns')
+                .update({ status: 'approved' })
+                .eq('id', campaignId);
+            alert('✅ Campaign approved and published!');
+            loadCampaignHistory();
         }
-      }
+
+        async function adminRejectCampaign(campaignId) {
+            await supabase
+                .from('campaigns')
+                .update({ status: 'rejected' })
+                .eq('id', campaignId);
+            alert('❌ Campaign rejected.');
+            loadCampaignHistory();
+        }
     </script>
-  </body>
+
+</body>
 </html>
