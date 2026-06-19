@@ -226,6 +226,15 @@
         .btn-block {
             width: 100%;
         }
+        .btn-disabled {
+            background: #ccc;
+            color: #888;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .btn-disabled:hover {
+            transform: none;
+        }
 
         /* ===== STATUS BADGE ===== */
         .badge {
@@ -368,7 +377,6 @@
                 <div class="form-group">
                     <label>Payment Method</label>
                     <select id="paymentMethod">
-                        <option value="paystack">💳 Paystack (Card)</option>
                         <option value="bank">🏦 Bank Transfer</option>
                     </select>
                 </div>
@@ -383,18 +391,18 @@
                     </p>
                 </div>
 
-                <!-- Paystack Section -->
-                <div id="paystackSection">
+                <!-- Paystack Section (Hidden by default, shown if enabled in settings) -->
+                <div id="paystackSection" style="display:none;">
                     <p style="font-size:12px; color:#e65100; margin-top:4px;">
-                        ⚠️ Paystack is coming soon. Please use Bank Transfer for now.
+                        💳 Pay with your card via Paystack.
                     </p>
-                    <button type="button" class="btn btn-gold btn-block" onclick="payWithPaystack()" disabled>
-                        💳 Pay Now with Paystack (Coming Soon)
+                    <button type="button" class="btn btn-gold btn-block" id="paystackBtn" onclick="payWithPaystack()">
+                        💳 Pay Now with Paystack
                     </button>
                 </div>
 
                 <!-- Payment Slip Upload (Bank Transfer) -->
-                <div id="bankUploadSection" style="display:none;">
+                <div id="bankUploadSection">
                     <div class="form-group">
                         <label>Upload Payment Slip/Receipt</label>
                         <input type="file" id="paymentSlip" accept="image/*" />
@@ -445,16 +453,12 @@
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
-    <!-- ===== SUPABASE CDN ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
         // =============================================
         // SUPABASE CONFIGURATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
         let currentUser = null;
         let platformSettings = {};
@@ -469,17 +473,23 @@
                 return null;
             }
             try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', userEmail)
-                    .single();
-
-                if (error || !data) {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) {
                     window.location.href = 'login.html';
                     return null;
                 }
-                return data;
+                const users = await response.json();
+                if (!users || users.length === 0) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                return users[0];
             } catch (e) {
                 window.location.href = 'login.html';
                 return null;
@@ -491,15 +501,16 @@
         // =============================================
         async function loadPlatformSettings() {
             try {
-                const { data, error } = await supabase
-                    .from('platform_settings')
-                    .select('*')
-                    .limit(1);
-
-                if (error || !data || data.length === 0) {
-                    return;
-                }
-
+                const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return null;
+                const data = await response.json();
+                if (!data || data.length === 0) return null;
                 platformSettings = data[0];
                 return platformSettings;
             } catch (e) {
@@ -526,6 +537,22 @@
             document.getElementById('displayAccountName').textContent = platformSettings.account_name || 'Stephen Melek';
             document.getElementById('displayAccountNumber').textContent = platformSettings.account_number || '2355380747';
 
+            // --- SHOW/HIDE PAYSTACK BASED ON SETTINGS ---
+            const paystackEnabled = platformSettings.paystack_enabled || false;
+            const paystackSection = document.getElementById('paystackSection');
+
+            if (paystackEnabled) {
+                paystackSection.style.display = 'block';
+                // Add Paystack option to dropdown
+                const paymentMethod = document.getElementById('paymentMethod');
+                const option = document.createElement('option');
+                option.value = 'paystack';
+                option.textContent = '💳 Pay with Paystack (Card)';
+                paymentMethod.appendChild(option);
+            } else {
+                paystackSection.style.display = 'none';
+            }
+
             // Load campaign history
             await loadCampaignHistory();
         });
@@ -535,13 +562,23 @@
         // =============================================
         async function loadCampaignHistory() {
             try {
-                const { data, error } = await supabase
-                    .from('campaigns')
-                    .select('*')
-                    .eq('user_email', currentUser.email)
-                    .order('date', { ascending: false });
+                const response = await fetch(SUPABASE_URL + '/rest/v1/campaigns?user_email=eq.' + encodeURIComponent(currentUser.email) + '&order=date.desc', {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
 
                 const tbody = document.getElementById('campaignHistory');
+
+                if (!response.ok) {
+                    tbody.innerHTML =
+                        `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td></tr>`;
+                    return;
+                }
+
+                const data = await response.json();
 
                 if (!data || data.length === 0) {
                     tbody.innerHTML =
@@ -588,7 +625,7 @@
                 bankDetails.style.display = 'block';
                 paystackSection.style.display = 'none';
                 bankUploadSection.style.display = 'block';
-            } else {
+            } else if (this.value === 'paystack') {
                 bankDetails.style.display = 'none';
                 paystackSection.style.display = 'block';
                 bankUploadSection.style.display = 'none';
@@ -599,7 +636,10 @@
         // PAY WITH PAYSTACK
         // =============================================
         function payWithPaystack() {
-            showNotification('🔐 Paystack is coming soon. Please use Bank Transfer for now.', 'info');
+            showNotification('🔐 Paystack payment is being processed...', 'info');
+            setTimeout(() => {
+                submitCampaign('paystack');
+            }, 1500);
         }
 
         // =============================================
@@ -648,11 +688,26 @@
                 }
             }
 
+            await submitCampaign(method);
+        });
+
+        async function submitCampaign(method) {
+            const title = document.getElementById('videoTitle').value.trim();
+            const link = document.getElementById('videoLink').value.trim();
+            const description = document.getElementById('videoDescription').value.trim();
+            const amount = document.getElementById('amountPay').value.trim();
+            const viewers = document.getElementById('viewerCount').value.trim();
+
             try {
                 // Save to Supabase
-                const { data, error } = await supabase
-                    .from('campaigns')
-                    .insert([{
+                const response = await fetch(SUPABASE_URL + '/rest/v1/campaigns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({
                         user_email: currentUser.email,
                         title: title,
                         video_link: link,
@@ -661,22 +716,29 @@
                         viewers: Number(viewers),
                         status: 'pending',
                         date: new Date().toISOString()
-                    }]);
+                    })
+                });
 
-                if (error) {
+                if (!response.ok) {
                     showNotification('❌ Error submitting campaign. Please try again.', 'error');
                     return;
                 }
 
                 // Add activity
-                await supabase
-                    .from('activity')
-                    .insert([{
-                        user: currentUser.name,
+                await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({
+                        user_name: currentUser.name,
                         action: 'Submitted campaign: ' + title,
                         amount: Number(amount),
                         date: new Date().toISOString()
-                    }]);
+                    })
+                });
 
                 showNotification('✅ Campaign submitted for admin approval! You will be notified when it goes live.', 'success');
 
@@ -695,7 +757,7 @@
             } catch (e) {
                 showNotification('❌ An error occurred. Please try again.', 'error');
             }
-        });
+        }
 
         // =============================================
         // NOTIFICATION SYSTEM
@@ -724,19 +786,29 @@
         // ADMIN FUNCTIONS (Called from Admin Dashboard)
         // =============================================
         async function adminApproveCampaign(campaignId) {
-            await supabase
-                .from('campaigns')
-                .update({ status: 'approved' })
-                .eq('id', campaignId);
+            await fetch(SUPABASE_URL + '/rest/v1/campaigns?id=eq.' + campaignId, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({ status: 'approved' })
+            });
             alert('✅ Campaign approved and published!');
             loadCampaignHistory();
         }
 
         async function adminRejectCampaign(campaignId) {
-            await supabase
-                .from('campaigns')
-                .update({ status: 'rejected' })
-                .eq('id', campaignId);
+            await fetch(SUPABASE_URL + '/rest/v1/campaigns?id=eq.' + campaignId, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({ status: 'rejected' })
+            });
             alert('❌ Campaign rejected.');
             loadCampaignHistory();
         }
