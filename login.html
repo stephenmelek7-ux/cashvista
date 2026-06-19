@@ -6,11 +6,7 @@
     <title>Login - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
@@ -23,7 +19,7 @@
             background: #fff;
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
             width: 100%;
             max-width: 400px;
         }
@@ -62,7 +58,7 @@
             border-color: #f5c842;
             outline: none;
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
         }
         .login-container .btn {
             background: #f5c842;
@@ -200,10 +196,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // =============================================
+        // LOGIN FORM - SIMPLE VERSION
+        // =============================================
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -221,6 +223,7 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Logging in...';
 
+                // --- FIND USER ---
                 const { data, error } = await supabase
                     .from('users')
                     .select('*')
@@ -229,25 +232,29 @@
 
                 if (error || !data) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Invalid email or password. Please try again.';
+                    notification.textContent = '❌ Invalid email or password.';
                     return;
                 }
 
+                // --- CHECK PASSWORD ---
                 if (data.password !== password) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Invalid email or password. Please try again.';
+                    notification.textContent = '❌ Invalid email or password.';
                     return;
                 }
 
+                // --- CHECK IF ACTIVE ---
                 if (data.is_active === false) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Your account has been suspended. Contact admin.';
+                    notification.textContent = '❌ Your account has been suspended.';
                     return;
                 }
 
+                // --- SAVE SESSION ---
                 sessionStorage.setItem('userEmail', email);
                 sessionStorage.setItem('userName', data.name);
 
+                // --- UPDATE LAST LOGIN ---
                 await supabase
                     .from('users')
                     .update({ last_login: new Date().toISOString() })
@@ -266,6 +273,9 @@
             }
         });
 
+        // =============================================
+        // GOOGLE LOGIN
+        // =============================================
         async function googleLogin() {
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
