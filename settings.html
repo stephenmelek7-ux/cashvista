@@ -317,9 +317,10 @@
         <!-- ===== PAYMENT METHODS ===== -->
         <div class="card">
             <h2>💳 Payment Methods</h2>
-            <p class="subtitle">Enable or disable payment methods on the platform. Changes affect ALL users.</p>
+            <p class="subtitle">Enable or disable payment methods. Disabled methods will NOT appear on user pages.</p>
 
             <div class="settings-grid">
+                <!-- Paystack Toggle -->
                 <div style="background:#f8fafc; padding:20px; border-radius:16px;">
                     <h4 style="color:#0d1b2a; margin-bottom:8px;">Paystack</h4>
                     <div class="toggle-group">
@@ -327,9 +328,11 @@
                         <button class="toggle-btn" id="paystackToggle" onclick="togglePaystack()">Enable</button>
                     </div>
                     <p style="font-size:13px; color:#888; margin-top:6px;">
-                        <span id="paystackNote">Coming soon. Not activated yet.</span>
+                        <span id="paystackNote">Disabled. Users will NOT see Paystack as an option.</span>
                     </p>
                 </div>
+
+                <!-- Bank Transfer Toggle -->
                 <div style="background:#f8fafc; padding:20px; border-radius:16px;">
                     <h4 style="color:#0d1b2a; margin-bottom:8px;">Bank Transfer</h4>
                     <div class="toggle-group">
@@ -337,7 +340,7 @@
                         <button class="toggle-btn active" id="bankToggle" onclick="toggleBank()">Disable</button>
                     </div>
                     <p style="font-size:13px; color:#888; margin-top:6px;">
-                        Users can pay via bank transfer using the account details above.
+                        <span id="bankNote">Users can pay via bank transfer using the account details above.</span>
                     </p>
                 </div>
             </div>
@@ -426,14 +429,14 @@
                 });
 
                 if (!response.ok) {
-                    console.log('No settings found, using defaults');
+                    showNotification('❌ Failed to load settings. Check API keys.', 'error');
                     return;
                 }
 
                 const data = await response.json();
 
                 if (!data || data.length === 0) {
-                    console.log('No settings found, using defaults');
+                    showNotification('❌ Settings not found in database. Please run the SQL setup.', 'error');
                     return;
                 }
 
@@ -467,8 +470,11 @@
                 document.getElementById('investAmount').value = settings.invest_amount || 5000;
                 document.getElementById('currentInvestAmount').textContent = '₦' + (settings.invest_amount || 5000).toLocaleString();
 
+                showNotification('✅ Settings loaded successfully!', 'success');
+
             } catch (error) {
                 console.error('Error loading settings:', error);
+                showNotification('❌ Error loading settings: ' + error.message, 'error');
             }
         }
 
@@ -485,28 +491,31 @@
                     status.className = 'toggle-status active';
                     toggle.textContent = 'Disable';
                     toggle.className = 'toggle-btn active';
-                    note.textContent = 'Paystack is active and ready to accept payments.';
+                    note.textContent = '✅ Enabled. Users will see Paystack as an option.';
                 } else {
                     status.textContent = '🔴 Inactive';
                     status.className = 'toggle-status inactive';
                     toggle.textContent = 'Enable';
                     toggle.className = 'toggle-btn inactive';
-                    note.textContent = 'Coming soon. Not activated yet.';
+                    note.textContent = '🚫 Disabled. Users will NOT see Paystack as an option.';
                 }
             }
             if (method === 'bank') {
                 const status = document.getElementById('bankStatus');
                 const toggle = document.getElementById('bankToggle');
+                const note = document.getElementById('bankNote');
                 if (active) {
                     status.textContent = '🟢 Active';
                     status.className = 'toggle-status active';
                     toggle.textContent = 'Disable';
                     toggle.className = 'toggle-btn active';
+                    note.textContent = '✅ Users can pay via bank transfer.';
                 } else {
                     status.textContent = '🔴 Inactive';
                     status.className = 'toggle-status inactive';
                     toggle.textContent = 'Enable';
                     toggle.className = 'toggle-btn inactive';
+                    note.textContent = '🚫 Disabled. Users will NOT see Bank Transfer as an option.';
                 }
             }
         }
@@ -539,7 +548,7 @@
             });
 
             updatePaymentStatus('paystack', newStatus);
-            showNotification('✅ Paystack status updated! All users will see the change.', 'success');
+            showNotification('✅ Paystack ' + (newStatus ? 'enabled' : 'disabled') + '! All users will see the change.', 'success');
         }
 
         async function toggleBank() {
@@ -567,7 +576,7 @@
             });
 
             updatePaymentStatus('bank', newStatus);
-            showNotification('✅ Bank Transfer status updated! All users will see the change.', 'success');
+            showNotification('✅ Bank Transfer ' + (newStatus ? 'enabled' : 'disabled') + '! All users will see the change.', 'success');
         }
 
         // =============================================
@@ -601,7 +610,7 @@
                 const data = await response.json();
 
                 if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found. Please contact support.', 'error');
+                    showNotification('❌ Settings not found. Please run the SQL setup.', 'error');
                     return;
                 }
 
@@ -657,7 +666,7 @@
                 const data = await response.json();
 
                 if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found. Please contact support.', 'error');
+                    showNotification('❌ Settings not found. Please run the SQL setup.', 'error');
                     return;
                 }
 
@@ -712,7 +721,7 @@
                 const data = await response.json();
 
                 if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found. Please contact support.', 'error');
+                    showNotification('❌ Settings not found. Please run the SQL setup.', 'error');
                     return;
                 }
 
