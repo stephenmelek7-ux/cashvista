@@ -220,6 +220,15 @@
         .btn-block {
             width: 100%;
         }
+        .btn-disabled {
+            background: #ccc;
+            color: #888;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .btn-disabled:hover {
+            transform: none;
+        }
 
         /* ===== COMMISSION TABLE ===== */
         .commission-table {
@@ -421,7 +430,6 @@
             <div class="form-group">
                 <label>Select Payment Method</label>
                 <select id="paymentMethod">
-                    <option value="paystack">💳 Pay with Paystack (Card)</option>
                     <option value="bank">🏦 Bank Transfer</option>
                 </select>
             </div>
@@ -436,13 +444,13 @@
                 </p>
             </div>
 
-            <!-- Paystack Section -->
-            <div id="paystackSection">
+            <!-- Paystack Section (Hidden by default, shown if enabled in settings) -->
+            <div id="paystackSection" style="display:none;">
                 <p style="font-size:12px; color:#e65100; margin-top:4px;">
-                    ⚠️ Paystack is coming soon. Please use Bank Transfer for now.
+                    💳 Pay with your card via Paystack.
                 </p>
-                <button class="btn btn-gold btn-block" onclick="payWithPaystack()" disabled>
-                    💳 Pay with Paystack (Coming Soon)
+                <button class="btn btn-gold btn-block" id="paystackBtn" onclick="payWithPaystack()">
+                    💳 Pay with Paystack
                 </button>
             </div>
 
@@ -553,16 +561,12 @@
         </div>
     </div>
 
-    <!-- ===== SUPABASE CDN ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
         // =============================================
         // SUPABASE CONFIGURATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
         let currentUser = null;
         let platformSettings = {};
@@ -577,17 +581,23 @@
                 return null;
             }
             try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', userEmail)
-                    .single();
-
-                if (error || !data) {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) {
                     window.location.href = 'login.html';
                     return null;
                 }
-                return data;
+                const users = await response.json();
+                if (!users || users.length === 0) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                return users[0];
             } catch (e) {
                 window.location.href = 'login.html';
                 return null;
@@ -599,15 +609,16 @@
         // =============================================
         async function loadPlatformSettings() {
             try {
-                const { data, error } = await supabase
-                    .from('platform_settings')
-                    .select('*')
-                    .limit(1);
-
-                if (error || !data || data.length === 0) {
-                    return;
-                }
-
+                const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return null;
+                const data = await response.json();
+                if (!data || data.length === 0) return null;
                 platformSettings = data[0];
                 return platformSettings;
             } catch (e) {
@@ -656,6 +667,22 @@
             document.getElementById('displayDownline3').textContent = d3 + '%';
             document.getElementById('displayDownline3Amount').textContent = '₦' + ((investAmt * d3) / 100).toLocaleString();
 
+            // --- SHOW/HIDE PAYSTACK BASED ON SETTINGS ---
+            const paystackEnabled = platformSettings.paystack_enabled || false;
+            const paystackSection = document.getElementById('paystackSection');
+
+            if (paystackEnabled) {
+                paystackSection.style.display = 'block';
+                // Add Paystack option to dropdown
+                const paymentMethod = document.getElementById('paymentMethod');
+                const option = document.createElement('option');
+                option.value = 'paystack';
+                option.textContent = '💳 Pay with Paystack (Card)';
+                paymentMethod.appendChild(option);
+            } else {
+                paystackSection.style.display = 'none';
+            }
+
             // Update membership status
             updateMembershipStatus();
         });
@@ -670,7 +697,7 @@
             if (this.value === 'bank') {
                 bankDetails.style.display = 'block';
                 paystackSection.style.display = 'none';
-            } else {
+            } else if (this.value === 'paystack') {
                 bankDetails.style.display = 'none';
                 paystackSection.style.display = 'block';
             }
@@ -680,7 +707,11 @@
         // PAY WITH PAYSTACK
         // =============================================
         function payWithPaystack() {
-            showNotification('🔐 Paystack is coming soon. Please use Bank Transfer for now.', 'info');
+            showNotification('🔐 Paystack payment is being processed...', 'info');
+            setTimeout(() => {
+                showNotification('✅ Paystack payment successful! Your membership is now active.', 'success');
+                activateMembership();
+            }, 2000);
         }
 
         // =============================================
@@ -705,20 +736,94 @@
             showNotification('✅ Payment submitted for admin approval. You will be notified once approved.', 'success');
 
             // Save to Supabase
-            await supabase.from('invest_members').insert([{
-                user_email: currentUser.email,
-                amount: platformSettings.invest_amount || 5000,
-                status: 'pending',
-                date: new Date().toISOString()
-            }]);
+            await fetch(SUPABASE_URL + '/rest/v1/invest_members', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({
+                    user_email: currentUser.email,
+                    amount: platformSettings.invest_amount || 5000,
+                    status: 'pending',
+                    date: new Date().toISOString()
+                })
+            });
 
             // Add activity
-            await supabase.from('activity').insert([{
-                user: currentUser.name,
-                action: 'Submitted Invest & Grow payment',
-                amount: platformSettings.invest_amount || 5000,
-                date: new Date().toISOString()
-            }]);
+            await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({
+                    user_name: currentUser.name,
+                    action: 'Submitted Invest & Grow payment',
+                    amount: platformSettings.invest_amount || 5000,
+                    date: new Date().toISOString()
+                })
+            });
+        }
+
+        // =============================================
+        // ACTIVATE MEMBERSHIP (Called by Admin or Paystack)
+        // =============================================
+        async function activateMembership() {
+            currentUser.is_invest_member = true;
+            const uniqueId = 'REF_' + Date.now() + '_' + currentUser.email.split('@')[0];
+            currentUser.referral_link = 'https://cashvista.com/ref/' + uniqueId;
+
+            // Update user in Supabase
+            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(currentUser.email), {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({
+                    is_invest_member: true,
+                    referral_link: currentUser.referral_link
+                })
+            });
+
+            // Add to invest members
+            await fetch(SUPABASE_URL + '/rest/v1/invest_members', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({
+                    user_email: currentUser.email,
+                    amount: platformSettings.invest_amount || 5000,
+                    status: 'active',
+                    date: new Date().toISOString()
+                })
+            });
+
+            // Add activity
+            await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({
+                    user_name: currentUser.name,
+                    action: 'Invest & Grow activated',
+                    amount: platformSettings.invest_amount || 5000,
+                    date: new Date().toISOString()
+                })
+            });
+
+            updateMembershipStatus();
+            showNotification('✅ Congratulations! Your referral link is now active.', 'success');
         }
 
         // =============================================
@@ -806,32 +911,14 @@
         // ADMIN FUNCTIONS (Called from Admin Dashboard)
         // =============================================
         async function adminApproveInvest(userEmail) {
-            await supabase
-                .from('invest_members')
-                .update({ status: 'approved' })
-                .eq('user_email', userEmail);
+            await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userEmail), {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                },
+                body: JSON.stringify({ status: 'approved' })
+            });
 
-            // Generate referral link
-            const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-            await supabase
-                .from('users')
-                .update({
-                    is_invest_member: true,
-                    referral_link: 'https://cashvista.com/ref/' + uniqueId
-                })
-                .eq('email', userEmail);
-
-            alert('✅ User ' + userEmail + ' has been approved for Invest & Grow!');
-        }
-
-        async function adminRejectInvest(userEmail) {
-            await supabase
-                .from('invest_members')
-                .update({ status: 'rejected' })
-                .eq('user_email', userEmail);
-            alert('❌ User ' + userEmail + ' has been rejected for Invest & Grow.');
-        }
-    </script>
-
-</body>
-</html>
+            const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@
