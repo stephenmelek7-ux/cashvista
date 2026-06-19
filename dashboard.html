@@ -565,11 +565,21 @@
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
+    <!-- ===== SUPABASE CDN ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
         // =============================================
-        // GET LOGGED-IN USER FROM localStorage
+        // SUPABASE CONFIGURATION
         // =============================================
-        function getLoggedInUser() {
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // =============================================
+        // GET LOGGED-IN USER FROM SUPABASE
+        // =============================================
+        async function getLoggedInUser() {
             const userEmail = sessionStorage.getItem('userEmail');
 
             if (!userEmail) {
@@ -578,14 +588,18 @@
             }
 
             try {
-                const users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-                const user = users.find(u => u.email === userEmail);
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', userEmail)
+                    .single();
 
-                if (!user) {
+                if (error || !data) {
                     window.location.href = 'login.html';
                     return null;
                 }
-                return user;
+
+                return data;
             } catch (e) {
                 window.location.href = 'login.html';
                 return null;
@@ -595,11 +609,10 @@
         // =============================================
         // LOAD DASHBOARD
         // =============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = getLoggedInUser();
+        async function loadDashboard() {
+            const user = await getLoggedInUser();
             if (!user) return;
 
-            // Update ALL name fields
             const userName = user.name || 'User';
             document.getElementById('userName').textContent = userName;
             document.getElementById('bannerName').textContent = userName;
@@ -608,17 +621,17 @@
             document.getElementById('walletBalance').textContent = '₦' + (user.balance || 0).toLocaleString();
 
             document.getElementById('statReferrals').textContent = user.referrals || 0;
-            document.getElementById('statEarnings').textContent = '₦' + (user.totalEarned || 0).toLocaleString();
+            document.getElementById('statEarnings').textContent = '₦' + (user.total_earned || 0).toLocaleString();
             document.getElementById('statTasks').textContent = '12';
 
-            const refLink = user.referralLink || 'https://cashvista.com/ref/' + (user.username || user.email?.split('@')[0] || 'user');
+            const refLink = user.referral_link || 'https://cashvista.com/ref/' + (user.username || user.email.split('@')[0]);
             document.getElementById('referralLinkDisplay').textContent = refLink;
-            document.getElementById('directCount').textContent = user.directCount || 0;
-            document.getElementById('downlineCount').textContent = user.downlineCount || 0;
-            document.getElementById('referralEarned').textContent = '₦' + (user.referralEarned || 0).toLocaleString();
+            document.getElementById('directCount').textContent = user.direct_count || 0;
+            document.getElementById('downlineCount').textContent = user.downline_count || 0;
+            document.getElementById('referralEarned').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
 
             const investStatus = document.getElementById('investStatus');
-            if (user.isInvestMember) {
+            if (user.is_invest_member) {
                 investStatus.textContent = '✅ Active';
                 investStatus.className = 'badge-mini green';
             } else {
@@ -626,22 +639,53 @@
                 investStatus.className = 'badge-mini gold';
             }
 
-            // Sample transaction history
-            const history = [
-                { date: new Date().toLocaleDateString(), desc: 'Welcome bonus', amount: '+₦500', status: 'Completed' }
-            ];
-            const tbody = document.getElementById('transactionHistory');
-            if (history.length > 0) {
-                tbody.innerHTML = history.map(t =>
-                    `<tr>
-                        <td>${t.date}</td>
-                        <td>${t.desc}</td>
-                        <td style="font-weight:600; color:${t.amount.startsWith('+') ? '#2e7d32' : '#c62828'};">${t.amount}</td>
-                        <td><span class="status-badge ${t.status === 'Completed' ? 'success' : 'warning'}">${t.status}</span></td>
-                    </tr>`
-                ).join('');
+            // Load transaction history from Supabase
+            await loadTransactions(user.email);
+        }
+
+        // =============================================
+        // LOAD TRANSACTIONS FROM SUPABASE
+        // =============================================
+        async function loadTransactions(email) {
+            try {
+                const { data, error } = await supabase
+                    .from('wallet_transactions')
+                    .select('*')
+                    .eq('user_email', email)
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                const tbody = document.getElementById('transactionHistory');
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align:center; color:#999; padding:25px;">
+                                No transactions yet. Start earning today!
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = data.map(t => {
+                    const statusClass = t.status === 'completed' ? 'success' : 'warning';
+                    const amountColor = t.amount > 0 ? '#2e7d32' : '#c62828';
+                    const sign = t.amount > 0 ? '+' : '';
+                    return `
+                        <tr>
+                            <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                            <td>${t.description || t.type || 'Transaction'}</td>
+                            <td style="font-weight:600; color:${amountColor};">${sign}₦${Math.abs(t.amount).toLocaleString()}</td>
+                            <td><span class="status-badge ${statusClass}">${t.status || 'Completed'}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                console.error('Error loading transactions:', e);
             }
-        });
+        }
 
         // =============================================
         // COPY REFERRAL LINK
@@ -661,9 +705,15 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
+                sessionStorage.removeItem('userName');
                 window.location.href = 'login.html';
             }
         }
+
+        // =============================================
+        // LOAD ON PAGE LOAD
+        // =============================================
+        document.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
 
 </body>
