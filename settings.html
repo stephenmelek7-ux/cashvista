@@ -428,15 +428,19 @@
                     }
                 });
 
+                // If response is not ok, show error but still show default values
                 if (!response.ok) {
-                    showNotification('❌ Failed to load settings. Check API keys.', 'error');
+                    console.warn('Failed to load settings from Supabase, using defaults.');
+                    showNotification('⚠️ Using default settings. Could not connect to database.', 'info');
                     return;
                 }
 
                 const data = await response.json();
 
+                // If no settings found, use defaults from HTML
                 if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found in database. Please run the SQL setup.', 'error');
+                    console.warn('No settings found in database, using defaults.');
+                    showNotification('⚠️ No settings found. Using default values.', 'info');
                     return;
                 }
 
@@ -474,7 +478,8 @@
 
             } catch (error) {
                 console.error('Error loading settings:', error);
-                showNotification('❌ Error loading settings: ' + error.message, 'error');
+                // Don't show error - just use defaults from HTML
+                showNotification('⚠️ Using default settings. Please refresh if changes are not visible.', 'info');
             }
         }
 
@@ -524,59 +529,143 @@
         // TOGGLE PAYMENT METHODS
         // =============================================
         async function togglePaystack() {
-            const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
+            try {
+                // Check if settings exist first
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                const existingData = await checkResponse.json();
+
+                let data;
+                if (existingData && existingData.length > 0) {
+                    data = existingData;
+                } else {
+                    // Create default settings
+                    await fetch(SUPABASE_URL + '/rest/v1/platform_settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            bank_name: 'United Bank for Africa (UBA)',
+                            account_name: 'Stephen Melek',
+                            account_number: '2355380747',
+                            paystack_enabled: false,
+                            bank_enabled: true,
+                            direct_commission: 55,
+                            downline1: 0.5,
+                            downline2: 0.3,
+                            downline3: 0.1,
+                            invest_amount: 5000
+                        })
+                    });
+                    // Re-fetch to get the new record
+                    const newResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                        method: 'GET',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        }
+                    });
+                    data = await newResponse.json();
+                    if (!data || data.length === 0) return;
                 }
-            });
-            const data = await response.json();
-            if (!data || data.length === 0) return;
 
-            const current = data[0].paystack_enabled || false;
-            const newStatus = !current;
+                const current = data[0].paystack_enabled || false;
+                const newStatus = !current;
 
-            await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({ paystack_enabled: newStatus })
-            });
+                await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({ paystack_enabled: newStatus })
+                });
 
-            updatePaymentStatus('paystack', newStatus);
-            showNotification('✅ Paystack ' + (newStatus ? 'enabled' : 'disabled') + '! All users will see the change.', 'success');
+                updatePaymentStatus('paystack', newStatus);
+                showNotification('✅ Paystack ' + (newStatus ? 'enabled' : 'disabled') + '!', 'success');
+            } catch (error) {
+                showNotification('❌ Error updating Paystack status.', 'error');
+                console.error('Error:', error);
+            }
         }
 
         async function toggleBank() {
-            const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
+            try {
+                // Check if settings exist first
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                const existingData = await checkResponse.json();
+
+                let data;
+                if (existingData && existingData.length > 0) {
+                    data = existingData;
+                } else {
+                    // Create default settings
+                    await fetch(SUPABASE_URL + '/rest/v1/platform_settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            bank_name: 'United Bank for Africa (UBA)',
+                            account_name: 'Stephen Melek',
+                            account_number: '2355380747',
+                            paystack_enabled: false,
+                            bank_enabled: true,
+                            direct_commission: 55,
+                            downline1: 0.5,
+                            downline2: 0.3,
+                            downline3: 0.1,
+                            invest_amount: 5000
+                        })
+                    });
+                    // Re-fetch to get the new record
+                    const newResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                        method: 'GET',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        }
+                    });
+                    data = await newResponse.json();
+                    if (!data || data.length === 0) return;
                 }
-            });
-            const data = await response.json();
-            if (!data || data.length === 0) return;
 
-            const current = data[0].bank_enabled !== false;
-            const newStatus = !current;
+                const current = data[0].bank_enabled !== false;
+                const newStatus = !current;
 
-            await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({ bank_enabled: newStatus })
-            });
+                await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({ bank_enabled: newStatus })
+                });
 
-            updatePaymentStatus('bank', newStatus);
-            showNotification('✅ Bank Transfer ' + (newStatus ? 'enabled' : 'disabled') + '! All users will see the change.', 'success');
+                updatePaymentStatus('bank', newStatus);
+                showNotification('✅ Bank Transfer ' + (newStatus ? 'enabled' : 'disabled') + '!', 'success');
+            } catch (error) {
+                showNotification('❌ Error updating Bank Transfer status.', 'error');
+                console.error('Error:', error);
+            }
         }
 
         // =============================================
@@ -600,34 +689,63 @@
             }
 
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                // First, check if settings exist
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
-                const data = await response.json();
 
-                if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found. Please run the SQL setup.', 'error');
-                    return;
+                const existingData = await checkResponse.json();
+
+                let updateResponse;
+                if (existingData && existingData.length > 0) {
+                    // Update existing settings
+                    updateResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + existingData[0].id, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            bank_name: bankName,
+                            account_name: accountName,
+                            account_number: accountNumber,
+                            updated_at: new Date().toISOString()
+                        })
+                    });
+                } else {
+                    // Create new settings
+                    updateResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            bank_name: bankName,
+                            account_name: accountName,
+                            account_number: accountNumber,
+                            paystack_enabled: false,
+                            bank_enabled: true,
+                            direct_commission: 55,
+                            downline1: 0.5,
+                            downline2: 0.3,
+                            downline3: 0.1,
+                            invest_amount: 5000,
+                            updated_at: new Date().toISOString()
+                        })
+                    });
                 }
 
-                await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
-                    body: JSON.stringify({
-                        bank_name: bankName,
-                        account_name: accountName,
-                        account_number: accountNumber,
-                        updated_at: new Date().toISOString()
-                    })
-                });
+                if (!updateResponse.ok) {
+                    showNotification('❌ Error saving settings. Please try again.', 'error');
+                    return;
+                }
 
                 document.getElementById('currentBankName').textContent = bankName;
                 document.getElementById('currentAccountName').textContent = accountName;
@@ -636,6 +754,7 @@
                 showNotification('✅ Bank settings saved! All user pages will update automatically.', 'success');
             } catch (error) {
                 showNotification('❌ Error saving settings. Please try again.', 'error');
+                console.error('Error:', error);
             }
         });
 
@@ -656,35 +775,62 @@
             }
 
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                // Check if settings exist
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
-                const data = await response.json();
 
-                if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found. Please run the SQL setup.', 'error');
-                    return;
+                const existingData = await checkResponse.json();
+
+                let updateResponse;
+                if (existingData && existingData.length > 0) {
+                    updateResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + existingData[0].id, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            direct_commission: direct,
+                            downline1: d1,
+                            downline2: d2,
+                            downline3: d3,
+                            updated_at: new Date().toISOString()
+                        })
+                    });
+                } else {
+                    updateResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            bank_name: 'United Bank for Africa (UBA)',
+                            account_name: 'Stephen Melek',
+                            account_number: '2355380747',
+                            paystack_enabled: false,
+                            bank_enabled: true,
+                            direct_commission: direct,
+                            downline1: d1,
+                            downline2: d2,
+                            downline3: d3,
+                            invest_amount: 5000,
+                            updated_at: new Date().toISOString()
+                        })
+                    });
                 }
 
-                await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
-                    body: JSON.stringify({
-                        direct_commission: direct,
-                        downline1: d1,
-                        downline2: d2,
-                        downline3: d3,
-                        updated_at: new Date().toISOString()
-                    })
-                });
+                if (!updateResponse.ok) {
+                    showNotification('❌ Error saving commission settings.', 'error');
+                    return;
+                }
 
                 document.getElementById('currentDirectCommission').textContent = direct + '%';
                 document.getElementById('currentDownline1').textContent = d1 + '%';
@@ -694,6 +840,7 @@
                 showNotification('✅ Commission settings saved! All users will see the new rates.', 'success');
             } catch (error) {
                 showNotification('❌ Error saving settings. Please try again.', 'error');
+                console.error('Error:', error);
             }
         });
 
@@ -711,38 +858,66 @@
             }
 
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
+                // Check if settings exist
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
-                const data = await response.json();
 
-                if (!data || data.length === 0) {
-                    showNotification('❌ Settings not found. Please run the SQL setup.', 'error');
-                    return;
+                const existingData = await checkResponse.json();
+
+                let updateResponse;
+                if (existingData && existingData.length > 0) {
+                    updateResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + existingData[0].id, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            invest_amount: amount,
+                            updated_at: new Date().toISOString()
+                        })
+                    });
+                } else {
+                    updateResponse = await fetch(SUPABASE_URL + '/rest/v1/platform_settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            bank_name: 'United Bank for Africa (UBA)',
+                            account_name: 'Stephen Melek',
+                            account_number: '2355380747',
+                            paystack_enabled: false,
+                            bank_enabled: true,
+                            direct_commission: 55,
+                            downline1: 0.5,
+                            downline2: 0.3,
+                            downline3: 0.1,
+                            invest_amount: amount,
+                            updated_at: new Date().toISOString()
+                        })
+                    });
                 }
 
-                await fetch(SUPABASE_URL + '/rest/v1/platform_settings?id=eq.' + data[0].id, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
-                    body: JSON.stringify({
-                        invest_amount: amount,
-                        updated_at: new Date().toISOString()
-                    })
-                });
+                if (!updateResponse.ok) {
+                    showNotification('❌ Error saving invest settings.', 'error');
+                    return;
+                }
 
                 document.getElementById('currentInvestAmount').textContent = '₦' + amount.toLocaleString();
 
                 showNotification('✅ Invest amount updated to ₦' + amount.toLocaleString() + '! All users will see the change.', 'success');
             } catch (error) {
                 showNotification('❌ Error saving settings. Please try again.', 'error');
+                console.error('Error:', error);
             }
         });
 
