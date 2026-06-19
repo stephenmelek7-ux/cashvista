@@ -137,13 +137,10 @@
 
     <script>
         // =============================================
-        // SUPABASE - COPY YOUR EXACT KEYS FROM SUPABASE
-        // =============================================
-        // GO TO: Supabase Dashboard → Settings → API
-        // COPY the "Project URL" and "anon public" key
+        // SUPABASE CONFIGURATION - CORRECT KEYS
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -217,10 +214,8 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.text();
                     notification.className = 'notification error';
                     notification.textContent = '❌ Registration failed. Please try again.';
-                    console.error('Error:', errorData);
                     return;
                 }
 
