@@ -6,11 +6,7 @@
     <title>Register - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
@@ -23,7 +19,7 @@
             background: #fff;
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
             width: 100%;
             max-width: 420px;
         }
@@ -62,7 +58,7 @@
             border-color: #f5c842;
             outline: none;
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
         }
         .register-container .btn {
             background: #f5c842;
@@ -156,10 +152,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // =============================================
+        // REGISTER FORM - SIMPLE VERSION
+        // =============================================
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -170,7 +172,7 @@
             const password = document.getElementById('password').value.trim();
             const notification = document.getElementById('notification');
 
-            // --- VALIDATION ---
+            // --- SIMPLE VALIDATION ---
             if (!name) {
                 notification.className = 'notification error';
                 notification.textContent = '❌ Please enter your full name.';
@@ -178,12 +180,7 @@
             }
             if (!email || !email.includes('@')) {
                 notification.className = 'notification error';
-                notification.textContent = '❌ Please enter a valid email address.';
-                return;
-            }
-            if (!phone || phone.length < 10) {
-                notification.className = 'notification error';
-                notification.textContent = '❌ Please enter a valid phone number.';
+                notification.textContent = '❌ Please enter a valid email.';
                 return;
             }
             if (password.length < 6) {
@@ -196,7 +193,7 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Creating your account...';
 
-                // --- CHECK IF USER ALREADY EXISTS ---
+                // --- CHECK IF USER EXISTS ---
                 const { data: existingUser } = await supabase
                     .from('users')
                     .select('email')
@@ -205,17 +202,17 @@
 
                 if (existingUser) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ User with this email already exists. Please login.';
+                    notification.textContent = '❌ This email is already registered. Please login.';
                     return;
                 }
 
-                // --- SAVE USER TO SUPABASE ---
+                // --- SAVE USER ---
                 const { error } = await supabase
                     .from('users')
                     .insert([{
                         name: name,
                         email: email,
-                        phone: phone,
+                        phone: phone || '',
                         username: username || '',
                         password: password,
                         balance: 0,
@@ -228,7 +225,7 @@
 
                 if (error) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ ' + error.message;
+                    notification.textContent = '❌ Error: ' + error.message;
                     return;
                 }
 
@@ -236,9 +233,9 @@
                 sessionStorage.setItem('userEmail', email);
 
                 notification.className = 'notification success';
-                notification.textContent = '✅ Account created successfully! Redirecting to dashboard...';
+                notification.textContent = '✅ Account created! Redirecting...';
 
-                // --- ADD TO ACTIVITY LOG ---
+                // --- ADD ACTIVITY ---
                 await supabase
                     .from('activity')
                     .insert([{
