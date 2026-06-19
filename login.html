@@ -4,15 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - CashVista</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
+            font-family: Arial, sans-serif;
             background: #f0f4f8;
             display: flex;
             justify-content: center;
@@ -23,7 +18,7 @@
             background: #fff;
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
             width: 100%;
             max-width: 400px;
         }
@@ -34,7 +29,6 @@
             color: #0d1b2a;
         }
         .login-container .logo span { color: #f5c842; }
-        .login-container .logo .play-icon { color: #f5c842; }
         .login-container .subtitle {
             text-align: center;
             color: #888;
@@ -55,14 +49,6 @@
             border-radius: 12px;
             font-size: 15px;
             margin-top: 5px;
-            transition: 0.3s;
-            background: #fafbfc;
-        }
-        .login-container input:focus {
-            border-color: #f5c842;
-            outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
         }
         .login-container .btn {
             background: #f5c842;
@@ -75,7 +61,6 @@
             width: 100%;
             margin-top: 20px;
             cursor: pointer;
-            transition: 0.3s;
         }
         .login-container .btn:hover { background: #e6b800; }
         .login-container .links {
@@ -89,14 +74,6 @@
             font-weight: 600;
             text-decoration: none;
         }
-        .login-container .links a:hover { color: #f5c842; }
-        .footer-credit {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #aaa;
-        }
-        .footer-credit .founder { color: #f5c842; }
         .notification {
             padding: 12px 16px;
             border-radius: 12px;
@@ -132,22 +109,9 @@
             font-weight: 600;
             font-size: 15px;
             cursor: pointer;
-            transition: 0.3s;
             margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
-        .google-btn:hover {
-            background: #f8fafc;
-            border-color: #f5c842;
-        }
-        .google-btn .g-icon {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ea4335;
-        }
+        .google-btn:hover { background: #f8fafc; }
         .divider {
             border: none;
             border-top: 1px solid #e8ecf0;
@@ -162,16 +126,19 @@
             color: #f5c842;
             text-decoration: none;
         }
-        .forgot-link a:hover { text-decoration: underline; }
-        @media (max-width: 480px) {
-            .login-container { padding: 25px 20px; margin: 10px; }
+        .footer-credit {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
         }
+        .footer-credit .founder { color: #f5c842; }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo">
-            <span class="play-icon">▶</span>Cash<span>Vista</span>
+            <span>▶</span>Cash<span>Vista</span>
         </div>
         <p class="subtitle">Welcome back! Login to your account</p>
         <div id="notification" class="notification"></div>
@@ -189,7 +156,7 @@
         <hr class="divider" />
         <p style="text-align:center; color:#888; font-size:13px;">Or continue with</p>
         <button class="google-btn" onclick="googleLogin()">
-            <span class="g-icon">G</span> Sign in with Google
+            G Sign in with Google
         </button>
 
         <p class="links">Don't have an account? <a href="register.html">Sign up free</a></p>
@@ -198,11 +165,9 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -221,37 +186,39 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Logging in...';
 
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', email)
-                    .maybeSingle();
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
 
-                if (error || !data) {
+                const users = await response.json();
+
+                if (!users || users.length === 0) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Invalid email or password.';
                     return;
                 }
 
-                if (data.password !== password) {
+                const user = users[0];
+
+                if (user.password !== password) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Invalid email or password.';
                     return;
                 }
 
-                if (data.is_active === false) {
+                if (user.is_active === false) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Your account has been suspended.';
                     return;
                 }
 
                 sessionStorage.setItem('userEmail', email);
-                sessionStorage.setItem('userName', data.name);
-
-                await supabase
-                    .from('users')
-                    .update({ last_login: new Date().toISOString() })
-                    .eq('email', email);
+                sessionStorage.setItem('userName', user.name);
 
                 notification.className = 'notification success';
                 notification.textContent = '✅ Login successful! Redirecting...';
@@ -262,26 +229,13 @@
 
             } catch (error) {
                 notification.className = 'notification error';
-                notification.textContent = '❌ ' + error.message;
+                notification.textContent = '❌ Connection error. Please try again.';
+                console.error('Error:', error);
             }
         });
 
-        async function googleLogin() {
-            try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + '/dashboard.html'
-                    }
-                });
-
-                if (error) {
-                    alert('❌ Google login failed: ' + error.message);
-                }
-            } catch (error) {
-                alert('❌ An error occurred during Google login.');
-                console.error(error);
-            }
+        function googleLogin() {
+            alert('🔐 Google login will be available soon. Please use email/password for now.');
         }
     </script>
 </body>
