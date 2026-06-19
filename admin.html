@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+        .topbar .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .topbar .admin-info .badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #f5c842;
+        }
+        .topbar .admin-info .email { color: #ddd; font-size: 14px; }
+        .topbar .admin-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .admin-info .logout:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .topbar .admin-info a {
+            color: #f5c842;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .topbar .admin-info a:hover { text-decoration: underline; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 20px 22px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        .stat-card .icon { font-size: 24px; margin-bottom: 4px; }
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0d1b2a;
+        }
+        .stat-card .number.gold { color: #f5c842; }
+        .stat-card .number.green { color: #2e7d32; }
+        .stat-card .number.red { color: #c62828; }
+        .stat-card .number.blue { color: #0d47a1; }
+        .stat-card .label { font-size: 13px; color: #888; font-weight: 500; }
+        .section-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px 28px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .section-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .section-card .header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d1b2a;
+        }
+        .section-card .header .count-badge {
+            background: #f5c842;
+            color: #0d1b2a;
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .section-card .header .live-badge {
+            font-size: 12px;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 2px 12px;
+            border-radius: 30px;
+            margin-left: 10px;
+        }
+        .section-card .header .actions button {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-refresh {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+        .btn-refresh:hover {
+            background: #0d47a1;
+            color: #fff;
+        }
+        .table-wrapper { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            background: #0d1b2a;
+            color: #fff;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            vertical-align: middle;
+        }
+        tr:hover td { background: #f8fafc; }
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+        .empty-state .icon { font-size: 36px; margin-bottom: 6px; }
+        .badge {
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #e65100; }
+        .badge-danger { background: #fce4ec; color: #c62828; }
+        .btn-sm {
+            padding: 4px 14px;
+            border: none;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 2px;
+        }
+        .btn-sm:hover { transform: scale(1.05); }
+        .btn-approve { background: #e8f5e9; color: #2e7d32; }
+        .btn-approve:hover { background: #2e7d32; color: #fff; }
+        .btn-reject { background: #fce4ec; color: #c62828; }
+        .btn-reject:hover { background: #c62828; color: #fff; }
+        .btn-view { background: #e3f2fd; color: #0d47a1; }
+        .btn-view:hover { background: #0d47a1; color: #fff; }
+        .btn-delete { background: #fce4ec; color: #c62828; }
+        .btn-delete:hover { background: #c62828; color: #fff; }
+        .btn-suspend { background: #fff3e0; color: #e65100; }
+        .btn-suspend:hover { background: #e65100; color: #fff; }
+        .btn-activate { background: #e8f5e9; color: #2e7d32; }
+        .btn-activate:hover { background: #2e7d32; color: #fff; }
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder { color: #f5c842; font-weight: 600; }
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+                padding: 15px;
+            }
+            .topbar .admin-info { justify-content: center; }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .stat-card .number { font-size: 22px; }
+            .section-card { padding: 18px 16px; }
+            .section-card .header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            table { font-size: 12px; }
+            th, td { padding: 8px 10px; }
+            .btn-sm { font-size: 10px; padding: 3px 10px; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="admin-info">
+            <span class="badge">🔐 ADMIN</span>
+            <span class="email" id="adminEmail">admin@cashvista.com</span>
+            <a href="settings.html">⚙️ Settings</a>
+            <button class="logout" onclick="adminLogout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- STATS GRID -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <div class="number gold" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💰</div>
+                <div class="number green" id="totalRevenue">₦0</div>
+                <div class="label">Total Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💳</div>
+                <div class="number blue" id="totalWallet">₦0</div>
+                <div class="label">Wallet Balance</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📈</div>
+                <div class="number gold" id="investMembers">0</div>
+                <div class="label">Invest Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">⏳</div>
+                <div class="number red" id="pendingCount">0</div>
+                <div class="label">Pending Approvals</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📊</div>
+                <div class="number" id="todaySignups">0</div>
+                <div class="label">Today's Signups</div>
+            </div>
+        </div>
+
+        <!-- ALL REGISTERED USERS -->
+        <div class="section-card">
+            <div class="header">
+                <h2>👥 All Registered Users <span class="count-badge" id="userCountBadge">0</span><span class="live-badge">🔴 Live</span></h2>
+                <div class="actions">
+                    <button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Balance</th>
+                            <th>Invest</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <tr>
+                            <td colspan="9" class="empty-state">
+                                <div class="icon">👤</div>
+                                <p>No users registered yet.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PENDING APPROVALS -->
+        <div class="section-card">
+            <div class="header">
+                <h2>📋 Pending Approvals <span class="count-badge" id="pendingBadge">0</span></h2>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>User</th>
+                            <th>Details</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingTableBody">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <div class="icon">✅</div>
+                                <p>No pending approvals.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="section-card">
+            <div class="header">
+                <h2>🕐 Recent Activity</h2>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityTableBody">
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <div class="icon">📭</div>
+                                <p>No activity yet.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
+
+    <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        // =============================================
+        // ADMIN SESSION CHECK
+        // =============================================
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
+
+        // =============================================
+        // FETCH DATA FROM SUPABASE
+        // =============================================
+        async function fetchFromSupabase(table, params = '') {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Error fetching from Supabase:', e);
+                return [];
+            }
+        }
+
+        // =============================================
+        // RENDER DASHBOARD
+        // =============================================
+        async function renderDashboard() {
+            try {
+                // --- FETCH ALL DATA ---
+                const users = await fetchFromSupabase('users', '?order=joined_date.desc');
+                const campaigns = await fetchFromSupabase('campaigns');
+                const investMembers = await fetchFromSupabase('invest_members');
+                const withdrawals = await fetchFromSupabase('withdrawals');
+                const activity = await fetchFromSupabase('activity', '?order=date.desc&limit=20');
+
+                // --- CALCULATE STATS ---
+                const totalUsers = users ? users.length : 0;
+                const totalInvest = investMembers ? investMembers.length : 0;
+                const pendingCampaigns = campaigns ? campaigns.filter(c => c.status === 'pending').length : 0;
+                const pendingInvest = investMembers ? investMembers.filter(i => i.status === 'pending').length : 0;
+                const pendingWithdrawals = withdrawals ? withdrawals.filter(w => w.status === 'pending').length : 0;
+                const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
+
+                let totalWallet = 0;
+                let totalRevenue = 0;
+                if (users) {
+                    users.forEach(u => {
+                        totalWallet += (u.balance || 0);
+                        totalRevenue += (u.total_earned || 0);
+                    });
+                }
+
+                const today = new Date().toDateString();
+                const todaySignups = users ? users.filter(u => {
+                    if (!u.joined_date) return false;
+                    try {
+                        const d = new Date(u.joined_date);
+                        return d.toDateString() === today;
+                    } catch (e) { return false; }
+                }).length : 0;
+
+                // --- UPDATE STATS CARDS ---
+                document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+                document.getElementById('totalRevenue').textContent = '₦' + totalRevenue.toLocaleString();
+                document.getElementById('totalWallet').textContent = '₦' + totalWallet.toLocaleString();
+                document.getElementById('investMembers').textContent = totalInvest;
+                document.getElementById('pendingCount').textContent = totalPending;
+                document.getElementById('todaySignups').textContent = todaySignups;
+                document.getElementById('userCountBadge').textContent = totalUsers;
+                document.getElementById('pendingBadge').textContent = totalPending;
+
+                // --- USERS TABLE ---
+                const userBody = document.getElementById('userTableBody');
+                if (!users || users.length === 0) {
+                    userBody.innerHTML =
+                        `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
+                } else {
+                    userBody.innerHTML = users.map((user, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${user.name || 'Unknown'}</strong></td>
+                            <td>${user.email || 'No email'}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>₦${(user.balance || 0).toLocaleString()}</td>
+                            <td>${user.is_invest_member ? '✅' : '❌'}</td>
+                            <td>${user.joined_date ? new Date(user.joined_date).toLocaleDateString() : 'N/A'}</td>
+                            <td>
+                                <span class="badge ${user.is_active !== false ? 'badge-success' : 'badge-danger'}">
+                                    ${user.is_active !== false ? '✅ Active' : '🚫 Suspended'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
+                                <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" 
+                                        onclick="toggleUser('${user.email}')">
+                                    ${user.is_active !== false ? '🔒' : '🔓'}
+                                </button>
+                                <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                // --- PENDING TABLE ---
+                const pendingBody = document.getElementById('pendingTableBody');
+                const pendingItems = [];
+
+                if (campaigns) {
+                    campaigns.filter(c => c.status === 'pending').forEach(c => {
+                        pendingItems.push({ type: '📹 Campaign', user: c.user_email || 'Unknown',
+                            details: c.title || 'Video', date: c.date || 'N/A' });
+                    });
+                }
+                if (investMembers) {
+                    investMembers.filter(i => i.status === 'pending').forEach(i => {
+                        pendingItems.push({ type: '📈 Invest', user: i.user_email || 'Unknown',
+                            details: '₦' + (i.amount || 5000), date: i.date || 'N/A' });
+                    });
+                }
+                if (withdrawals) {
+                    withdrawals.filter(w => w.status === 'pending').forEach(w => {
+                        pendingItems.push({ type: '💰 Withdraw', user: w.user_email || 'Unknown',
+                            details: '₦' + (w.amount || 0), date: w.date || 'N/A' });
+                    });
+                }
+
+                if (pendingItems.length === 0) {
+                    pendingBody.innerHTML =
+                        `<tr><td colspan="5" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
+                } else {
+                    pendingBody.innerHTML = pendingItems.map(item => `
+                        <tr>
+                            <td><span class="badge badge-warning">${item.type}</span></td>
+                            <td><strong>${item.user}</strong></td>
+                            <td>${item.details}</td>
+                            <td>${item.date}</td>
+                            <td>
+                                <button class="btn-sm btn-approve" onclick="alert('✅ Approved')">✅</button>
+                                <button class="btn-sm btn-reject" onclick="alert('❌ Rejected')">❌</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                // --- ACTIVITY TABLE ---
+                const activityBody = document.getElementById('activityTableBody');
+                if (!activity || activity.length === 0) {
+                    activityBody.innerHTML =
+                        `<tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr>`;
+                } else {
+                    activityBody.innerHTML = activity.slice(0, 20).map(a => `
+                        <tr>
+                            <td><strong>${a.user_name || 'Unknown'}</strong></td>
+                            <td>${a.action || 'N/A'}</td>
+                            <td>${a.amount ? '₦' + a.amount.toLocaleString() : '₦0'}</td>
+                            <td>${a.date ? new Date(a.date).toLocaleString() : 'N/A'}</td>
+                        </tr>
+                    `).join('');
+                }
+
+            } catch (error) {
+                console.error('Error rendering dashboard:', error);
+            }
+        }
+
+        // =============================================
+        // USER ACTIONS
+        // =============================================
+        async function viewUser(email) {
+            const users = await fetchFromSupabase('users?email=eq.' + encodeURIComponent(email));
+            if (!users || users.length === 0) { alert('User not found.'); return; }
+            const user = users[0];
+            alert(`👤 USER DETAILS\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email || 'N/A'}\nPhone: ${user.phone || 'N/A'}\nBalance: ₦${(user.balance || 0).toLocaleString()}\nInvest Member: ${user.is_invest_member ? 'Yes' : 'No'}\nStatus: ${user.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}`);
+        }
+
+        async function toggleUser(email) {
+            if (!confirm(`Toggle status for ${email}?`)) return;
+            const users = await fetchFromSupabase('users?email=eq.' + encodeURIComponent(email));
+            if (!users || users.length === 0) { alert('User not found.'); return; }
+            const user = users[0];
+            const newStatus = user.is_active === false ? true : false;
+
+            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY,
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({ is_active: newStatus })
+            });
+
+            alert(`✅ User status updated.`);
+            renderDashboard();
+        }
+
+        async function deleteUser(email) {
+            if (!confirm(`⚠️ Delete ${email}? This cannot be undone!`)) return;
+            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                method: 'DELETE',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                }
+            });
+            alert(`✅ User ${email} deleted.`);
+            renderDashboard();
+        }
+
+        // =============================================
+        // ADMIN LOGOUT
+        // =============================================
+        function adminLogout() {
+            if (confirm('Logout from admin panel?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminEmail');
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        // =============================================
+        // LOAD ON PAGE LOAD + AUTO REFRESH
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDashboard();
+            // Auto-refresh every 15 seconds
+            setInterval(renderDashboard, 15000);
+        });
+    </script>
+
+</body>
+</html>
