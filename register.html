@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .register-container {
+            background: #fff;
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 420px;
+        }
+        .register-container .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: #0d1b2a;
+        }
+        .register-container .logo span { color: #f5c842; }
+        .register-container .logo .play-icon { color: #f5c842; }
+        .register-container .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .register-container label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        .register-container input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            margin-top: 5px;
+            transition: 0.3s;
+            background: #fafbfc;
+        }
+        .register-container input:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .register-container .btn {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 17px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .register-container .btn:hover { background: #e6b800; }
+        .register-container .links {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+        .register-container .links a {
+            color: #0d1b2a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .register-container .links a:hover { color: #f5c842; }
+        .footer-credit {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .footer-credit .founder { color: #f5c842; }
+        .notification {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .notification.error {
+            background: #fce4ec;
+            color: #c62828;
+            display: block;
+            border-left: 4px solid #c62828;
+        }
+        .notification.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+            border-left: 4px solid #2e7d32;
+        }
+        .notification.info {
+            background: #e3f2fd;
+            color: #0d47a1;
+            display: block;
+            border-left: 4px solid #0d47a1;
+        }
+        @media (max-width: 480px) {
+            .register-container { padding: 25px 20px; margin: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <p class="subtitle">Create your free account</p>
+        <div id="notification" class="notification"></div>
+        <form id="registerForm">
+            <label>Full Name</label>
+            <input type="text" id="fullName" placeholder="Your full name" required />
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com" required />
+            <label>Phone Number</label>
+            <input type="tel" id="phone" placeholder="08012345678" required />
+            <label>Username (Optional)</label>
+            <input type="text" id="username" placeholder="Choose a unique username" />
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Min 6 characters" required />
+            <button type="submit" class="btn">Create Account</button>
+        </form>
+        <p class="links">Already have an account? <a href="login.html">Login</a></p>
+        <div class="footer-credit">
+            <p class="founder">Designed by Stephen Melek Elisha</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ng3ZsQ3TmI540';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const notification = document.getElementById('notification');
+
+            // --- VALIDATION ---
+            if (!name) {
+                notification.className = 'notification error';
+                notification.textContent = '❌ Please enter your full name.';
+                return;
+            }
+            if (!email || !email.includes('@')) {
+                notification.className = 'notification error';
+                notification.textContent = '❌ Please enter a valid email address.';
+                return;
+            }
+            if (!phone || phone.length < 10) {
+                notification.className = 'notification error';
+                notification.textContent = '❌ Please enter a valid phone number.';
+                return;
+            }
+            if (password.length < 6) {
+                notification.className = 'notification error';
+                notification.textContent = '❌ Password must be at least 6 characters.';
+                return;
+            }
+
+            try {
+                notification.className = 'notification info';
+                notification.textContent = '⏳ Creating your account...';
+
+                // --- CHECK IF USER ALREADY EXISTS ---
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('email', email)
+                    .maybeSingle();
+
+                if (existingUser) {
+                    notification.className = 'notification error';
+                    notification.textContent = '❌ User with this email already exists. Please login.';
+                    return;
+                }
+
+                // --- SAVE USER TO SUPABASE ---
+                const { error } = await supabase
+                    .from('users')
+                    .insert([{
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        username: username || '',
+                        password: password,
+                        balance: 0,
+                        total_earned: 0,
+                        referrals: 0,
+                        is_invest_member: false,
+                        is_active: true,
+                        joined_date: new Date().toISOString()
+                    }]);
+
+                if (error) {
+                    notification.className = 'notification error';
+                    notification.textContent = '❌ ' + error.message;
+                    return;
+                }
+
+                // --- SAVE SESSION ---
+                sessionStorage.setItem('userEmail', email);
+
+                notification.className = 'notification success';
+                notification.textContent = '✅ Account created successfully! Redirecting to dashboard...';
+
+                // --- ADD TO ACTIVITY LOG ---
+                await supabase
+                    .from('activity')
+                    .insert([{
+                        user_name: name,
+                        action: 'Registered',
+                        amount: 0,
+                        date: new Date().toISOString()
+                    }]);
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+
+            } catch (error) {
+                notification.className = 'notification error';
+                notification.textContent = '❌ ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
