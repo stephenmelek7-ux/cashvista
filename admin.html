@@ -554,11 +554,11 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD
+        // RENDER DASHBOARD - FULL WORKING VERSION
         // =============================================
         async function renderDashboard() {
             try {
-                console.log('⏳ Loading dashboard data...');
+                console.log('⏳ Loading dashboard data from Supabase...');
 
                 // --- FETCH ALL DATA FROM SUPABASE ---
                 const { data: users, error: userError } = await supabase
@@ -616,7 +616,12 @@
                     console.error('Error fetching batches:', batchError);
                 }
 
-                console.log('✅ Data loaded:', { users: users?.length, campaigns: campaigns?.length, investMembers: investMembers?.length, withdrawals: withdrawals?.length });
+                console.log('✅ Data loaded successfully!');
+                console.log('Users:', users?.length || 0);
+                console.log('Campaigns:', campaigns?.length || 0);
+                console.log('Invest Members:', investMembers?.length || 0);
+                console.log('Withdrawals:', withdrawals?.length || 0);
+                console.log('Batches:', batches?.length || 0);
 
                 // --- CALCULATE STATS ---
                 const totalUsers = users ? users.length : 0;
@@ -628,9 +633,11 @@
                 const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
 
                 let totalWallet = 0;
+                let totalRevenue = 0;
                 if (users) {
                     users.forEach(u => {
                         totalWallet += (u.balance || 0);
+                        totalRevenue += (u.total_earned || 0);
                     });
                 }
 
@@ -646,7 +653,7 @@
 
                 // --- UPDATE STATS CARDS ---
                 document.getElementById('totalUsers').textContent = totalUsers;
-                document.getElementById('totalRevenue').textContent = '₦' + (totalUsers * 5000).toLocaleString();
+                document.getElementById('totalRevenue').textContent = '₦' + totalRevenue.toLocaleString();
                 document.getElementById('totalWallet').textContent = '₦' + totalWallet.toLocaleString();
                 document.getElementById('investMembers').textContent = totalInvest;
                 document.getElementById('pendingCount').textContent = totalPending;
@@ -1087,7 +1094,8 @@
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             renderDashboard();
-            setInterval(renderDashboard, 15000);
+            // Auto-refresh every 10 seconds to show new users instantly
+            setInterval(renderDashboard, 10000);
         });
     </script>
 </body>
