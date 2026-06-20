@@ -6,11 +6,7 @@
     <title>Admin Dashboard - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
@@ -28,11 +24,7 @@
             top: 0;
             z-index: 100;
         }
-        .topbar .logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: #f5c842;
-        }
+        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
         .topbar .logo span { color: #fff; }
         .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .admin-info {
@@ -62,10 +54,7 @@
             font-size: 13px;
             transition: 0.3s;
         }
-        .topbar .admin-info .logout:hover {
-            background: #e74c3c;
-            color: #fff;
-        }
+        .topbar .admin-info .logout:hover { background: #e74c3c; color: #fff; }
         .topbar .admin-info a {
             color: #f5c842;
             text-decoration: none;
@@ -73,47 +62,38 @@
             font-size: 13px;
         }
         .topbar .admin-info a:hover { text-decoration: underline; }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 25px 20px;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 25px 20px; }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 15px;
             margin-bottom: 25px;
         }
         .stat-card {
             background: #fff;
-            padding: 20px 22px;
+            padding: 18px 20px;
             border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.03);
             transition: 0.3s;
         }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        }
-        .stat-card .icon { font-size: 24px; margin-bottom: 4px; }
-        .stat-card .number {
-            font-size: 28px;
-            font-weight: 800;
-            color: #0d1b2a;
-        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+        .stat-card .icon { font-size: 22px; margin-bottom: 4px; }
+        .stat-card .number { font-size: 26px; font-weight: 800; color: #0d1b2a; }
         .stat-card .number.gold { color: #f5c842; }
         .stat-card .number.green { color: #2e7d32; }
         .stat-card .number.red { color: #c62828; }
         .stat-card .number.blue { color: #0d47a1; }
-        .stat-card .label { font-size: 13px; color: #888; font-weight: 500; }
+        .stat-card .label { font-size: 12px; color: #888; font-weight: 500; }
+
         .section-card {
             background: #fff;
             border-radius: 20px;
             padding: 25px 28px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
             margin-bottom: 25px;
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0,0,0,0.03);
         }
         .section-card .header {
             display: flex;
@@ -152,43 +132,26 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        .btn-refresh {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-        .btn-refresh:hover {
-            background: #0d47a1;
-            color: #fff;
-        }
+        .btn-refresh { background: #e3f2fd; color: #0d47a1; }
+        .btn-refresh:hover { background: #0d47a1; color: #fff; }
+
         .table-wrapper { overflow-x: auto; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th {
             background: #0d1b2a;
             color: #fff;
-            padding: 12px 16px;
+            padding: 10px 14px;
             text-align: left;
             font-weight: 600;
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
-            vertical-align: middle;
-        }
+        td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; color: #333; vertical-align: middle; }
         tr:hover td { background: #f8fafc; }
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: #999;
-        }
+        .empty-state { text-align: center; padding: 30px; color: #999; }
         .empty-state .icon { font-size: 36px; margin-bottom: 6px; }
+
         .badge {
             padding: 4px 14px;
             border-radius: 30px;
@@ -199,6 +162,8 @@
         .badge-success { background: #e8f5e9; color: #2e7d32; }
         .badge-warning { background: #fff3e0; color: #e65100; }
         .badge-danger { background: #fce4ec; color: #c62828; }
+        .badge-info { background: #e3f2fd; color: #0d47a1; }
+
         .btn-sm {
             padding: 4px 14px;
             border: none;
@@ -222,6 +187,11 @@
         .btn-suspend:hover { background: #e65100; color: #fff; }
         .btn-activate { background: #e8f5e9; color: #2e7d32; }
         .btn-activate:hover { background: #2e7d32; color: #fff; }
+        .btn-link { background: #e3f2fd; color: #0d47a1; }
+        .btn-link:hover { background: #0d47a1; color: #fff; }
+        .btn-assign { background: #fef7e0; color: #e65100; }
+        .btn-assign:hover { background: #e65100; color: #fff; }
+
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -231,31 +201,151 @@
             border-radius: 20px 20px 0 0;
         }
         .footer .founder { color: #f5c842; font-weight: 600; }
-        @media (max-width: 768px) {
-            .topbar {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-                padding: 15px;
-            }
-            .topbar .admin-info { justify-content: center; }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-            .stat-card .number { font-size: 22px; }
-            .section-card { padding: 18px 16px; }
-            .section-card .header {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            table { font-size: 12px; }
-            th, td { padding: 8px 10px; }
-            .btn-sm { font-size: 10px; padding: 3px 10px; }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 10px 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
         }
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        .nav-tabs button {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .nav-tabs button.active { background: #0d1b2a; color: #fff; }
+        .nav-tabs button:hover:not(.active) { background: #ccc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .receipt-img {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        .receipt-img:hover { border-color: #f5c842; }
+        .video-link {
+            color: #0d47a1;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .video-link:hover { color: #f5c842; }
+
+        .batch-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e8ecf0;
+        }
+        .batch-box .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .batch-box .batch-header h4 { color: #0d1b2a; font-size: 16px; }
+        .batch-box .batch-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .batch-box .batch-users .user-tag {
+            background: #fff;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+        .batch-box .batch-users .user-tag.active { border-color: #2e7d32; background: #e8f5e9; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h3 { color: #0d1b2a; margin-bottom: 15px; }
+        .modal-content .form-group { margin-bottom: 15px; }
+        .modal-content .form-group label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .modal-content .form-group input,
+        .modal-content .form-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+        .modal-content .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .modal-content .btn-gold { background: #f5c842; color: #0d1b2a; }
+        .modal-content .btn-gold:hover { background: #e6b800; }
+        .modal-close {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .topbar { flex-direction: column; gap: 10px; text-align: center; padding: 15px; }
+            .topbar .admin-info { justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card .number { font-size: 20px; }
+            .section-card { padding: 15px; }
+            .section-card .header { flex-direction: column; gap: 10px; align-items: flex-start; }
+            table { font-size: 12px; }
+            th, td { padding: 6px 8px; }
+            .btn-sm { font-size: 10px; padding: 3px 8px; }
+            .nav-tabs { flex-direction: column; }
+            .nav-tabs button { width: 100%; }
+            .modal-content { padding: 20px; }
         }
     </style>
 </head>
@@ -277,128 +367,154 @@
 
         <!-- STATS GRID -->
         <div class="stats-grid" id="statsGrid">
-            <div class="stat-card">
-                <div class="icon">👥</div>
-                <div class="number gold" id="totalUsers">0</div>
-                <div class="label">Total Users</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">💰</div>
-                <div class="number green" id="totalRevenue">₦0</div>
-                <div class="label">Total Revenue</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">💳</div>
-                <div class="number blue" id="totalWallet">₦0</div>
-                <div class="label">Wallet Balance</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">📈</div>
-                <div class="number gold" id="investMembers">0</div>
-                <div class="label">Invest Members</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">⏳</div>
-                <div class="number red" id="pendingCount">0</div>
-                <div class="label">Pending Approvals</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">📊</div>
-                <div class="number" id="todaySignups">0</div>
-                <div class="label">Today's Signups</div>
-            </div>
+            <div class="stat-card"><div class="icon">👥</div><div class="number gold" id="totalUsers">0</div><div class="label">Total Users</div></div>
+            <div class="stat-card"><div class="icon">💰</div><div class="number green" id="totalRevenue">₦0</div><div class="label">Total Revenue</div></div>
+            <div class="stat-card"><div class="icon">💳</div><div class="number blue" id="totalWallet">₦0</div><div class="label">Wallet Balance</div></div>
+            <div class="stat-card"><div class="icon">📈</div><div class="number gold" id="investMembers">0</div><div class="label">Invest Members</div></div>
+            <div class="stat-card"><div class="icon">⏳</div><div class="number red" id="pendingCount">0</div><div class="label">Pending Approvals</div></div>
+            <div class="stat-card"><div class="icon">📊</div><div class="number" id="todaySignups">0</div><div class="label">Today's Signups</div></div>
         </div>
 
-        <!-- ALL REGISTERED USERS -->
-        <div class="section-card">
-            <div class="header">
-                <h2>👥 All Registered Users <span class="count-badge" id="userCountBadge">0</span><span class="live-badge">🔴 Live</span></h2>
-                <div class="actions">
-                    <button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button>
+        <!-- NAVIGATION TABS -->
+        <div class="nav-tabs">
+            <button class="active" onclick="switchTab('pending')">📋 Pending <span id="pendingTabBadge" style="background:red; color:#fff; border-radius:50%; padding:0 8px; font-size:11px;">0</span></button>
+            <button onclick="switchTab('campaigns')">📹 Campaigns</button>
+            <button onclick="switchTab('invest')">📈 Invest</button>
+            <button onclick="switchTab('withdrawals')">💰 Withdrawals</button>
+            <button onclick="switchTab('batches')">📦 Batches</button>
+            <button onclick="switchTab('users')">👥 Users</button>
+            <button onclick="switchTab('activity')">🕐 Activity</button>
+        </div>
+
+        <!-- TAB 1: PENDING APPROVALS -->
+        <div id="tab-pending" class="tab-content active">
+            <div class="section-card">
+                <div class="header"><h2>📋 Pending Approvals <span class="count-badge" id="pendingBadge">0</span></h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Type</th><th>User</th><th>Details</th><th>Amount</th><th>Receipt</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody id="pendingTableBody"><tr><td colspan="7" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr></tbody>
+                    </table>
                 </div>
             </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Balance</th>
-                            <th>Invest</th>
-                            <th>Joined</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody">
-                        <tr>
-                            <td colspan="9" class="empty-state">
-                                <div class="icon">👤</div>
-                                <p>No users registered yet.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        </div>
+
+        <!-- TAB 2: CAMPAIGNS -->
+        <div id="tab-campaigns" class="tab-content">
+            <div class="section-card">
+                <div class="header"><h2>📹 All Campaigns <span class="count-badge" id="campaignCountBadge">0</span></h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Title</th><th>User</th><th>Amount</th><th>Viewers</th><th>Video Link</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="campaignTableBody"><tr><td colspan="7" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- PENDING APPROVALS -->
-        <div class="section-card">
-            <div class="header">
-                <h2>📋 Pending Approvals <span class="count-badge" id="pendingBadge">0</span></h2>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>User</th>
-                            <th>Details</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pendingTableBody">
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                <div class="icon">✅</div>
-                                <p>No pending approvals.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- TAB 3: INVEST & GROW -->
+        <div id="tab-invest" class="tab-content">
+            <div class="section-card">
+                <div class="header"><h2>📈 Invest Members <span class="count-badge" id="investCountBadge">0</span></h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>User</th><th>Amount</th><th>Receipt</th><th>Referral Link</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="investTableBody"><tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- RECENT ACTIVITY -->
-        <div class="section-card">
-            <div class="header">
-                <h2>🕐 Recent Activity</h2>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Action</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activityTableBody">
-                        <tr>
-                            <td colspan="4" class="empty-state">
-                                <div class="icon">📭</div>
-                                <p>No activity yet.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- TAB 4: WITHDRAWALS -->
+        <div id="tab-withdrawals" class="tab-content">
+            <div class="section-card">
+                <div class="header"><h2>💰 Withdrawals <span class="count-badge" id="withdrawalCountBadge">0</span></h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>User</th><th>Amount</th><th>Bank</th><th>Account</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="withdrawalTableBody"><tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No withdrawals yet.</p></td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
+        <!-- TAB 5: BATCHES -->
+        <div id="tab-batches" class="tab-content">
+            <div class="section-card">
+                <div class="header"><h2>📦 Batch Management <span class="count-badge" id="batchCountBadge">0</span></h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div id="batchesContainer">
+                    <div class="empty-state"><div class="icon">📦</div><p>No batches created yet.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: ALL USERS -->
+        <div id="tab-users" class="tab-content">
+            <div class="section-card">
+                <div class="header"><h2>👥 All Users <span class="count-badge" id="userCountBadge">0</span></h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Balance</th><th>Invest</th><th>Batch</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="userTableBody"><tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 7: ACTIVITY -->
+        <div id="tab-activity" class="tab-content">
+            <div class="section-card">
+                <div class="header"><h2>🕐 Recent Activity</h2>
+                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>User</th><th>Action</th><th>Amount</th><th>Date</th></tr></thead>
+                        <tbody id="activityTableBody"><tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== ASSIGN CAMPAIGN MODAL ===== -->
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <h3>📹 Assign Campaign to Batch</h3>
+            <form id="assignForm">
+                <div class="form-group">
+                    <label>Select Campaign</label>
+                    <select id="assignCampaign" required>
+                        <option value="">-- Select Campaign --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Batch</label>
+                    <select id="assignBatch" required>
+                        <option value="">-- Select Batch --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Number of Viewers (max 20 per batch)</label>
+                    <input type="number" id="assignViewers" value="20" min="1" max="20" required />
+                </div>
+                <button type="submit" class="btn btn-gold">📤 Assign Campaign</button>
+                <button type="button" class="modal-close" onclick="closeAssignModal()">Cancel</button>
+            </form>
+        </div>
     </div>
 
     <footer class="footer">
@@ -406,39 +522,40 @@
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // =============================================
-        // SUPABASE CONFIGURATION
-        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // =============================================
-        // ADMIN SESSION CHECK
-        // =============================================
         if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
             window.location.href = 'admin-login.html';
         }
         document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
 
         // =============================================
-        // FETCH DATA FROM SUPABASE
+        // FETCH HELPERS
         // =============================================
-        async function fetchFromSupabase(table, params = '') {
+        async function fetchData(table, params = '') {
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
-                if (!response.ok) return [];
-                return await response.json();
-            } catch (e) {
-                console.error('Error fetching from Supabase:', e);
-                return [];
-            }
+                const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false });
+                if (error) return [];
+                return data;
+            } catch (e) { return []; }
+        }
+
+        // =============================================
+        // SWITCH TABS
+        // =============================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            const buttons = document.querySelectorAll('.nav-tabs button');
+            const tabs = ['pending', 'campaigns', 'invest', 'withdrawals', 'batches', 'users', 'activity'];
+            const index = tabs.indexOf(tabName);
+            if (index !== -1) buttons[index].classList.add('active');
+            if (tabName === 'batches') renderBatches();
         }
 
         // =============================================
@@ -446,14 +563,13 @@
         // =============================================
         async function renderDashboard() {
             try {
-                // --- FETCH ALL DATA ---
-                const users = await fetchFromSupabase('users', '?order=joined_date.desc');
-                const campaigns = await fetchFromSupabase('campaigns');
-                const investMembers = await fetchFromSupabase('invest_members');
-                const withdrawals = await fetchFromSupabase('withdrawals');
-                const activity = await fetchFromSupabase('activity', '?order=date.desc&limit=20');
+                const users = await fetchData('users');
+                const campaigns = await fetchData('campaigns');
+                const investMembers = await fetchData('invest_members');
+                const withdrawals = await fetchData('withdrawals');
+                const activity = await fetchData('activity');
+                const batches = await fetchData('batches');
 
-                // --- CALCULATE STATS ---
                 const totalUsers = users ? users.length : 0;
                 const totalInvest = investMembers ? investMembers.length : 0;
                 const pendingCampaigns = campaigns ? campaigns.filter(c => c.status === 'pending').length : 0;
@@ -462,38 +578,110 @@
                 const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
 
                 let totalWallet = 0;
-                let totalRevenue = 0;
-                if (users) {
-                    users.forEach(u => {
-                        totalWallet += (u.balance || 0);
-                        totalRevenue += (u.total_earned || 0);
-                    });
-                }
+                if (users) users.forEach(u => totalWallet += (u.balance || 0));
 
                 const today = new Date().toDateString();
                 const todaySignups = users ? users.filter(u => {
                     if (!u.joined_date) return false;
-                    try {
-                        const d = new Date(u.joined_date);
-                        return d.toDateString() === today;
-                    } catch (e) { return false; }
+                    try { return new Date(u.joined_date).toDateString() === today; } catch (e) { return false; }
                 }).length : 0;
 
-                // --- UPDATE STATS CARDS ---
-                document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
-                document.getElementById('totalRevenue').textContent = '₦' + totalRevenue.toLocaleString();
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('totalRevenue').textContent = '₦' + (totalUsers * 5000).toLocaleString();
                 document.getElementById('totalWallet').textContent = '₦' + totalWallet.toLocaleString();
                 document.getElementById('investMembers').textContent = totalInvest;
                 document.getElementById('pendingCount').textContent = totalPending;
                 document.getElementById('todaySignups').textContent = todaySignups;
-                document.getElementById('userCountBadge').textContent = totalUsers;
                 document.getElementById('pendingBadge').textContent = totalPending;
+                document.getElementById('pendingTabBadge').textContent = totalPending;
+                document.getElementById('userCountBadge').textContent = totalUsers;
+                document.getElementById('campaignCountBadge').textContent = campaigns ? campaigns.length : 0;
+                document.getElementById('investCountBadge').textContent = totalInvest;
+                document.getElementById('withdrawalCountBadge').textContent = withdrawals ? withdrawals.length : 0;
+                document.getElementById('batchCountBadge').textContent = batches ? batches.length : 0;
 
-                // --- USERS TABLE ---
+                // PENDING TABLE
+                const pendingBody = document.getElementById('pendingTableBody');
+                const pendingItems = [];
+                if (campaigns) campaigns.filter(c => c.status === 'pending').forEach(c => {
+                    pendingItems.push({ type: '📹 Campaign', id: c.id, user: c.user_email || 'Unknown', title: c.title || 'Video', amount: '₦' + (c.amount || 0).toLocaleString(), receipt: c.receipt_url || null, date: c.date ? new Date(c.date).toLocaleDateString() : 'N/A', data: c, table: 'campaigns' });
+                });
+                if (investMembers) investMembers.filter(i => i.status === 'pending').forEach(i => {
+                    pendingItems.push({ type: '📈 Invest', id: i.id, user: i.user_email || 'Unknown', title: 'Invest & Grow', amount: '₦' + (i.amount || 5000).toLocaleString(), receipt: i.receipt_url || null, date: i.date ? new Date(i.date).toLocaleDateString() : 'N/A', data: i, table: 'invest_members' });
+                });
+                if (withdrawals) withdrawals.filter(w => w.status === 'pending').forEach(w => {
+                    pendingItems.push({ type: '💰 Withdraw', id: w.id, user: w.user_email || 'Unknown', title: 'Withdrawal', amount: '₦' + (w.amount || 0).toLocaleString(), receipt: null, date: w.date ? new Date(w.date).toLocaleDateString() : 'N/A', data: w, table: 'withdrawals' });
+                });
+
+                if (pendingItems.length === 0) {
+                    pendingBody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
+                } else {
+                    pendingBody.innerHTML = pendingItems.map(item => `
+                        <tr>
+                            <td><span class="badge badge-warning">${item.type}</span></td>
+                            <td><strong>${item.user}</strong></td>
+                            <td>${item.title}</td>
+                            <td>${item.amount}</td>
+                            <td>${item.receipt ? `<img src="${item.receipt}" class="receipt-img" onclick="viewReceipt('${item.receipt}')" title="Click to view receipt" />` : 'N/A'}</td>
+                            <td>${item.date}</td>
+                            <td>
+                                <button class="btn-sm btn-approve" onclick="approveItem('${item.table}', '${item.id}', '${item.user}')">✅ Approve</button>
+                                <button class="btn-sm btn-reject" onclick="rejectItem('${item.table}', '${item.id}', '${item.user}')">❌ Reject</button>
+                                ${item.type === '📹 Campaign' ? `<button class="btn-sm btn-link" onclick="viewVideo('${item.data.video_link}')">🔗 Watch</button>` : ''}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                // CAMPAIGNS TABLE
+                const campaignBody = document.getElementById('campaignTableBody');
+                if (!campaigns || campaigns.length === 0) {
+                    campaignBody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr>`;
+                } else {
+                    campaignBody.innerHTML = campaigns.map(c => {
+                        let statusBadge = '';
+                        if (c.status === 'pending') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        else if (c.status === 'approved') statusBadge = '<span class="badge badge-success">✅ Live</span>';
+                        else if (c.status === 'rejected') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                        else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        return `<tr><td><strong>${c.title}</strong></td><td>${c.user_email || 'Unknown'}</td><td>₦${(c.amount || 0).toLocaleString()}</td><td>${c.viewers || 0}</td><td><a href="${c.video_link}" target="_blank" class="video-link">🔗 Watch</a></td><td>${statusBadge}</td><td>${c.date ? new Date(c.date).toLocaleDateString() : 'N/A'}</td></tr>`;
+                    }).join('');
+                }
+
+                // INVEST TABLE
+                const investBody = document.getElementById('investTableBody');
+                if (!investMembers || investMembers.length === 0) {
+                    investBody.innerHTML = `<tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr>`;
+                } else {
+                    investBody.innerHTML = investMembers.map(i => {
+                        let statusBadge = '';
+                        if (i.status === 'pending') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        else if (i.status === 'approved' || i.status === 'active') statusBadge = '<span class="badge badge-success">✅ Active</span>';
+                        else if (i.status === 'rejected') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                        else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        return `<tr><td><strong>${i.user_email || 'Unknown'}</strong></td><td>₦${(i.amount || 5000).toLocaleString()}</td><td>${i.receipt_url ? `<img src="${i.receipt_url}" class="receipt-img" onclick="viewReceipt('${i.receipt_url}')" title="View receipt" />` : 'N/A'}</td><td>${i.referral_link || 'Not generated'}</td><td>${statusBadge}</td><td>${i.date ? new Date(i.date).toLocaleDateString() : 'N/A'}</td></tr>`;
+                    }).join('');
+                }
+
+                // WITHDRAWALS TABLE
+                const withdrawalBody = document.getElementById('withdrawalTableBody');
+                if (!withdrawals || withdrawals.length === 0) {
+                    withdrawalBody.innerHTML = `<tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No withdrawals yet.</p></td></tr>`;
+                } else {
+                    withdrawalBody.innerHTML = withdrawals.map(w => {
+                        let statusBadge = '';
+                        if (w.status === 'pending') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        else if (w.status === 'approved') statusBadge = '<span class="badge badge-success">✅ Approved</span>';
+                        else if (w.status === 'rejected') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                        else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        return `<tr><td><strong>${w.user_email || 'Unknown'}</strong></td><td>₦${(w.amount || 0).toLocaleString()}</td><td>${w.bank_name || 'N/A'}</td><td>${w.account_number || 'N/A'}</td><td>${statusBadge}</td><td>${w.date ? new Date(w.date).toLocaleDateString() : 'N/A'}</td></tr>`;
+                    }).join('');
+                }
+
+                // USERS TABLE
                 const userBody = document.getElementById('userTableBody');
                 if (!users || users.length === 0) {
-                    userBody.innerHTML =
-                        `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
+                    userBody.innerHTML = `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
                 } else {
                     userBody.innerHTML = users.map((user, index) => `
                         <tr>
@@ -503,70 +691,21 @@
                             <td>${user.phone || 'N/A'}</td>
                             <td>₦${(user.balance || 0).toLocaleString()}</td>
                             <td>${user.is_invest_member ? '✅' : '❌'}</td>
-                            <td>${user.joined_date ? new Date(user.joined_date).toLocaleDateString() : 'N/A'}</td>
-                            <td>
-                                <span class="badge ${user.is_active !== false ? 'badge-success' : 'badge-danger'}">
-                                    ${user.is_active !== false ? '✅ Active' : '🚫 Suspended'}
-                                </span>
-                            </td>
+                            <td>${user.batch || 'Not assigned'}</td>
+                            <td><span class="badge ${user.is_active !== false ? 'badge-success' : 'badge-danger'}">${user.is_active !== false ? '✅ Active' : '🚫 Suspended'}</span></td>
                             <td>
                                 <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
-                                <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" 
-                                        onclick="toggleUser('${user.email}')">
-                                    ${user.is_active !== false ? '🔒' : '🔓'}
-                                </button>
+                                <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" onclick="toggleUser('${user.email}')">${user.is_active !== false ? '🔒' : '🔓'}</button>
                                 <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
                             </td>
                         </tr>
                     `).join('');
                 }
 
-                // --- PENDING TABLE ---
-                const pendingBody = document.getElementById('pendingTableBody');
-                const pendingItems = [];
-
-                if (campaigns) {
-                    campaigns.filter(c => c.status === 'pending').forEach(c => {
-                        pendingItems.push({ type: '📹 Campaign', user: c.user_email || 'Unknown',
-                            details: c.title || 'Video', date: c.date || 'N/A' });
-                    });
-                }
-                if (investMembers) {
-                    investMembers.filter(i => i.status === 'pending').forEach(i => {
-                        pendingItems.push({ type: '📈 Invest', user: i.user_email || 'Unknown',
-                            details: '₦' + (i.amount || 5000), date: i.date || 'N/A' });
-                    });
-                }
-                if (withdrawals) {
-                    withdrawals.filter(w => w.status === 'pending').forEach(w => {
-                        pendingItems.push({ type: '💰 Withdraw', user: w.user_email || 'Unknown',
-                            details: '₦' + (w.amount || 0), date: w.date || 'N/A' });
-                    });
-                }
-
-                if (pendingItems.length === 0) {
-                    pendingBody.innerHTML =
-                        `<tr><td colspan="5" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
-                } else {
-                    pendingBody.innerHTML = pendingItems.map(item => `
-                        <tr>
-                            <td><span class="badge badge-warning">${item.type}</span></td>
-                            <td><strong>${item.user}</strong></td>
-                            <td>${item.details}</td>
-                            <td>${item.date}</td>
-                            <td>
-                                <button class="btn-sm btn-approve" onclick="alert('✅ Approved')">✅</button>
-                                <button class="btn-sm btn-reject" onclick="alert('❌ Rejected')">❌</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-
-                // --- ACTIVITY TABLE ---
+                // ACTIVITY TABLE
                 const activityBody = document.getElementById('activityTableBody');
                 if (!activity || activity.length === 0) {
-                    activityBody.innerHTML =
-                        `<tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr>`;
+                    activityBody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr>`;
                 } else {
                     activityBody.innerHTML = activity.slice(0, 20).map(a => `
                         <tr>
@@ -578,52 +717,219 @@
                     `).join('');
                 }
 
+                // Populate dropdowns for assignment
+                populateAssignDropdowns(campaigns, batches);
+
             } catch (error) {
                 console.error('Error rendering dashboard:', error);
             }
         }
 
         // =============================================
+        // RENDER BATCHES
+        // =============================================
+        async function renderBatches() {
+            try {
+                const batches = await fetchData('batches');
+                const users = await fetchData('users');
+                const container = document.getElementById('batchesContainer');
+
+                if (!batches || batches.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No batches created yet.</p></div>`;
+                    return;
+                }
+
+                let html = '';
+                for (const batch of batches) {
+                    // Get users in this batch
+                    const batchUsers = users ? users.filter(u => u.batch === batch.name) : [];
+
+                    html += `
+                        <div class="batch-box">
+                            <div class="batch-header">
+                                <h4>📦 ${batch.name}</h4>
+                                <span style="font-size:13px; color:#888;">${batchUsers.length} users</span>
+                            </div>
+                            <div class="batch-users">
+                                ${batchUsers.length === 0 ? '<span style="color:#999; font-size:13px;">No users assigned yet</span>' : batchUsers.map(u => `<span class="user-tag active">${u.name || u.email}</span>`).join('')}
+                            </div>
+                            <div style="margin-top:10px;">
+                                <button class="btn-sm btn-assign" onclick="openAssignModal('${batch.name}')">📤 Assign Campaign</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error rendering batches:', error);
+            }
+        }
+
+        // =============================================
+        // POPULATE DROPDOWNS
+        // =============================================
+        function populateAssignDropdowns(campaigns, batches) {
+            const campaignSelect = document.getElementById('assignCampaign');
+            const batchSelect = document.getElementById('assignBatch');
+
+            if (campaignSelect) {
+                campaignSelect.innerHTML = '<option value="">-- Select Campaign --</option>';
+                if (campaigns) {
+                    campaigns.filter(c => c.status === 'approved').forEach(c => {
+                        const option = document.createElement('option');
+                        option.value = c.id;
+                        option.textContent = c.title + ' (₦' + (c.amount || 0).toLocaleString() + ')';
+                        campaignSelect.appendChild(option);
+                    });
+                }
+            }
+
+            if (batchSelect) {
+                batchSelect.innerHTML = '<option value="">-- Select Batch --</option>';
+                if (batches) {
+                    batches.forEach(b => {
+                        const option = document.createElement('option');
+                        option.value = b.name;
+                        option.textContent = b.name;
+                        batchSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        // =============================================
+        // ASSIGN CAMPAIGN MODAL
+        // =============================================
+        function openAssignModal(batchName) {
+            document.getElementById('assignModal').style.display = 'flex';
+            if (batchName) {
+                document.getElementById('assignBatch').value = batchName;
+            }
+            // Populate dropdowns again
+            fetchData('campaigns').then(campaigns => {
+                fetchData('batches').then(batches => {
+                    populateAssignDropdowns(campaigns, batches);
+                    if (batchName) {
+                        document.getElementById('assignBatch').value = batchName;
+                    }
+                });
+            });
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assignModal').style.display = 'none';
+        }
+
+        document.getElementById('assignForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const campaignId = document.getElementById('assignCampaign').value;
+            const batchName = document.getElementById('assignBatch').value;
+            const viewers = parseInt(document.getElementById('assignViewers').value);
+
+            if (!campaignId || !batchName) {
+                alert('❌ Please select both campaign and batch.');
+                return;
+            }
+
+            try {
+                // Update campaign with batch assignment
+                const { error } = await supabase
+                    .from('campaigns')
+                    .update({
+                        assigned_batch: batchName,
+                        assigned_viewers: viewers,
+                        status: 'live',
+                        assigned_at: new Date().toISOString()
+                    })
+                    .eq('id', campaignId);
+
+                if (error) {
+                    alert('❌ Error assigning campaign: ' + error.message);
+                    return;
+                }
+
+                // Add activity
+                await supabase.from('activity').insert([{
+                    user_name: 'Admin',
+                    action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
+                    amount: 0,
+                    date: new Date().toISOString()
+                }]);
+
+                alert('✅ Campaign assigned successfully!');
+                closeAssignModal();
+                renderDashboard();
+
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        // =============================================
+        // APPROVE / REJECT
+        // =============================================
+        async function approveItem(table, id, userEmail) {
+            if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
+            try {
+                await supabase.from(table).update({ status: 'approved' }).eq('id', id);
+
+                if (table === 'invest_members') {
+                    const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
+                    const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
+                    await supabase.from('users').update({ is_invest_member: true, referral_link: referralLink, referral_code: uniqueId }).eq('email', userEmail);
+                    await supabase.from(table).update({ referral_link: referralLink }).eq('id', id);
+                    alert(`✅ ${userEmail} approved! Referral link generated.`);
+                } else if (table === 'campaigns') {
+                    alert(`✅ Campaign approved! You can now assign it to batches.`);
+                } else if (table === 'withdrawals') {
+                    alert(`✅ Withdrawal approved!`);
+                }
+                renderDashboard();
+            } catch (error) {
+                alert('❌ Error approving: ' + error.message);
+            }
+        }
+
+        async function rejectItem(table, id, userEmail) {
+            if (!confirm(`❌ Reject this ${table} for ${userEmail}?`)) return;
+            try {
+                await supabase.from(table).update({ status: 'rejected' }).eq('id', id);
+                alert(`❌ ${userEmail} rejected.`);
+                renderDashboard();
+            } catch (error) {
+                alert('❌ Error rejecting: ' + error.message);
+            }
+        }
+
+        // =============================================
+        // VIEW FUNCTIONS
+        // =============================================
+        function viewReceipt(url) { window.open(url, '_blank'); }
+        function viewVideo(url) { window.open(url, '_blank'); }
+
+        // =============================================
         // USER ACTIONS
         // =============================================
         async function viewUser(email) {
-            const users = await fetchFromSupabase('users?email=eq.' + encodeURIComponent(email));
-            if (!users || users.length === 0) { alert('User not found.'); return; }
-            const user = users[0];
-            alert(`👤 USER DETAILS\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email || 'N/A'}\nPhone: ${user.phone || 'N/A'}\nBalance: ₦${(user.balance || 0).toLocaleString()}\nInvest Member: ${user.is_invest_member ? 'Yes' : 'No'}\nStatus: ${user.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}`);
+            const { data } = await supabase.from('users').select('*').eq('email', email).single();
+            if (!data) { alert('User not found.'); return; }
+            alert(`👤 USER DETAILS\n\nName: ${data.name || 'N/A'}\nEmail: ${data.email || 'N/A'}\nPhone: ${data.phone || 'N/A'}\nBalance: ₦${(data.balance || 0).toLocaleString()}\nInvest Member: ${data.is_invest_member ? 'Yes' : 'No'}\nReferral Link: ${data.referral_link || 'N/A'}\nBatch: ${data.batch || 'Not assigned'}\nStatus: ${data.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${data.joined_date ? new Date(data.joined_date).toLocaleString() : 'N/A'}`);
         }
 
         async function toggleUser(email) {
             if (!confirm(`Toggle status for ${email}?`)) return;
-            const users = await fetchFromSupabase('users?email=eq.' + encodeURIComponent(email));
-            if (!users || users.length === 0) { alert('User not found.'); return; }
-            const user = users[0];
-            const newStatus = user.is_active === false ? true : false;
-
-            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY,
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({ is_active: newStatus })
-            });
-
+            const { data } = await supabase.from('users').select('is_active').eq('email', email).single();
+            if (!data) { alert('User not found.'); return; }
+            const newStatus = data.is_active === false ? true : false;
+            await supabase.from('users').update({ is_active: newStatus }).eq('email', email);
             alert(`✅ User status updated.`);
             renderDashboard();
         }
 
         async function deleteUser(email) {
             if (!confirm(`⚠️ Delete ${email}? This cannot be undone!`)) return;
-            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
-                method: 'DELETE',
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                }
-            });
+            await supabase.from('users').delete().eq('email', email);
             alert(`✅ User ${email} deleted.`);
             renderDashboard();
         }
@@ -640,14 +946,12 @@
         }
 
         // =============================================
-        // LOAD ON PAGE LOAD + AUTO REFRESH
+        // LOAD
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             renderDashboard();
-            // Auto-refresh every 15 seconds
             setInterval(renderDashboard, 15000);
         });
     </script>
-
 </body>
 </html>
