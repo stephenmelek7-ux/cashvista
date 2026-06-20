@@ -404,13 +404,34 @@
         <!-- TAB 2: CAMPAIGNS -->
         <div id="tab-campaigns" class="tab-content">
             <div class="section-card">
-                <div class="header"><h2>📹 All Campaigns <span class="count-badge" id="campaignCountBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                <div class="header">
+                    <h2>📹 All Campaigns <span class="count-badge" id="campaignCountBadge">0</span></h2>
+                    <div class="actions">
+                        <button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button>
+                    </div>
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Title</th><th>User</th><th>Amount</th><th>Viewers</th><th>Video Link</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody id="campaignTableBody"><tr><td colspan="7" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr></tbody>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Viewers</th>
+                                <th>Video Link</th>
+                                <th>Receipt</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaignTableBody">
+                            <tr>
+                                <td colspan="8" class="empty-state">
+                                    <div class="icon">📭</div>
+                                    <p>No campaigns yet.</p>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -741,7 +762,7 @@
                 // --- CAMPAIGNS TABLE ---
                 const campaignBody = document.getElementById('campaignTableBody');
                 if (!campaigns || campaigns.length === 0) {
-                    campaignBody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr>`;
+                    campaignBody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr>`;
                 } else {
                     campaignBody.innerHTML = campaigns.map(c => {
                         let statusBadge = '';
@@ -755,6 +776,7 @@
                             <td>₦${(c.amount || 0).toLocaleString()}</td>
                             <td>${c.viewers || 0}</td>
                             <td><a href="${c.video_link}" target="_blank" class="video-link">🔗 Watch</a></td>
+                            <td>${c.receipt_url ? `<img src="${c.receipt_url}" class="receipt-img" onclick="viewReceipt('${c.receipt_url}')" title="View receipt" />` : 'N/A'}</td>
                             <td>${statusBadge}</td>
                             <td>${c.date ? new Date(c.date).toLocaleDateString() : 'N/A'}</td>
                         </tr>`;
