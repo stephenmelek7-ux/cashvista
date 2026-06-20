@@ -1,826 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Watch & Earn - CashVista</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-      /* ===== RESET & BASE ===== */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        background: #f0f4f8;
-        color: #1a1a2e;
-      }
-
-      /* ===== TOP BAR ===== */
-      .topbar {
-        background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
-        color: #fff;
-        padding: 15px 25px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      .topbar .logo {
-        font-size: 28px;
-        font-weight: 800;
-        color: #f5c842;
-      }
-      .topbar .logo span {
-        color: #fff;
-      }
-      .topbar .logo .play-icon {
-        color: #f5c842;
-        margin-right: 5px;
-      }
-      .topbar .user-info {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        flex-wrap: wrap;
-      }
-      .topbar .user-info .greeting {
-        color: #ddd;
-        font-size: 14px;
-      }
-      .topbar .user-info .greeting strong {
-        color: #f5c842;
-        font-weight: 700;
-      }
-      .topbar .user-info .balance-badge {
-        background: rgba(245, 200, 66, 0.15);
-        border: 1px solid #f5c842;
-        padding: 6px 18px;
-        border-radius: 30px;
-        font-weight: 700;
-        font-size: 15px;
-        color: #f5c842;
-      }
-      .topbar .user-info .logout {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-        border: 1px solid #e74c3c;
-        padding: 6px 18px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        transition: 0.3s;
-      }
-      .topbar .user-info .logout:hover {
-        background: #e74c3c;
-        color: #fff;
-      }
-      .topbar .back-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 6px 18px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        text-decoration: none;
-        transition: 0.3s;
-      }
-      .topbar .back-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      /* ===== CONTAINER ===== */
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 25px 20px;
-      }
-
-      /* ===== CARDS ===== */
-      .card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 25px 30px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-        margin-bottom: 25px;
-        border: 1px solid rgba(0, 0, 0, 0.03);
-      }
-      .card h2 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #0d1b2a;
-        margin-bottom: 6px;
-      }
-      .card .subtitle {
-        color: #888;
-        font-size: 15px;
-        margin-bottom: 20px;
-      }
-
-      /* ===== VIDEO TASK CARDS ===== */
-      .video-task {
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 20px 25px;
-        margin-bottom: 15px;
-        border: 1px solid #e8ecf0;
-        transition: 0.3s;
-      }
-      .video-task:hover {
-        border-color: #f5c842;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-      }
-      .video-task .task-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: #0d1b2a;
-      }
-      .video-task .task-meta {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin: 8px 0 4px;
-        font-size: 14px;
-        color: #555;
-      }
-      .video-task .task-meta span {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .video-task .task-meta .duration {
-        color: #f5c842;
-        font-weight: 600;
-      }
-      .video-task .task-meta .reward {
-        color: #2e7d32;
-        font-weight: 600;
-      }
-      .video-task .task-instruction {
-        font-size: 14px;
-        color: #555;
-        margin: 8px 0 12px;
-        padding: 10px 16px;
-        background: #fff3e0;
-        border-radius: 8px;
-        border-left: 4px solid #e65100;
-      }
-      .video-task .btn-watch {
-        background: #0d1b2a;
-        color: #fff;
-        border: none;
-        padding: 10px 28px;
-        border-radius: 30px;
-        font-weight: 700;
-        font-size: 14px;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-      .video-task .btn-watch:hover {
-        background: #1b3a5c;
-        transform: scale(1.02);
-      }
-      .video-task .btn-watch:disabled {
-        background: #888;
-        cursor: not-allowed;
-        transform: none;
-      }
-      .video-task .btn-watch.watching {
-        background: #e65100;
-        animation: pulse 1.5s infinite;
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
         }
-        50% {
-          opacity: 0.6;
-        }
-      }
-
-      /* ===== TIMER DISPLAY ===== */
-      .timer-display {
-        background: #0d1b2a;
-        color: #f5c842;
-        padding: 15px 20px;
-        border-radius: 12px;
-        text-align: center;
-        margin: 10px 0;
-        display: none;
-      }
-      .timer-display.active {
-        display: block;
-      }
-      .timer-display .time {
-        font-size: 28px;
-        font-weight: 800;
-        font-variant-numeric: tabular-nums;
-      }
-      .timer-display .earnings {
-        font-size: 18px;
-        font-weight: 700;
-        color: #fff;
-        margin-top: 4px;
-      }
-
-      /* ===== NOTIFICATION ===== */
-      .notification {
-        padding: 15px 20px;
-        border-radius: 16px;
-        margin-bottom: 20px;
-        display: none;
-        font-weight: 500;
-      }
-      .notification.show {
-        display: block;
-      }
-      .notification.success {
-        background: #e8f5e9;
-        color: #1b5e20;
-        border-left: 5px solid #2e7d32;
-      }
-      .notification.error {
-        background: #fce4ec;
-        color: #b71c1c;
-        border-left: 5px solid #c62828;
-      }
-      .notification.info {
-        background: #e3f2fd;
-        color: #0d47a1;
-        border-left: 5px solid #0d47a1;
-      }
-
-      /* ===== EARNINGS SUMMARY ===== */
-      .earnings-summary {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
-        margin-top: 10px;
-      }
-      .earnings-summary .stat-box {
-        background: #f8fafc;
-        padding: 15px;
-        border-radius: 12px;
-        text-align: center;
-      }
-      .earnings-summary .stat-box .num {
-        font-size: 24px;
-        font-weight: 800;
-        color: #f5c842;
-      }
-      .earnings-summary .stat-box .label {
-        font-size: 13px;
-        color: #888;
-      }
-
-      /* ===== FOOTER ===== */
-      .footer {
-        background: #0d1b2a;
-        color: #aaa;
-        text-align: center;
-        padding: 20px;
-        margin-top: 30px;
-        border-radius: 20px 20px 0 0;
-      }
-      .footer .founder {
-        color: #f5c842;
-        font-weight: 600;
-      }
-
-      /* ===== RESPONSIVE ===== */
-      @media (max-width: 768px) {
         .topbar {
-          flex-direction: column;
-          gap: 12px;
-          text-align: center;
-          padding: 15px;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
+        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .user-info {
-          justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
         }
+        .topbar .user-info .greeting { color: #ddd; font-size: 14px; }
+        .topbar .user-info .greeting strong { color: #f5c842; font-weight: 700; }
+        .topbar .user-info .balance-badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #f5c842;
+        }
+        .topbar .user-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
+        .topbar .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .topbar .back-btn:hover { background: rgba(255,255,255,0.2); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 25px 20px; }
         .card {
-          padding: 18px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.03);
         }
+        .card h2 { font-size: 24px; font-weight: 700; color: #0d1b2a; margin-bottom: 6px; }
+        .card .subtitle { color: #888; font-size: 15px; margin-bottom: 20px; }
+
         .video-task {
-          padding: 15px;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            border: 1px solid #e8ecf0;
+            transition: 0.3s;
         }
-        .video-task .task-meta {
-          font-size: 13px;
-          gap: 12px;
+        .video-task:hover { border-color: #f5c842; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+        .video-task .task-title { font-size: 18px; font-weight: 700; color: #0d1b2a; }
+        .video-task .task-meta { display: flex; gap: 20px; flex-wrap: wrap; margin: 8px 0 4px; font-size: 14px; color: #555; }
+        .video-task .task-meta .duration { color: #f5c842; font-weight: 600; }
+        .video-task .task-meta .reward { color: #2e7d32; font-weight: 600; }
+        .video-task .task-instruction {
+            font-size: 14px;
+            color: #555;
+            margin: 8px 0 12px;
+            padding: 10px 16px;
+            background: #fff3e0;
+            border-radius: 8px;
+            border-left: 4px solid #e65100;
         }
-        .timer-display .time {
-          font-size: 22px;
+        .video-task .btn-watch {
+            background: #0d1b2a;
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
         }
+        .video-task .btn-watch:hover { background: #1b3a5c; transform: scale(1.02); }
+        .video-task .btn-watch:disabled { background: #888; cursor: not-allowed; transform: none; }
+        .video-task .btn-watch.watching { background: #e65100; animation: pulse 1.5s infinite; }
+        .video-task .btn-watch.completed { background: #2e7d32; }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .timer-display {
+            background: #0d1b2a;
+            color: #f5c842;
+            padding: 20px 25px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+        }
+        .timer-display.active { display: block; }
+        .timer-display .time { font-size: 32px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .timer-display .earnings { font-size: 20px; font-weight: 700; color: #fff; margin-top: 6px; }
+        .timer-display .stop-btn {
+            background: #c62828;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.3s;
+        }
+        .timer-display .stop-btn:hover { background: #b71c1c; }
+
+        .notification {
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+        .notification.show { display: block; }
+        .notification.success { background: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
+        .notification.error { background: #fce4ec; color: #b71c1c; border-left: 5px solid #c62828; }
+        .notification.info { background: #e3f2fd; color: #0d47a1; border-left: 5px solid #0d47a1; }
+
         .earnings-summary {
-          grid-template-columns: repeat(2, 1fr);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
         }
-      }
+        .earnings-summary .stat-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .earnings-summary .stat-box .num { font-size: 24px; font-weight: 800; color: #f5c842; }
+        .earnings-summary .stat-box .label { font-size: 13px; color: #888; }
+
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder { color: #f5c842; font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
+            .topbar .user-info { justify-content: center; }
+            .card { padding: 18px; }
+            .video-task { padding: 15px; }
+            .video-task .task-meta { font-size: 13px; gap: 12px; }
+            .timer-display .time { font-size: 24px; }
+            .earnings-summary { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
-  </head>
-  <body>
-    <!-- ===== TOP BAR ===== -->
+</head>
+<body>
+
     <div class="topbar">
-      <div class="logo">
-        <span class="play-icon">▶</span>Cash<span>Vista</span>
-      </div>
-      <div class="user-info">
-        <span class="greeting"
-          >👋 Welcome, <strong id="userName">User</strong></span
-        >
-        <span class="balance-badge"
-          >💰 <span id="userBalance">₦0.00</span></span
-        >
-        <a href="dashboard.html" class="back-btn">← Dashboard</a>
-        <button class="logout" onclick="logout()">🚪 Logout</button>
-      </div>
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="user-info">
+            <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
+            <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
+            <a href="dashboard.html" class="back-btn">← Dashboard</a>
+            <button class="logout" onclick="logout()">🚪 Logout</button>
+        </div>
     </div>
 
     <div class="container">
-      <!-- ===== NOTIFICATION ===== -->
-      <div id="notification" class="notification">
-        <span id="notificationMessage">Welcome to Watch & Earn!</span>
-      </div>
 
-      <!-- ===== AVAILABLE TASKS ===== -->
-      <div class="card">
-        <h2>📺 Available Video Tasks</h2>
-        <p class="subtitle">
-          Watch videos and earn ₦1 per second. Complete the instructions to get
-          credited.
-        </p>
-
-        <div id="taskList">
-          <!-- Tasks will be loaded here -->
-          <p style="color: #888; text-align: center; padding: 20px">
-            Loading tasks...
-          </p>
+        <div id="notification" class="notification">
+            <span id="notificationMessage">Welcome to Watch & Earn!</span>
         </div>
 
-        <!-- ===== TIMER DISPLAY ===== -->
-        <div id="timerDisplay" class="timer-display">
-          <div class="time" id="timerTime">00:00</div>
-          <div class="earnings">
-            💰 Earnings: <span id="timerEarnings">₦0.00</span>
-          </div>
-          <button
-            class="btn-watch"
-            onclick="stopWatching()"
-            style="
-              background: #c62828;
-              margin-top: 10px;
-              padding: 6px 20px;
-              font-size: 13px;
-            "
-          >
-            ⏹ Stop & Claim
-          </button>
+        <div class="card">
+            <h2>📺 Available Video Tasks</h2>
+            <p class="subtitle">Watch videos and earn ₦1 per second. Complete the instructions to get credited.</p>
+            <div id="taskList">
+                <p style="color:#888; text-align:center; padding:20px;">Loading tasks...</p>
+            </div>
+            <div id="timerDisplay" class="timer-display">
+                <div class="time" id="timerTime">00:00</div>
+                <div class="earnings">💰 Earnings: <span id="timerEarnings">₦0.00</span></div>
+                <button class="stop-btn" onclick="stopWatching()">⏹ Stop & Claim Earnings</button>
+            </div>
         </div>
-      </div>
 
-      <!-- ===== EARNINGS SUMMARY ===== -->
-      <div class="card">
-        <h3>📊 Your Earnings Summary</h3>
-        <div class="earnings-summary">
-          <div class="stat-box">
-            <div class="num" id="todayEarnings">₦0</div>
-            <div class="label">Today's Earnings</div>
-          </div>
-          <div class="stat-box">
-            <div class="num" id="totalWatchEarnings">₦0</div>
-            <div class="label">Total Watch Earnings</div>
-          </div>
-          <div class="stat-box">
-            <div class="num" id="videosWatched">0</div>
-            <div class="label">Videos Watched</div>
-          </div>
+        <div class="card">
+            <h3>📊 Your Earnings Summary</h3>
+            <div class="earnings-summary">
+                <div class="stat-box"><div class="num" id="todayEarnings">₦0</div><div class="label">Today's Earnings</div></div>
+                <div class="stat-box"><div class="num" id="totalWatchEarnings">₦0</div><div class="label">Total Watch Earnings</div></div>
+                <div class="stat-box"><div class="num" id="videosWatched">0</div><div class="label">Videos Watched</div></div>
+            </div>
         </div>
-      </div>
+
     </div>
 
-    <!-- ===== FOOTER ===== -->
     <footer class="footer">
-      <p>&copy; 2026 CashVista. All rights reserved.</p>
-      <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      // =============================================
-      // GET LOGGED-IN USER
-      // =============================================
-      function getLoggedInUser() {
-        const userEmail = sessionStorage.getItem('userEmail');
-        if (!userEmail) {
-          window.location.href = 'login.html';
-          return null;
-        }
-        try {
-          const users = JSON.parse(
-            localStorage.getItem('cashvista_users') || '[]'
-          );
-          const user = users.find((u) => u.email === userEmail);
-          if (!user) {
-            window.location.href = 'login.html';
-            return null;
-          }
-          return user;
-        } catch (e) {
-          window.location.href = 'login.html';
-          return null;
-        }
-      }
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      let currentUser = null;
-      let watchTimer = null;
-      let watchStartTime = null;
-      let isWatching = false;
-      let currentTaskId = null;
-      let earningsData = {
-        today: 0,
-        total: 0,
-        count: 0,
-      };
+        let currentUser = null;
+        let watchTimer = null;
+        let watchStartTime = null;
+        let isWatching = false;
+        let currentTaskId = null;
+        let currentTaskLink = null;
+        let earningsData = { today: 0, total: 0, count: 0 };
 
-      // =============================================
-      // LOAD PAGE
-      // =============================================
-      document.addEventListener('DOMContentLoaded', function () {
-        currentUser = getLoggedInUser();
-        if (!currentUser) return;
-
-        document.getElementById('userName').textContent =
-          currentUser.name || 'User';
-        document.getElementById('userBalance').textContent =
-          '₦' + (currentUser.balance || 0).toLocaleString();
-
-        loadEarningsSummary();
-        loadTasks();
-      });
-
-      // =============================================
-      // LOAD TASKS
-      // =============================================
-      function loadTasks() {
-        // Get approved campaigns from localStorage
-        const campaigns = JSON.parse(
-          localStorage.getItem('cashvista_campaigns') || '[]'
-        );
-        const approvedCampaigns = campaigns.filter(
-          (c) => c.status === 'approved' || c.status === 'live'
-        );
-
-        const taskList = document.getElementById('taskList');
-
-        if (approvedCampaigns.length === 0) {
-          taskList.innerHTML = `
-                    <div style="text-align:center; padding:30px; color:#888;">
-                        <div style="font-size:48px; margin-bottom:10px;">📭</div>
-                        <p>No video tasks available right now.</p>
-                        <p style="font-size:13px;">Check back later for new videos to watch and earn!</p>
-                    </div>
-                `;
-          return;
+        async function getLoggedInUser() {
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (!userEmail) { window.location.href = 'login.html'; return null; }
+            try {
+                const { data, error } = await supabase.from('users').select('*').eq('email', userEmail).single();
+                if (error || !data) { window.location.href = 'login.html'; return null; }
+                return data;
+            } catch (e) { window.location.href = 'login.html'; return null; }
         }
 
-        taskList.innerHTML = approvedCampaigns
-          .map(
-            (campaign, index) => `
-                <div class="video-task" id="task-${campaign.id}">
-                    <div class="task-title">${campaign.title}</div>
-                    <div class="task-meta">
-                        <span class="duration">⏱️ Duration: ${getRandomDuration()} minutes</span>
-                        <span class="reward">💰 Reward: ₦${getRandomReward()}</span>
-                    </div>
-                    <div class="task-instruction">
-                        📋 <strong>Instruction:</strong> Watch the video, like, follow, and subscribe to the channel.
-                    </div>
-                    <button class="btn-watch" id="watchBtn-${
-                      campaign.id
-                    }" onclick="startWatching('${campaign.id}', '${
-              campaign.link
-            }')">
-                        ▶️ Watch Video
-                    </button>
-                </div>
-            `
-          )
-          .join('');
-      }
-
-      // =============================================
-      // HELPER FUNCTIONS FOR DEMO DATA
-      // =============================================
-      function getRandomDuration() {
-        const durations = [2, 3, 5, 8, 10];
-        return durations[Math.floor(Math.random() * durations.length)];
-      }
-
-      function getRandomReward() {
-        const rewards = [120, 180, 300, 480, 600];
-        return rewards[Math.floor(Math.random() * rewards.length)];
-      }
-
-      // =============================================
-      // START WATCHING
-      // =============================================
-      function startWatching(taskId, videoLink) {
-        if (isWatching) {
-          showNotification(
-            '⚠️ You are already watching a video. Finish it first.',
-            'error'
-          );
-          return;
-        }
-
-        // Open video in new tab
-        window.open(videoLink, '_blank');
-
-        // Start timer
-        isWatching = true;
-        currentTaskId = taskId;
-        watchStartTime = Date.now();
-
-        // Update button
-        const btn = document.getElementById('watchBtn-' + taskId);
-        if (btn) {
-          btn.textContent = '⏳ Watching...';
-          btn.disabled = true;
-          btn.className = 'btn-watch watching';
-        }
-
-        // Show timer
-        const timerDisplay = document.getElementById('timerDisplay');
-        timerDisplay.classList.add('active');
-        document.getElementById('timerTime').textContent = '00:00';
-        document.getElementById('timerEarnings').textContent = '₦0.00';
-
-        // Start timer update
-        watchTimer = setInterval(updateTimer, 1000);
-
-        showNotification(
-          '▶️ Video opened in new tab. Watch and come back to claim your earnings!',
-          'info'
-        );
-      }
-
-      // =============================================
-      // UPDATE TIMER
-      // =============================================
-      function updateTimer() {
-        if (!watchStartTime) return;
-
-        const elapsedSeconds = Math.floor((Date.now() - watchStartTime) / 1000);
-        const minutes = Math.floor(elapsedSeconds / 60);
-        const seconds = elapsedSeconds % 60;
-
-        document.getElementById('timerTime').textContent =
-          String(minutes).padStart(2, '0') +
-          ':' +
-          String(seconds).padStart(2, '0');
-
-        // Calculate earnings: ₦1 per second
-        const earnings = elapsedSeconds;
-        document.getElementById('timerEarnings').textContent =
-          '₦' + earnings.toFixed(0);
-      }
-
-      // =============================================
-      // STOP WATCHING & CLAIM
-      // =============================================
-      function stopWatching() {
-        if (!isWatching) {
-          showNotification('⚠️ You are not watching any video.', 'error');
-          return;
-        }
-
-        const elapsedSeconds = Math.floor((Date.now() - watchStartTime) / 1000);
-        const earnings = elapsedSeconds; // ₦1 per second
-
-        if (elapsedSeconds < 5) {
-          showNotification(
-            '⚠️ You watched for less than 5 seconds. Watch longer to earn!',
-            'error'
-          );
-          resetWatchState();
-          return;
-        }
-
-        // Credit earnings to user
-        creditEarnings(earnings);
-
-        // Reset state
-        resetWatchState();
-
-        showNotification(
-          '✅ You earned ₦' + earnings + ' from watching this video!',
-          'success'
-        );
-
-        // Update balance display
-        document.getElementById('userBalance').textContent =
-          '₦' + (currentUser.balance || 0).toLocaleString();
-
-        // Update earnings summary
-        loadEarningsSummary();
-
-        // Mark task as completed
-        markTaskCompleted(currentTaskId);
-      }
-
-      // =============================================
-      // CREDIT EARNINGS
-      // =============================================
-      function creditEarnings(amount) {
-        // Update user balance in localStorage
-        let users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-        const index = users.findIndex((u) => u.email === currentUser.email);
-
-        if (index !== -1) {
-          users[index].balance = (users[index].balance || 0) + amount;
-          users[index].totalEarned = (users[index].totalEarned || 0) + amount;
-          localStorage.setItem('cashvista_users', JSON.stringify(users));
-
-          // Update current user object
-          currentUser = users[index];
-        }
-
-        // Add transaction
-        let transactions = JSON.parse(
-          localStorage.getItem('cashvista_transactions') || '[]'
-        );
-        transactions.push({
-          userEmail: currentUser.email,
-          type: 'video_earning',
-          amount: amount,
-          description: 'Video watching earnings',
-          date: new Date().toISOString(),
+        document.addEventListener('DOMContentLoaded', async function() {
+            currentUser = await getLoggedInUser();
+            if (!currentUser) return;
+            document.getElementById('userName').textContent = currentUser.name || 'User';
+            document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
+            loadEarningsSummary();
+            loadTasks();
         });
-        localStorage.setItem(
-          'cashvista_transactions',
-          JSON.stringify(transactions)
-        );
 
-        // Add activity
-        addActivity(
-          currentUser.name,
-          'Watched video and earned ₦' + amount,
-          amount
-        );
-      }
+        async function loadTasks() {
+            try {
+                const { data: campaigns, error } = await supabase
+                    .from('campaigns')
+                    .select('*')
+                    .eq('status', 'live')
+                    .order('created_at', { ascending: false });
 
-      // =============================================
-      // MARK TASK COMPLETED
-      // =============================================
-      function markTaskCompleted(taskId) {
-        // In production, this would mark the task as completed for the user
-        // For demo, we just show a message
-        console.log('Task ' + taskId + ' completed');
-      }
+                const taskList = document.getElementById('taskList');
 
-      // =============================================
-      // RESET WATCH STATE
-      // =============================================
-      function resetWatchState() {
-        isWatching = false;
-        currentTaskId = null;
-        watchStartTime = null;
+                if (error || !campaigns || campaigns.length === 0) {
+                    taskList.innerHTML = `
+                        <div style="text-align:center; padding:30px; color:#888;">
+                            <div style="font-size:48px; margin-bottom:10px;">📭</div>
+                            <p>No video tasks available right now.</p>
+                            <p style="font-size:13px;">Check back later for new videos to watch and earn!</p>
+                        </div>
+                    `;
+                    return;
+                }
 
-        if (watchTimer) {
-          clearInterval(watchTimer);
-          watchTimer = null;
+                // Filter tasks that user hasn't completed
+                const { data: completions } = await supabase
+                    .from('task_completions')
+                    .select('campaign_id')
+                    .eq('user_email', currentUser.email);
+
+                const completedIds = completions ? completions.map(c => c.campaign_id) : [];
+
+                const availableCampaigns = campaigns.filter(c => !completedIds.includes(c.id));
+
+                if (availableCampaigns.length === 0) {
+                    taskList.innerHTML = `
+                        <div style="text-align:center; padding:30px; color:#888;">
+                            <div style="font-size:48px; margin-bottom:10px;">✅</div>
+                            <p>You've completed all available tasks!</p>
+                            <p style="font-size:13px;">Check back later for new videos.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const duration = 5; // default 5 minutes
+                taskList.innerHTML = availableCampaigns.map(campaign => `
+                    <div class="video-task" id="task-${campaign.id}">
+                        <div class="task-title">${campaign.title}</div>
+                        <div class="task-meta">
+                            <span class="duration">⏱️ Duration: ${duration} minutes</span>
+                            <span class="reward">💰 Reward: ₦${duration * 60}</span>
+                        </div>
+                        <div class="task-instruction">
+                            📋 <strong>Instruction:</strong> Watch the video, like, follow, and subscribe to the channel.
+                        </div>
+                        <button class="btn-watch" id="watchBtn-${campaign.id}" onclick="startWatching('${campaign.id}', '${campaign.video_link}')">
+                            ▶️ Watch Video
+                        </button>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
         }
 
-        // Reset button
-        if (currentTaskId) {
-          const btn = document.getElementById('watchBtn-' + currentTaskId);
-          if (btn) {
-            btn.textContent = '✅ Watched';
-            btn.disabled = true;
-            btn.className = 'btn-watch';
-            btn.style.background = '#2e7d32';
-          }
+        function startWatching(taskId, videoLink) {
+            if (isWatching) {
+                showNotification('⚠️ You are already watching a video. Finish it first.', 'error');
+                return;
+            }
+
+            window.open(videoLink, '_blank');
+
+            isWatching = true;
+            currentTaskId = taskId;
+            currentTaskLink = videoLink;
+            watchStartTime = Date.now();
+
+            const btn = document.getElementById('watchBtn-' + taskId);
+            if (btn) {
+                btn.textContent = '⏳ Watching...';
+                btn.disabled = true;
+                btn.className = 'btn-watch watching';
+            }
+
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerDisplay.classList.add('active');
+            document.getElementById('timerTime').textContent = '00:00';
+            document.getElementById('timerEarnings').textContent = '₦0.00';
+
+            if (watchTimer) clearInterval(watchTimer);
+            watchTimer = setInterval(updateTimer, 1000);
+
+            showNotification('▶️ Video opened in new tab. Watch and come back to claim your earnings!', 'info');
         }
 
-        // Hide timer
-        document.getElementById('timerDisplay').classList.remove('active');
-      }
-
-      // =============================================
-      // LOAD EARNINGS SUMMARY
-      // =============================================
-      function loadEarningsSummary() {
-        try {
-          const users = JSON.parse(
-            localStorage.getItem('cashvista_users') || '[]'
-          );
-          const user = users.find((u) => u.email === currentUser?.email);
-
-          if (user) {
-            document.getElementById('totalWatchEarnings').textContent =
-              '₦' + (user.totalEarned || 0).toLocaleString();
-            document.getElementById('videosWatched').textContent =
-              user.videosWatched || 0;
-          }
-
-          // Today's earnings (from transactions)
-          const transactions = JSON.parse(
-            localStorage.getItem('cashvista_transactions') || '[]'
-          );
-          const today = new Date().toDateString();
-          const todayEarnings = transactions
-            .filter(
-              (t) =>
-                t.userEmail === currentUser?.email && t.type === 'video_earning'
-            )
-            .filter((t) => new Date(t.date).toDateString() === today)
-            .reduce((sum, t) => sum + t.amount, 0);
-
-          document.getElementById('todayEarnings').textContent =
-            '₦' + todayEarnings.toLocaleString();
-
-          // Also update total watch earnings from transactions
-          const totalWatchEarnings = transactions
-            .filter(
-              (t) =>
-                t.userEmail === currentUser?.email && t.type === 'video_earning'
-            )
-            .reduce((sum, t) => sum + t.amount, 0);
-
-          document.getElementById('totalWatchEarnings').textContent =
-            '₦' + totalWatchEarnings.toLocaleString();
-        } catch (e) {
-          console.log('Error loading earnings summary:', e);
+        function updateTimer() {
+            if (!watchStartTime) return;
+            const elapsedSeconds = Math.floor((Date.now() - watchStartTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            document.getElementById('timerTime').textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            const earnings = elapsedSeconds;
+            document.getElementById('timerEarnings').textContent = '₦' + earnings.toFixed(0);
         }
-      }
 
-      // =============================================
-      // ADD ACTIVITY
-      // =============================================
-      function addActivity(user, action, amount = 0) {
-        const activity = JSON.parse(
-          localStorage.getItem('cashvista_activity') || '[]'
-        );
-        activity.unshift({
-          user: user,
-          action: action,
-          amount: amount,
-          date: new Date().toLocaleString(),
-        });
-        if (activity.length > 100) activity.pop();
-        localStorage.setItem('cashvista_activity', JSON.stringify(activity));
-      }
+        async function stopWatching() {
+            if (!isWatching) {
+                showNotification('⚠️ You are not watching any video.', 'error');
+                return;
+            }
 
-      // =============================================
-      // NOTIFICATION SYSTEM
-      // =============================================
-      function showNotification(message, type) {
-        const el = document.getElementById('notification');
-        const msg = document.getElementById('notificationMessage');
-        el.className = 'notification show ' + (type || 'info');
-        msg.textContent = message;
-        setTimeout(() => {
-          el.classList.remove('show');
-        }, 5000);
-      }
+            const elapsedSeconds = Math.floor((Date.now() - watchStartTime) / 1000);
 
-      // =============================================
-      // LOGOUT
-      // =============================================
-      function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-          sessionStorage.removeItem('userEmail');
-          window.location.href = 'login.html';
+            if (elapsedSeconds < 5) {
+                showNotification('⚠️ You watched for less than 5 seconds. Watch longer to earn!', 'error');
+                resetWatchState();
+                return;
+            }
+
+            await creditEarnings(elapsedSeconds);
+
+            // Mark task as completed
+            await supabase.from('task_completions').insert([{
+                user_email: currentUser.email,
+                campaign_id: currentTaskId,
+                seconds_watched: elapsedSeconds,
+                amount_earned: elapsedSeconds,
+                completed_at: new Date().toISOString()
+            }]);
+
+            showNotification('✅ You earned ₦' + elapsedSeconds + ' from watching this video!', 'success');
+            resetWatchState();
+            document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
+            loadEarningsSummary();
+            loadTasks();
         }
-      }
 
-      // =============================================
-      // UPDATE BALANCE DISPLAY
-      // =============================================
-      function updateBalanceDisplay() {
-        const users = JSON.parse(
-          localStorage.getItem('cashvista_users') || '[]'
-        );
-        const user = users.find((u) => u.email === currentUser?.email);
-        if (user) {
-          document.getElementById('userBalance').textContent =
-            '₦' + (user.balance || 0).toLocaleString();
+        async function creditEarnings(amount) {
+            const { error } = await supabase
+                .from('users')
+                .update({ balance: (currentUser.balance || 0) + amount, total_earned: (currentUser.total_earned || 0) + amount })
+                .eq('email', currentUser.email);
+
+            if (error) {
+                console.error('Error crediting earnings:', error);
+                return;
+            }
+
+            currentUser.balance = (currentUser.balance || 0) + amount;
+            currentUser.total_earned = (currentUser.total_earned || 0) + amount;
+
+            await supabase.from('activity').insert([{
+                user_name: currentUser.name,
+                action: 'Watched video - earned ₦' + amount,
+                amount: amount,
+                date: new Date().toISOString()
+            }]);
         }
-      }
 
-      // Call updateBalanceDisplay periodically to refresh
-      setInterval(updateBalanceDisplay, 5000);
+        function resetWatchState() {
+            isWatching = false;
+            currentTaskId = null;
+            watchStartTime = null;
+            if (watchTimer) { clearInterval(watchTimer); watchTimer = null; }
+
+            if (currentTaskId) {
+                const btn = document.getElementById('watchBtn-' + currentTaskId);
+                if (btn) {
+                    btn.textContent = '✅ Completed';
+                    btn.disabled = true;
+                    btn.className = 'btn-watch completed';
+                }
+            }
+            document.getElementById('timerDisplay').classList.remove('active');
+        }
+
+        async function loadEarningsSummary() {
+            try {
+                const { data: transactions } = await supabase
+                    .from('task_completions')
+                    .select('*')
+                    .eq('user_email', currentUser.email);
+
+                const today = new Date().toDateString();
+                const todayEarnings = transactions ? transactions.filter(t => new Date(t.completed_at).toDateString() === today).reduce((sum, t) => sum + t.amount_earned, 0) : 0;
+                const totalEarnings = transactions ? transactions.reduce((sum, t) => sum + t.amount_earned, 0) : 0;
+
+                document.getElementById('todayEarnings').textContent = '₦' + todayEarnings.toLocaleString();
+                document.getElementById('totalWatchEarnings').textContent = '₦' + totalEarnings.toLocaleString();
+                document.getElementById('videosWatched').textContent = transactions ? transactions.length : 0;
+
+            } catch (e) { console.error('Error loading earnings summary:', e); }
+        }
+
+        function showNotification(message, type) {
+            const el = document.getElementById('notification');
+            const msg = document.getElementById('notificationMessage');
+            el.className = 'notification show ' + (type || 'info');
+            msg.textContent = message;
+            setTimeout(() => { el.classList.remove('show'); }, 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('userEmail');
+                window.location.href = 'login.html';
+            }
+        }
     </script>
-  </body>
+</body>
 </html>
