@@ -546,13 +546,13 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD - FIXED VERSION
+        // FETCH ALL DATA AND RENDER DASHBOARD
         // =============================================
         async function renderDashboard() {
             try {
                 console.log('🔄 Loading dashboard...');
 
-                // --- FETCH ALL USERS ---
+                // --- 1. FETCH ALL USERS ---
                 const { data: users, error: usersError } = await supabase
                     .from('users')
                     .select('*')
@@ -562,7 +562,7 @@
                     console.error('Error fetching users:', usersError);
                 }
 
-                // --- FETCH ALL CAMPAIGNS ---
+                // --- 2. FETCH ALL CAMPAIGNS ---
                 const { data: campaigns, error: campaignsError } = await supabase
                     .from('campaigns')
                     .select('*')
@@ -572,7 +572,7 @@
                     console.error('Error fetching campaigns:', campaignsError);
                 }
 
-                // --- FETCH ALL INVEST MEMBERS ---
+                // --- 3. FETCH ALL INVEST MEMBERS ---
                 const { data: investMembers, error: investError } = await supabase
                     .from('invest_members')
                     .select('*')
@@ -582,7 +582,7 @@
                     console.error('Error fetching invest members:', investError);
                 }
 
-                // --- FETCH ALL WITHDRAWALS ---
+                // --- 4. FETCH ALL WITHDRAWALS ---
                 const { data: withdrawals, error: withdrawError } = await supabase
                     .from('withdrawals')
                     .select('*')
@@ -592,7 +592,7 @@
                     console.error('Error fetching withdrawals:', withdrawError);
                 }
 
-                // --- FETCH ALL ACTIVITY ---
+                // --- 5. FETCH ALL ACTIVITY ---
                 const { data: activity, error: activityError } = await supabase
                     .from('activity')
                     .select('*')
@@ -603,7 +603,7 @@
                     console.error('Error fetching activity:', activityError);
                 }
 
-                // --- FETCH ALL BATCHES ---
+                // --- 6. FETCH ALL BATCHES ---
                 const { data: batches, error: batchesError } = await supabase
                     .from('batches')
                     .select('*')
@@ -612,6 +612,14 @@
                 if (batchesError) {
                     console.error('Error fetching batches:', batchesError);
                 }
+
+                // --- LOG DATA ---
+                console.log('✅ Users:', users?.length || 0);
+                console.log('✅ Campaigns:', campaigns?.length || 0);
+                console.log('✅ Invest Members:', investMembers?.length || 0);
+                console.log('✅ Withdrawals:', withdrawals?.length || 0);
+                console.log('✅ Activity:', activity?.length || 0);
+                console.log('✅ Batches:', batches?.length || 0);
 
                 // --- CALCULATE STATS ---
                 const totalUsers = users ? users.length : 0;
@@ -637,7 +645,7 @@
                     }
                 }).length : 0;
 
-                // --- UPDATE STATS ---
+                // --- UPDATE STATS CARDS ---
                 document.getElementById('totalUsers').textContent = totalUsers;
                 document.getElementById('totalRevenue').textContent = '₦' + (totalUsers * 5000).toLocaleString();
                 document.getElementById('totalWallet').textContent = '₦' + totalWallet.toLocaleString();
@@ -856,10 +864,10 @@
                     batchesContainer.innerHTML = html;
                 }
 
-                // Populate dropdowns for assignment
+                // --- POPULATE DROPDOWNS ---
                 populateAssignDropdowns(campaigns, batches);
 
-                console.log('✅ Dashboard updated!');
+                console.log('✅ Dashboard updated successfully!');
 
             } catch (error) {
                 console.error('Error rendering dashboard:', error);
@@ -1051,6 +1059,7 @@
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             renderDashboard();
+            // Auto-refresh every 10 seconds
             setInterval(renderDashboard, 10000);
         });
     </script>
