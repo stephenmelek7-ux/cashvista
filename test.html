@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Connection Test</title>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <div id="result">Loading...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // =============================================
+        // YOUR SUPABASE CREDENTIALS (COPY FROM YOUR CODE)
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '🔄 Testing connection...';
+
+            try {
+                // Try to fetch users
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .limit(5);
+
+                if (error) {
+                    resultDiv.innerHTML = '❌ ERROR: ' + error.message + '<br><br>Check your Supabase URL and API key.';
+                    console.error('Error:', error);
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    resultDiv.innerHTML = '✅ SUCCESS! Found ' + data.length + ' users.<br><br>';
+                    data.forEach((user, index) => {
+                        resultDiv.innerHTML += (index + 1) + '. ' + user.name + ' (' + user.email + ')<br>';
+                    });
+                } else {
+                    resultDiv.innerHTML = '✅ Connection successful! But no users found.';
+                }
+
+            } catch (e) {
+                resultDiv.innerHTML = '❌ ERROR: ' + e.message;
+                console.error('Error:', e);
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+</html>
