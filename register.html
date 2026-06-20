@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
             display: flex;
             justify-content: center;
@@ -29,6 +30,7 @@
             color: #0d1b2a;
         }
         .register-container .logo span { color: #f5c842; }
+        .register-container .logo .play-icon { color: #f5c842; }
         .register-container .subtitle {
             text-align: center;
             color: #888;
@@ -49,6 +51,14 @@
             border-radius: 12px;
             font-size: 15px;
             margin-top: 5px;
+            transition: 0.3s;
+            background: #fafbfc;
+        }
+        .register-container input:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
         }
         .register-container .btn {
             background: #f5c842;
@@ -61,6 +71,7 @@
             width: 100%;
             margin-top: 20px;
             cursor: pointer;
+            transition: 0.3s;
         }
         .register-container .btn:hover { background: #e6b800; }
         .register-container .links {
@@ -74,6 +85,14 @@
             font-weight: 600;
             text-decoration: none;
         }
+        .register-container .links a:hover { color: #f5c842; }
+        .footer-credit {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .footer-credit .founder { color: #f5c842; }
         .notification {
             padding: 12px 16px;
             border-radius: 12px;
@@ -100,19 +119,15 @@
             display: block;
             border-left: 4px solid #0d47a1;
         }
-        .footer-credit {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #aaa;
+        @media (max-width: 480px) {
+            .register-container { padding: 25px 20px; margin: 10px; }
         }
-        .footer-credit .founder { color: #f5c842; }
     </style>
 </head>
 <body>
     <div class="register-container">
         <div class="logo">
-            <span>▶</span>Cash<span>Vista</span>
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
         </div>
         <p class="subtitle">Create your free account</p>
         <div id="notification" class="notification"></div>
@@ -135,13 +150,85 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // =============================================
-        // SUPABASE CONFIGURATION - CORRECT KEYS
-        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // =============================================
+        // ASSIGN USER TO BATCH
+        // =============================================
+        async function assignUserToBatch(email) {
+            try {
+                // Get all users count to determine batch
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('id')
+                    .order('joined_date', { ascending: true });
+
+                if (error) {
+                    console.error('Error fetching users:', error);
+                    return null;
+                }
+
+                const totalUsers = users ? users.length : 0;
+                const batchNumber = Math.floor(totalUsers / 20) + 1;
+                const batchLetter = String.fromCharCode(64 + batchNumber); // A=1, B=2, C=3...
+
+                // Check if batch exists, if not create it
+                const { data: existingBatch, error: batchError } = await supabase
+                    .from('batches')
+                    .select('*')
+                    .eq('name', 'Batch ' + batchLetter)
+                    .maybeSingle();
+
+                let batchId;
+                if (!existingBatch) {
+                    const { data: newBatch, error: createError } = await supabase
+                        .from('batches')
+                        .insert([{
+                            name: 'Batch ' + batchLetter,
+                            batch_number: batchNumber,
+                            created_at: new Date().toISOString()
+                        }])
+                        .select()
+                        .single();
+
+                    if (createError) {
+                        console.error('Error creating batch:', createError);
+                        return null;
+                    }
+                    batchId = newBatch.id;
+                } else {
+                    batchId = existingBatch.id;
+                }
+
+                // Assign user to batch
+                const { error: assignError } = await supabase
+                    .from('user_batches')
+                    .insert([{
+                        user_email: email,
+                        batch_id: batchId,
+                        assigned_at: new Date().toISOString()
+                    }]);
+
+                if (assignError) {
+                    console.error('Error assigning user to batch:', assignError);
+                    return null;
+                }
+
+                return 'Batch ' + batchLetter;
+
+            } catch (error) {
+                console.error('Error in assignUserToBatch:', error);
+                return null;
+            }
+        }
+
+        // =============================================
+        // REGISTER FORM SUBMIT
+        // =============================================
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -173,32 +260,22 @@
                 notification.textContent = '⏳ Creating your account...';
 
                 // Check if user exists
-                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
+                const { data: existing } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('email', email)
+                    .maybeSingle();
 
-                const existingUsers = await checkResponse.json();
-
-                if (existingUsers && existingUsers.length > 0) {
+                if (existing) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ This email is already registered. Please login.';
                     return;
                 }
 
-                // Create user
-                const response = await fetch(SUPABASE_URL + '/rest/v1/users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({
+                // Save user
+                const { error: insertError } = await supabase
+                    .from('users')
+                    .insert([{
                         name: name,
                         email: email,
                         phone: phone || '',
@@ -210,18 +287,31 @@
                         is_invest_member: false,
                         is_active: true,
                         joined_date: new Date().toISOString()
-                    })
-                });
+                    }]);
 
-                if (!response.ok) {
+                if (insertError) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Registration failed. Please try again.';
+                    notification.textContent = '❌ ' + insertError.message;
                     return;
                 }
 
+                // Assign user to batch
+                const batch = await assignUserToBatch(email);
+
                 sessionStorage.setItem('userEmail', email);
+
                 notification.className = 'notification success';
-                notification.textContent = '✅ Account created! Redirecting...';
+                notification.textContent = '✅ Account created! Assigned to ' + batch + '. Redirecting...';
+
+                // Add activity
+                await supabase
+                    .from('activity')
+                    .insert([{
+                        user_name: name,
+                        action: 'Registered - ' + batch,
+                        amount: 0,
+                        date: new Date().toISOString()
+                    }]);
 
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
@@ -229,8 +319,7 @@
 
             } catch (error) {
                 notification.className = 'notification error';
-                notification.textContent = '❌ Connection error. Please try again.';
-                console.error('Error:', error);
+                notification.textContent = '❌ ' + error.message;
             }
         });
     </script>
