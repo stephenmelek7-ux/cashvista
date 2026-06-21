@@ -245,30 +245,101 @@
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION - NO DUPLICATE DECLARATION
+        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
         let watchTimer = null;
         let watchStartTime = null;
         let isWatching = false;
         let currentTaskId = null;
-        let currentTaskLink = null;
-        let earningsData = { today: 0, total: 0, count: 0 };
 
-        async function getLoggedInUser() {
-            const userEmail = sessionStorage.getItem('userEmail');
-            if (!userEmail) { window.location.href = 'login.html'; return null; }
+        // =============================================
+        // HELPER FUNCTIONS
+        // =============================================
+        async function fetchSupabase(table, params = '') {
             try {
-                const { data, error } = await supabase.from('users').select('*').eq('email', userEmail).single();
-                if (error || !data) { window.location.href = 'login.html'; return null; }
-                return data;
-            } catch (e) { window.location.href = 'login.html'; return null; }
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Fetch error:', e);
+                return [];
+            }
         }
 
+        async function insertSupabase(table, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Insert error:', e);
+                return false;
+            }
+        }
+
+        async function updateSupabase(table, email, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Update error:', e);
+                return false;
+            }
+        }
+
+        // =============================================
+        // GET LOGGED-IN USER
+        // =============================================
+        async function getLoggedInUser() {
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            try {
+                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(userEmail));
+                if (!users || users.length === 0) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                return users[0];
+            } catch (e) {
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
+
+        // =============================================
+        // LOAD PAGE
+        // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
             currentUser = await getLoggedInUser();
             if (!currentUser) return;
@@ -278,17 +349,16 @@
             loadTasks();
         });
 
+        // =============================================
+        // LOAD TASKS
+        // =============================================
         async function loadTasks() {
             try {
-                const { data: campaigns, error } = await supabase
-                    .from('campaigns')
-                    .select('*')
-                    .eq('status', 'live')
-                    .order('created_at', { ascending: false });
+                const campaigns = await fetchSupabase('campaigns', '?status=live&order=created_at.desc');
 
                 const taskList = document.getElementById('taskList');
 
-                if (error || !campaigns || campaigns.length === 0) {
+                if (!campaigns || campaigns.length === 0) {
                     taskList.innerHTML = `
                         <div style="text-align:center; padding:30px; color:#888;">
                             <div style="font-size:48px; margin-bottom:10px;">📭</div>
@@ -300,11 +370,7 @@
                 }
 
                 // Filter tasks that user hasn't completed
-                const { data: completions } = await supabase
-                    .from('task_completions')
-                    .select('campaign_id')
-                    .eq('user_email', currentUser.email);
-
+                const completions = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(currentUser.email));
                 const completedIds = completions ? completions.map(c => c.campaign_id) : [];
 
                 const availableCampaigns = campaigns.filter(c => !completedIds.includes(c.id));
@@ -320,7 +386,7 @@
                     return;
                 }
 
-                const duration = 5; // default 5 minutes
+                const duration = 5;
                 taskList.innerHTML = availableCampaigns.map(campaign => `
                     <div class="video-task" id="task-${campaign.id}">
                         <div class="task-title">${campaign.title}</div>
@@ -342,6 +408,9 @@
             }
         }
 
+        // =============================================
+        // START WATCHING
+        // =============================================
         function startWatching(taskId, videoLink) {
             if (isWatching) {
                 showNotification('⚠️ You are already watching a video. Finish it first.', 'error');
@@ -352,7 +421,6 @@
 
             isWatching = true;
             currentTaskId = taskId;
-            currentTaskLink = videoLink;
             watchStartTime = Date.now();
 
             const btn = document.getElementById('watchBtn-' + taskId);
@@ -373,6 +441,9 @@
             showNotification('▶️ Video opened in new tab. Watch and come back to claim your earnings!', 'info');
         }
 
+        // =============================================
+        // UPDATE TIMER
+        // =============================================
         function updateTimer() {
             if (!watchStartTime) return;
             const elapsedSeconds = Math.floor((Date.now() - watchStartTime) / 1000);
@@ -383,6 +454,9 @@
             document.getElementById('timerEarnings').textContent = '₦' + earnings.toFixed(0);
         }
 
+        // =============================================
+        // STOP WATCHING & CLAIM
+        // =============================================
         async function stopWatching() {
             if (!isWatching) {
                 showNotification('⚠️ You are not watching any video.', 'error');
@@ -399,14 +473,13 @@
 
             await creditEarnings(elapsedSeconds);
 
-            // Mark task as completed
-            await supabase.from('task_completions').insert([{
+            await insertSupabase('task_completions', {
                 user_email: currentUser.email,
                 campaign_id: currentTaskId,
                 seconds_watched: elapsedSeconds,
                 amount_earned: elapsedSeconds,
                 completed_at: new Date().toISOString()
-            }]);
+            });
 
             showNotification('✅ You earned ₦' + elapsedSeconds + ' from watching this video!', 'success');
             resetWatchState();
@@ -415,28 +488,34 @@
             loadTasks();
         }
 
+        // =============================================
+        // CREDIT EARNINGS
+        // =============================================
         async function creditEarnings(amount) {
-            const { error } = await supabase
-                .from('users')
-                .update({ balance: (currentUser.balance || 0) + amount, total_earned: (currentUser.total_earned || 0) + amount })
-                .eq('email', currentUser.email);
+            const newBalance = (currentUser.balance || 0) + amount;
+            const newTotal = (currentUser.total_earned || 0) + amount;
 
-            if (error) {
-                console.error('Error crediting earnings:', error);
-                return;
+            const success = await updateSupabase('users', currentUser.email, {
+                balance: newBalance,
+                total_earned: newTotal
+            });
+
+            if (success) {
+                currentUser.balance = newBalance;
+                currentUser.total_earned = newTotal;
             }
 
-            currentUser.balance = (currentUser.balance || 0) + amount;
-            currentUser.total_earned = (currentUser.total_earned || 0) + amount;
-
-            await supabase.from('activity').insert([{
+            await insertSupabase('activity', {
                 user_name: currentUser.name,
                 action: 'Watched video - earned ₦' + amount,
                 amount: amount,
                 date: new Date().toISOString()
-            }]);
+            });
         }
 
+        // =============================================
+        // RESET WATCH STATE
+        // =============================================
         function resetWatchState() {
             isWatching = false;
             currentTaskId = null;
@@ -454,12 +533,12 @@
             document.getElementById('timerDisplay').classList.remove('active');
         }
 
+        // =============================================
+        // LOAD EARNINGS SUMMARY
+        // =============================================
         async function loadEarningsSummary() {
             try {
-                const { data: transactions } = await supabase
-                    .from('task_completions')
-                    .select('*')
-                    .eq('user_email', currentUser.email);
+                const transactions = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(currentUser.email));
 
                 const today = new Date().toDateString();
                 const todayEarnings = transactions ? transactions.filter(t => new Date(t.completed_at).toDateString() === today).reduce((sum, t) => sum + t.amount_earned, 0) : 0;
@@ -472,6 +551,9 @@
             } catch (e) { console.error('Error loading earnings summary:', e); }
         }
 
+        // =============================================
+        // NOTIFICATION
+        // =============================================
         function showNotification(message, type) {
             const el = document.getElementById('notification');
             const msg = document.getElementById('notificationMessage');
@@ -480,6 +562,9 @@
             setTimeout(() => { el.classList.remove('show'); }, 5000);
         }
 
+        // =============================================
+        // LOGOUT
+        // =============================================
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
