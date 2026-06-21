@@ -380,11 +380,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION (ONLY ONCE)
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // =============================================
         // CHECK IF USER IS ALREADY LOGGED IN
@@ -392,7 +392,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const userEmail = sessionStorage.getItem('userEmail');
             if (userEmail) {
-                // User is already logged in, redirect to dashboard
                 window.location.href = 'dashboard.html';
             }
         });
@@ -435,8 +434,7 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Logging in...';
 
-                // --- CHECK USER IN SUPABASE ---
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('email', email)
@@ -448,21 +446,18 @@
                     return;
                 }
 
-                // --- CHECK PASSWORD ---
                 if (data.password !== password) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Invalid email or password. Please try again.';
                     return;
                 }
 
-                // --- CHECK IF USER IS ACTIVE ---
                 if (data.is_active === false) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Your account has been suspended. Contact admin.';
                     return;
                 }
 
-                // --- SAVE SESSION ---
                 sessionStorage.setItem('userEmail', email);
                 sessionStorage.setItem('userName', data.name);
 
@@ -485,7 +480,7 @@
         // =============================================
         async function googleLogin() {
             try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
                         redirectTo: window.location.origin + '/dashboard.html'
@@ -502,7 +497,7 @@
         }
 
         // =============================================
-        // FORGOT PASSWORD - OPEN MODAL
+        // FORGOT PASSWORD
         // =============================================
         let resetEmailAddress = '';
 
@@ -520,19 +515,14 @@
             document.getElementById('forgotModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
         document.getElementById('forgotModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeForgotModal();
             }
         });
 
-        // =============================================
-        // SEND RESET CODE
-        // =============================================
         async function sendResetCode() {
             const email = document.getElementById('resetEmail').value.trim();
-            const notification = document.getElementById('notification');
 
             if (!email || !email.includes('@')) {
                 alert('❌ Please enter a valid email address.');
@@ -540,8 +530,7 @@
             }
 
             try {
-                // Check if user exists
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('users')
                     .select('email')
                     .eq('email', email)
@@ -552,26 +541,17 @@
                     return;
                 }
 
-                // Generate 6-digit reset code
                 const resetCode = String(Math.floor(100000 + Math.random() * 900000));
 
-                // Store code in localStorage with expiry (10 minutes)
                 localStorage.setItem('reset_code_' + email, resetCode);
                 localStorage.setItem('reset_code_expiry_' + email, Date.now() + 600000);
 
                 resetEmailAddress = email;
 
-                // In a real app, send email here. For demo, show code in alert.
                 alert('✅ Reset code sent to ' + email + '\n\nYour 6-digit code is: ' + resetCode + '\n\n(This would be sent to your email in production)');
 
-                // Show step 2
                 document.getElementById('forgotStep1').style.display = 'none';
                 document.getElementById('forgotStep2').classList.add('active');
-
-                // Clear any previous notification
-                const notif = document.getElementById('notification');
-                notif.className = 'notification';
-                notif.textContent = '';
 
             } catch (error) {
                 alert('❌ Error sending reset code. Please try again.');
@@ -579,9 +559,6 @@
             }
         }
 
-        // =============================================
-        // RESET PASSWORD
-        // =============================================
         async function resetPassword() {
             const code = document.getElementById('resetCode').value.trim();
             const newPassword = document.getElementById('newPassword').value.trim();
@@ -603,7 +580,6 @@
             }
 
             try {
-                // Verify code
                 const storedCode = localStorage.getItem('reset_code_' + resetEmailAddress);
                 const expiry = localStorage.getItem('reset_code_expiry_' + resetEmailAddress);
 
@@ -624,8 +600,7 @@
                     return;
                 }
 
-                // Update password in Supabase
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('users')
                     .update({ password: newPassword })
                     .eq('email', resetEmailAddress);
@@ -636,7 +611,6 @@
                     return;
                 }
 
-                // Clean up
                 localStorage.removeItem('reset_code_' + resetEmailAddress);
                 localStorage.removeItem('reset_code_expiry_' + resetEmailAddress);
 
@@ -644,7 +618,6 @@
 
                 closeForgotModal();
 
-                // Clear notification
                 const notif = document.getElementById('notification');
                 notif.className = 'notification success';
                 notif.textContent = '✅ Password reset successful! Please login with your new password.';
