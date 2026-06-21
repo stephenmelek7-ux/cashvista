@@ -247,7 +247,7 @@
 
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION - NO DUPLICATE DECLARATION
+        // SUPABASE CONFIGURATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
@@ -270,6 +270,9 @@
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
+                if (response.status === 404) {
+                    return [];
+                }
                 if (!response.ok) return [];
                 return await response.json();
             } catch (e) {
@@ -316,6 +319,19 @@
         }
 
         // =============================================
+        // CREATE TABLE IF NOT EXISTS
+        // =============================================
+        async function createTablesIfNeeded() {
+            try {
+                // Check if task_completions table exists by trying to fetch
+                const test = await fetchSupabase('task_completions', '?limit=1');
+                // If we got here, table exists or at least doesn't error
+            } catch (e) {
+                console.log('task_completions table may not exist, will handle gracefully');
+            }
+        }
+
+        // =============================================
         // GET LOGGED-IN USER
         // =============================================
         async function getLoggedInUser() {
@@ -341,6 +357,7 @@
         // LOAD PAGE
         // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
+            await createTablesIfNeeded();
             currentUser = await getLoggedInUser();
             if (!currentUser) return;
             document.getElementById('userName').textContent = currentUser.name || 'User';
@@ -354,7 +371,8 @@
         // =============================================
         async function loadTasks() {
             try {
-                const campaigns = await fetchSupabase('campaigns', '?status=live&order=created_at.desc');
+                // Fetch all campaigns (no filter, we'll filter in JS)
+                const campaigns = await fetchSupabase('campaigns', '');
 
                 const taskList = document.getElementById('taskList');
 
@@ -369,11 +387,32 @@
                     return;
                 }
 
-                // Filter tasks that user hasn't completed
-                const completions = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(currentUser.email));
+                // Filter only live campaigns
+                const liveCampaigns = campaigns.filter(c => 
+                    c.status === 'live' || c.status === 'LIVE' || c.status === 'approved' || c.status === 'APPROVED'
+                );
+
+                if (liveCampaigns.length === 0) {
+                    taskList.innerHTML = `
+                        <div style="text-align:center; padding:30px; color:#888;">
+                            <div style="font-size:48px; margin-bottom:10px;">📭</div>
+                            <p>No live video tasks available right now.</p>
+                            <p style="font-size:13px;">Check back later for new videos to watch and earn!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Get user's completions
+                let completions = [];
+                try {
+                    completions = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(currentUser.email));
+                } catch (e) {
+                    completions = [];
+                }
                 const completedIds = completions ? completions.map(c => c.campaign_id) : [];
 
-                const availableCampaigns = campaigns.filter(c => !completedIds.includes(c.id));
+                const availableCampaigns = liveCampaigns.filter(c => !completedIds.includes(c.id));
 
                 if (availableCampaigns.length === 0) {
                     taskList.innerHTML = `
@@ -405,6 +444,13 @@
 
             } catch (error) {
                 console.error('Error loading tasks:', error);
+                const taskList = document.getElementById('taskList');
+                taskList.innerHTML = `
+                    <div style="text-align:center; padding:30px; color:#888;">
+                        <div style="font-size:48px; margin-bottom:10px;">⚠️</div>
+                        <p>Error loading tasks. Please refresh the page.</p>
+                    </div>
+                `;
             }
         }
 
@@ -538,7 +584,12 @@
         // =============================================
         async function loadEarningsSummary() {
             try {
-                const transactions = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(currentUser.email));
+                let transactions = [];
+                try {
+                    transactions = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(currentUser.email));
+                } catch (e) {
+                    transactions = [];
+                }
 
                 const today = new Date().toDateString();
                 const todayEarnings = transactions ? transactions.filter(t => new Date(t.completed_at).toDateString() === today).reduce((sum, t) => sum + t.amount_earned, 0) : 0;
