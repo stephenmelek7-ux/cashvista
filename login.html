@@ -338,16 +338,69 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION - FIXED (No redeclaration)
+        // SUPABASE CONFIGURATION (USING FETCH API)
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
-        // DO NOT redeclare 'supabase' - it already exists from the CDN
-        // Just use 'supabase' directly.
+        // =============================================
+        // HELPER: Fetch from Supabase
+        // =============================================
+        async function fetchSupabase(table, params = '') {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Fetch error:', e);
+                return [];
+            }
+        }
+
+        async function insertSupabase(table, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Insert error:', e);
+                return false;
+            }
+        }
+
+        async function updateSupabase(table, email, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Update error:', e);
+                return false;
+            }
+        }
 
         // =============================================
         // CHECK IF USER IS ALREADY LOGGED IN
@@ -397,32 +450,30 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Logging in...';
 
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', email)
-                    .maybeSingle();
+                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
 
-                if (error || !data) {
+                if (!users || users.length === 0) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Invalid email or password.';
                     return;
                 }
 
-                if (data.password !== password) {
+                const user = users[0];
+
+                if (user.password !== password) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Invalid email or password.';
                     return;
                 }
 
-                if (data.is_active === false) {
+                if (user.is_active === false) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Your account has been suspended.';
                     return;
                 }
 
                 sessionStorage.setItem('userEmail', email);
-                sessionStorage.setItem('userName', data.name);
+                sessionStorage.setItem('userName', user.name);
 
                 notification.className = 'notification success';
                 notification.textContent = '✅ Login successful! Redirecting...';
@@ -439,24 +490,14 @@
         });
 
         // =============================================
-        // GOOGLE LOGIN
+        // GOOGLE LOGIN (Redirect to Supabase Auth)
         // =============================================
-        async function googleLogin() {
-            try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + '/dashboard.html'
-                    }
-                });
-
-                if (error) {
-                    alert('❌ Google login failed: ' + error.message);
-                }
-            } catch (error) {
-                alert('❌ An error occurred during Google login.');
-                console.error(error);
-            }
+        function googleLogin() {
+            // Redirect to Supabase Google OAuth
+            const redirectUrl = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + 
+                encodeURIComponent(window.location.origin + '/dashboard.html');
+            
+            window.location.href = redirectUrl;
         }
 
         // =============================================
@@ -464,45 +505,52 @@
         // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('code')) {
+            const accessToken = urlParams.get('access_token');
+            const refreshToken = urlParams.get('refresh_token');
+
+            if (accessToken) {
                 try {
-                    const { data, error } = await supabase.auth.getSession();
-                    if (error) {
-                        console.error('Error getting session:', error);
+                    // Get user info from Supabase with the token
+                    const response = await fetch(SUPABASE_URL + '/auth/v1/user', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + accessToken
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.error('Failed to get user info');
                         return;
                     }
-                    if (data.session) {
-                        const user = data.session.user;
-                        if (user && user.email) {
-                            const { data: existingUser, error: findError } = await supabase
-                                .from('users')
-                                .select('*')
-                                .eq('email', user.email)
-                                .maybeSingle();
 
-                            if (!existingUser) {
-                                await supabase
-                                    .from('users')
-                                    .insert([{
-                                        name: user.user_metadata?.full_name || user.email,
-                                        email: user.email,
-                                        phone: '',
-                                        username: '',
-                                        password: 'google_oauth_' + Date.now(),
-                                        balance: 0,
-                                        total_earned: 0,
-                                        referrals: 0,
-                                        is_invest_member: false,
-                                        is_active: true,
-                                        joined_date: new Date().toISOString()
-                                    }]);
-                            }
+                    const user = await response.json();
 
-                            sessionStorage.setItem('userEmail', user.email);
-                            sessionStorage.setItem('userName', user.user_metadata?.full_name || user.email);
+                    if (user && user.email) {
+                        // Check if user exists in our users table
+                        const existingUsers = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(user.email));
 
-                            window.location.href = 'dashboard.html';
+                        if (!existingUsers || existingUsers.length === 0) {
+                            // Create new user
+                            await insertSupabase('users', {
+                                name: user.user_metadata?.full_name || user.email,
+                                email: user.email,
+                                phone: '',
+                                username: '',
+                                password: 'google_oauth_' + Date.now(),
+                                balance: 0,
+                                total_earned: 0,
+                                referrals: 0,
+                                is_invest_member: false,
+                                is_active: true,
+                                joined_date: new Date().toISOString()
+                            });
                         }
+
+                        sessionStorage.setItem('userEmail', user.email);
+                        sessionStorage.setItem('userName', user.user_metadata?.full_name || user.email);
+
+                        // Remove query params and redirect to dashboard
+                        window.location.href = window.location.origin + '/dashboard.html';
                     }
                 } catch (e) {
                     console.error('Error during OAuth callback:', e);
@@ -544,13 +592,9 @@
             }
 
             try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('email')
-                    .eq('email', email)
-                    .maybeSingle();
+                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
 
-                if (error || !data) {
+                if (!users || users.length === 0) {
                     alert('❌ No account found with this email.');
                     return;
                 }
@@ -614,14 +658,10 @@
                     return;
                 }
 
-                const { error } = await supabase
-                    .from('users')
-                    .update({ password: newPassword })
-                    .eq('email', resetEmailAddress);
+                const success = await updateSupabase('users', resetEmailAddress, { password: newPassword });
 
-                if (error) {
+                if (!success) {
                     alert('❌ Error resetting password. Please try again.');
-                    console.error(error);
                     return;
                 }
 
