@@ -319,19 +319,6 @@
         }
 
         // =============================================
-        // CREATE TABLE IF NOT EXISTS
-        // =============================================
-        async function createTablesIfNeeded() {
-            try {
-                // Check if task_completions table exists by trying to fetch
-                const test = await fetchSupabase('task_completions', '?limit=1');
-                // If we got here, table exists or at least doesn't error
-            } catch (e) {
-                console.log('task_completions table may not exist, will handle gracefully');
-            }
-        }
-
-        // =============================================
         // GET LOGGED-IN USER
         // =============================================
         async function getLoggedInUser() {
@@ -357,7 +344,6 @@
         // LOAD PAGE
         // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
-            await createTablesIfNeeded();
             currentUser = await getLoggedInUser();
             if (!currentUser) return;
             document.getElementById('userName').textContent = currentUser.name || 'User';
@@ -371,7 +357,7 @@
         // =============================================
         async function loadTasks() {
             try {
-                // Fetch all campaigns (no filter, we'll filter in JS)
+                // Fetch all campaigns
                 const campaigns = await fetchSupabase('campaigns', '');
 
                 const taskList = document.getElementById('taskList');
@@ -397,7 +383,7 @@
                         <div style="text-align:center; padding:30px; color:#888;">
                             <div style="font-size:48px; margin-bottom:10px;">📭</div>
                             <p>No live video tasks available right now.</p>
-                            <p style="font-size:13px;">Check back later for new videos to watch and earn!</p>
+                            <p style="font-size:13px;">Check back later for new videos.</p>
                         </div>
                     `;
                     return;
