@@ -341,11 +341,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION - FIXED (No redeclaration)
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // DO NOT redeclare 'supabase' - it already exists from the CDN
+        // Just use 'supabase' directly.
 
         // =============================================
         // CHECK IF USER IS ALREADY LOGGED IN
