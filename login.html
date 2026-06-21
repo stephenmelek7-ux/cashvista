@@ -340,17 +340,17 @@
 
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION (USING FETCH API)
+        // SUPABASE CONFIGURATION - NO DUPLICATE DECLARATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
         // =============================================
-        // HELPER: Fetch from Supabase
+        // HELPER FUNCTIONS
         // =============================================
-        async function fetchSupabase(table, params = '') {
+        async function fetchUsers(email) {
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -365,9 +365,27 @@
             }
         }
 
-        async function insertSupabase(table, data) {
+        async function updateUser(email, data) {
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Update error:', e);
+                return false;
+            }
+        }
+
+        async function insertUser(data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -380,24 +398,6 @@
                 return response.ok;
             } catch (e) {
                 console.error('Insert error:', e);
-                return false;
-            }
-        }
-
-        async function updateSupabase(table, email, data) {
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
-                    body: JSON.stringify(data)
-                });
-                return response.ok;
-            } catch (e) {
-                console.error('Update error:', e);
                 return false;
             }
         }
@@ -450,11 +450,11 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Logging in...';
 
-                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
+                const users = await fetchUsers(email);
 
                 if (!users || users.length === 0) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Invalid email or password.';
+                    notification.textContent = '❌ No account found with this email. Please sign up.';
                     return;
                 }
 
@@ -462,7 +462,7 @@
 
                 if (user.password !== password) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Invalid email or password.';
+                    notification.textContent = '❌ Invalid password. Please try again.';
                     return;
                 }
 
@@ -490,10 +490,9 @@
         });
 
         // =============================================
-        // GOOGLE LOGIN (Redirect to Supabase Auth)
+        // GOOGLE LOGIN
         // =============================================
         function googleLogin() {
-            // Redirect to Supabase Google OAuth
             const redirectUrl = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + 
                 encodeURIComponent(window.location.origin + '/dashboard.html');
             
@@ -506,11 +505,9 @@
         document.addEventListener('DOMContentLoaded', async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const accessToken = urlParams.get('access_token');
-            const refreshToken = urlParams.get('refresh_token');
 
             if (accessToken) {
                 try {
-                    // Get user info from Supabase with the token
                     const response = await fetch(SUPABASE_URL + '/auth/v1/user', {
                         method: 'GET',
                         headers: {
@@ -526,17 +523,15 @@
                     const user = await response.json();
 
                     if (user && user.email) {
-                        // Check if user exists in our users table
-                        const existingUsers = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(user.email));
+                        const existingUsers = await fetchUsers(user.email);
 
                         if (!existingUsers || existingUsers.length === 0) {
-                            // Create new user
-                            await insertSupabase('users', {
+                            await insertUser({
                                 name: user.user_metadata?.full_name || user.email,
                                 email: user.email,
                                 phone: '',
                                 username: '',
-                                password: 'google_oauth_' + Date.now(),
+                                password: 'google_user',
                                 balance: 0,
                                 total_earned: 0,
                                 referrals: 0,
@@ -549,7 +544,6 @@
                         sessionStorage.setItem('userEmail', user.email);
                         sessionStorage.setItem('userName', user.user_metadata?.full_name || user.email);
 
-                        // Remove query params and redirect to dashboard
                         window.location.href = window.location.origin + '/dashboard.html';
                     }
                 } catch (e) {
@@ -592,7 +586,7 @@
             }
 
             try {
-                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
+                const users = await fetchUsers(email);
 
                 if (!users || users.length === 0) {
                     alert('❌ No account found with this email.');
@@ -658,7 +652,7 @@
                     return;
                 }
 
-                const success = await updateSupabase('users', resetEmailAddress, { password: newPassword });
+                const success = await updateUser(resetEmailAddress, { password: newPassword });
 
                 if (!success) {
                     alert('❌ Error resetting password. Please try again.');
