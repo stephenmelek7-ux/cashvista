@@ -6,7 +6,11 @@
     <title>Register - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
@@ -19,7 +23,7 @@
             background: #fff;
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
             width: 100%;
             max-width: 420px;
         }
@@ -58,7 +62,7 @@
             border-color: #f5c842;
             outline: none;
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
         }
         .register-container .btn {
             background: #f5c842;
@@ -150,79 +154,49 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION - NO DUPLICATE DECLARATION
+        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // =============================================
-        // ASSIGN USER TO BATCH
+        // HELPER FUNCTIONS
         // =============================================
-        async function assignUserToBatch(email) {
+        async function fetchSupabase(table, email) {
             try {
-                // Get all users count to determine batch
-                const { data: users, error } = await supabase
-                    .from('users')
-                    .select('id')
-                    .order('joined_date', { ascending: true });
-
-                if (error) {
-                    console.error('Error fetching users:', error);
-                    return null;
-                }
-
-                const totalUsers = users ? users.length : 0;
-                const batchNumber = Math.floor(totalUsers / 20) + 1;
-                const batchLetter = String.fromCharCode(64 + batchNumber); // A=1, B=2, C=3...
-
-                // Check if batch exists, if not create it
-                const { data: existingBatch, error: batchError } = await supabase
-                    .from('batches')
-                    .select('*')
-                    .eq('name', 'Batch ' + batchLetter)
-                    .maybeSingle();
-
-                let batchId;
-                if (!existingBatch) {
-                    const { data: newBatch, error: createError } = await supabase
-                        .from('batches')
-                        .insert([{
-                            name: 'Batch ' + batchLetter,
-                            batch_number: batchNumber,
-                            created_at: new Date().toISOString()
-                        }])
-                        .select()
-                        .single();
-
-                    if (createError) {
-                        console.error('Error creating batch:', createError);
-                        return null;
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
-                    batchId = newBatch.id;
-                } else {
-                    batchId = existingBatch.id;
-                }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Fetch error:', e);
+                return [];
+            }
+        }
 
-                // Assign user to batch
-                const { error: assignError } = await supabase
-                    .from('user_batches')
-                    .insert([{
-                        user_email: email,
-                        batch_id: batchId,
-                        assigned_at: new Date().toISOString()
-                    }]);
-
-                if (assignError) {
-                    console.error('Error assigning user to batch:', assignError);
-                    return null;
-                }
-
-                return 'Batch ' + batchLetter;
-
-            } catch (error) {
-                console.error('Error in assignUserToBatch:', error);
-                return null;
+        async function insertSupabase(table, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Insert error:', e);
+                return false;
             }
         }
 
@@ -260,58 +234,56 @@
                 notification.textContent = '⏳ Creating your account...';
 
                 // Check if user exists
-                const { data: existing } = await supabase
-                    .from('users')
-                    .select('email')
-                    .eq('email', email)
-                    .maybeSingle();
+                const existing = await fetchSupabase('users', email);
 
-                if (existing) {
+                if (existing && existing.length > 0) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ This email is already registered. Please login.';
                     return;
                 }
 
-                // Save user
-                const { error: insertError } = await supabase
-                    .from('users')
-                    .insert([{
-                        name: name,
-                        email: email,
-                        phone: phone || '',
-                        username: username || '',
-                        password: password,
-                        balance: 0,
-                        total_earned: 0,
-                        referrals: 0,
-                        is_invest_member: false,
-                        is_active: true,
-                        joined_date: new Date().toISOString()
-                    }]);
+                // Insert user
+                const success = await insertSupabase('users', {
+                    name: name,
+                    email: email,
+                    phone: phone || '',
+                    username: username || '',
+                    password: password,
+                    balance: 0,
+                    total_earned: 0,
+                    referrals: 0,
+                    is_invest_member: false,
+                    is_active: true,
+                    joined_date: new Date().toISOString()
+                });
 
-                if (insertError) {
+                if (!success) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ ' + insertError.message;
+                    notification.textContent = '❌ Error creating account. Please try again.';
                     return;
                 }
-
-                // Assign user to batch
-                const batch = await assignUserToBatch(email);
 
                 sessionStorage.setItem('userEmail', email);
 
                 notification.className = 'notification success';
-                notification.textContent = '✅ Account created! Assigned to ' + batch + '. Redirecting...';
+                notification.textContent = '✅ Account created! Redirecting...';
 
                 // Add activity
-                await supabase
-                    .from('activity')
-                    .insert([{
+                await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
                         user_name: name,
-                        action: 'Registered - ' + batch,
+                        action: 'Registered',
                         amount: 0,
                         date: new Date().toISOString()
-                    }]);
+                    })
+                });
 
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
