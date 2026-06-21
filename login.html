@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
             display: flex;
             justify-content: center;
@@ -18,7 +23,7 @@
             background: #fff;
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
             width: 100%;
             max-width: 400px;
         }
@@ -28,7 +33,12 @@
             font-weight: 800;
             color: #0d1b2a;
         }
-        .login-container .logo span { color: #f5c842; }
+        .login-container .logo span {
+            color: #f5c842;
+        }
+        .login-container .logo .play-icon {
+            color: #f5c842;
+        }
         .login-container .subtitle {
             text-align: center;
             color: #888;
@@ -42,13 +52,39 @@
             margin-top: 12px;
             font-size: 14px;
         }
-        .login-container input {
+        .login-container .password-wrapper {
+            position: relative;
+        }
+        .login-container .password-wrapper input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 45px 12px 15px;
             border: 2px solid #e8ecf0;
             border-radius: 12px;
             font-size: 15px;
             margin-top: 5px;
+            transition: 0.3s;
+            background: #fafbfc;
+        }
+        .login-container .password-wrapper input:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .login-container .password-wrapper .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #888;
+            padding: 5px;
+        }
+        .login-container .password-wrapper .toggle-password:hover {
+            color: #0d1b2a;
         }
         .login-container .btn {
             background: #f5c842;
@@ -61,8 +97,11 @@
             width: 100%;
             margin-top: 20px;
             cursor: pointer;
+            transition: 0.3s;
         }
-        .login-container .btn:hover { background: #e6b800; }
+        .login-container .btn:hover {
+            background: #e6b800;
+        }
         .login-container .links {
             text-align: center;
             margin-top: 15px;
@@ -73,6 +112,18 @@
             color: #0d1b2a;
             font-weight: 600;
             text-decoration: none;
+        }
+        .login-container .links a:hover {
+            color: #f5c842;
+        }
+        .footer-credit {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .footer-credit .founder {
+            color: #f5c842;
         }
         .notification {
             padding: 12px 16px;
@@ -109,9 +160,22 @@
             font-weight: 600;
             font-size: 15px;
             cursor: pointer;
+            transition: 0.3s;
             margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .google-btn:hover { background: #f8fafc; }
+        .google-btn:hover {
+            background: #f8fafc;
+            border-color: #f5c842;
+        }
+        .google-btn .g-icon {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ea4335;
+        }
         .divider {
             border: none;
             border-top: 1px solid #e8ecf0;
@@ -125,20 +189,123 @@
             font-size: 13px;
             color: #f5c842;
             text-decoration: none;
+            cursor: pointer;
         }
-        .footer-credit {
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+        /* ===== FORGOT PASSWORD MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 90%;
+        }
+        .modal-content h3 {
+            color: #0d1b2a;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        .modal-content p {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .modal-content .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-content .form-group label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .modal-content .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fafbfc;
+        }
+        .modal-content .form-group input:focus {
+            border-color: #f5c842;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .modal-content .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .modal-content .btn-gold {
+            background: #f5c842;
+            color: #0d1b2a;
+        }
+        .modal-content .btn-gold:hover {
+            background: #e6b800;
+        }
+        .modal-content .btn-gray {
+            background: #e0e0e0;
+            color: #333;
+            margin-top: 8px;
+        }
+        .modal-content .btn-gray:hover {
+            background: #ccc;
+        }
+        .modal-content .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
             text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #aaa;
         }
-        .footer-credit .founder { color: #f5c842; }
+        .modal-content .modal-close:hover {
+            color: #0d1b2a;
+        }
+        .modal-content .reset-code-section {
+            display: none;
+        }
+        .modal-content .reset-code-section.active {
+            display: block;
+        }
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px 20px;
+                margin: 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo">
-            <span>▶</span>Cash<span>Vista</span>
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
         </div>
         <p class="subtitle">Welcome back! Login to your account</p>
         <div id="notification" class="notification"></div>
@@ -146,9 +313,14 @@
             <label>Email Address</label>
             <input type="email" id="email" placeholder="you@example.com" required />
             <label>Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required />
+            <div class="password-wrapper">
+                <input type="password" id="password" placeholder="Enter your password" required />
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" id="togglePasswordBtn">
+                    👁️
+                </button>
+            </div>
             <div class="forgot-link">
-                <a href="forgot-password.html">Forgot password?</a>
+                <a onclick="openForgotModal()">Forgot password?</a>
             </div>
             <button type="submit" class="btn">Login</button>
         </form>
@@ -156,7 +328,7 @@
         <hr class="divider" />
         <p style="text-align:center; color:#888; font-size:13px;">Or continue with</p>
         <button class="google-btn" onclick="googleLogin()">
-            G Sign in with Google
+            <span class="g-icon">G</span> Sign in with Google
         </button>
 
         <p class="links">Don't have an account? <a href="register.html">Sign up free</a></p>
@@ -165,13 +337,87 @@
         </div>
     </div>
 
+    <!-- ===== FORGOT PASSWORD MODAL ===== -->
+    <div id="forgotModal" class="modal">
+        <div class="modal-content">
+            <h3>🔐 Forgot Password</h3>
+            <p>Enter your email address and we'll send you a reset code.</p>
+
+            <!-- Step 1: Enter Email -->
+            <div id="forgotStep1">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="resetEmail" placeholder="you@example.com" />
+                </div>
+                <button class="btn btn-gold" onclick="sendResetCode()">📧 Send Reset Code</button>
+            </div>
+
+            <!-- Step 2: Enter Code + New Password -->
+            <div id="forgotStep2" class="reset-code-section">
+                <p style="color:#2e7d32; background:#e8f5e9; padding:10px; border-radius:8px; margin-bottom:12px;">
+                    ✅ Reset code sent to your email. Enter it below.
+                </p>
+                <div class="form-group">
+                    <label>Reset Code</label>
+                    <input type="text" id="resetCode" placeholder="Enter 6-digit code" maxlength="6" />
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="Min 6 characters" />
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirm your new password" />
+                </div>
+                <button class="btn btn-gold" onclick="resetPassword()">🔑 Reset Password</button>
+                <button class="btn btn-gray" onclick="closeForgotModal()">Cancel</button>
+            </div>
+
+            <button class="modal-close" onclick="closeForgotModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION - CORRECT KEYS
+        // SUPABASE CONFIGURATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // =============================================
+        // CHECK IF USER IS ALREADY LOGGED IN
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (userEmail) {
+                // User is already logged in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // =============================================
+        // TOGGLE PASSWORD VISIBILITY
+        // =============================================
+        let passwordVisible = false;
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('togglePasswordBtn');
+            passwordVisible = !passwordVisible;
+            if (passwordVisible) {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // =============================================
+        // LOGIN FORM SUBMIT
+        // =============================================
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -189,44 +435,36 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Logging in...';
 
-                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
+                // --- CHECK USER IN SUPABASE ---
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .maybeSingle();
 
-                if (!response.ok) {
+                if (error || !data) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Connection error. Please try again.';
+                    notification.textContent = '❌ Invalid email or password. Please try again.';
                     return;
                 }
 
-                const users = await response.json();
-
-                if (!users || users.length === 0) {
+                // --- CHECK PASSWORD ---
+                if (data.password !== password) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Invalid email or password.';
+                    notification.textContent = '❌ Invalid email or password. Please try again.';
                     return;
                 }
 
-                const user = users[0];
-
-                if (user.password !== password) {
+                // --- CHECK IF USER IS ACTIVE ---
+                if (data.is_active === false) {
                     notification.className = 'notification error';
-                    notification.textContent = '❌ Invalid email or password.';
+                    notification.textContent = '❌ Your account has been suspended. Contact admin.';
                     return;
                 }
 
-                if (user.is_active === false) {
-                    notification.className = 'notification error';
-                    notification.textContent = '❌ Your account has been suspended.';
-                    return;
-                }
-
+                // --- SAVE SESSION ---
                 sessionStorage.setItem('userEmail', email);
-                sessionStorage.setItem('userName', user.name);
+                sessionStorage.setItem('userName', data.name);
 
                 notification.className = 'notification success';
                 notification.textContent = '✅ Login successful! Redirecting...';
@@ -236,14 +474,185 @@
                 }, 1000);
 
             } catch (error) {
+                console.error('Login Error:', error);
                 notification.className = 'notification error';
-                notification.textContent = '❌ Connection error. Please try again.';
-                console.error('Error:', error);
+                notification.textContent = '❌ ' + error.message;
             }
         });
 
-        function googleLogin() {
-            alert('🔐 Google login will be available soon. Please use email/password for now.');
+        // =============================================
+        // GOOGLE LOGIN
+        // =============================================
+        async function googleLogin() {
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/dashboard.html'
+                    }
+                });
+
+                if (error) {
+                    alert('❌ Google login failed: ' + error.message);
+                }
+            } catch (error) {
+                alert('❌ An error occurred during Google login.');
+                console.error(error);
+            }
+        }
+
+        // =============================================
+        // FORGOT PASSWORD - OPEN MODAL
+        // =============================================
+        let resetEmailAddress = '';
+
+        function openForgotModal() {
+            document.getElementById('forgotModal').classList.add('active');
+            document.getElementById('forgotStep1').style.display = 'block';
+            document.getElementById('forgotStep2').classList.remove('active');
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetCode').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('forgotModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeForgotModal();
+            }
+        });
+
+        // =============================================
+        // SEND RESET CODE
+        // =============================================
+        async function sendResetCode() {
+            const email = document.getElementById('resetEmail').value.trim();
+            const notification = document.getElementById('notification');
+
+            if (!email || !email.includes('@')) {
+                alert('❌ Please enter a valid email address.');
+                return;
+            }
+
+            try {
+                // Check if user exists
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('email', email)
+                    .maybeSingle();
+
+                if (error || !data) {
+                    alert('❌ No account found with this email.');
+                    return;
+                }
+
+                // Generate 6-digit reset code
+                const resetCode = String(Math.floor(100000 + Math.random() * 900000));
+
+                // Store code in localStorage with expiry (10 minutes)
+                localStorage.setItem('reset_code_' + email, resetCode);
+                localStorage.setItem('reset_code_expiry_' + email, Date.now() + 600000);
+
+                resetEmailAddress = email;
+
+                // In a real app, send email here. For demo, show code in alert.
+                alert('✅ Reset code sent to ' + email + '\n\nYour 6-digit code is: ' + resetCode + '\n\n(This would be sent to your email in production)');
+
+                // Show step 2
+                document.getElementById('forgotStep1').style.display = 'none';
+                document.getElementById('forgotStep2').classList.add('active');
+
+                // Clear any previous notification
+                const notif = document.getElementById('notification');
+                notif.className = 'notification';
+                notif.textContent = '';
+
+            } catch (error) {
+                alert('❌ Error sending reset code. Please try again.');
+                console.error(error);
+            }
+        }
+
+        // =============================================
+        // RESET PASSWORD
+        // =============================================
+        async function resetPassword() {
+            const code = document.getElementById('resetCode').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmNewPassword').value.trim();
+
+            if (!code) {
+                alert('❌ Please enter the reset code.');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('❌ Password must be at least 6 characters.');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('❌ Passwords do not match.');
+                return;
+            }
+
+            try {
+                // Verify code
+                const storedCode = localStorage.getItem('reset_code_' + resetEmailAddress);
+                const expiry = localStorage.getItem('reset_code_expiry_' + resetEmailAddress);
+
+                if (!storedCode || !expiry) {
+                    alert('❌ Invalid or expired reset code. Please request a new one.');
+                    return;
+                }
+
+                if (Date.now() > Number(expiry)) {
+                    alert('❌ Reset code has expired. Please request a new one.');
+                    localStorage.removeItem('reset_code_' + resetEmailAddress);
+                    localStorage.removeItem('reset_code_expiry_' + resetEmailAddress);
+                    return;
+                }
+
+                if (code !== storedCode) {
+                    alert('❌ Invalid reset code. Please try again.');
+                    return;
+                }
+
+                // Update password in Supabase
+                const { error } = await supabase
+                    .from('users')
+                    .update({ password: newPassword })
+                    .eq('email', resetEmailAddress);
+
+                if (error) {
+                    alert('❌ Error resetting password. Please try again.');
+                    console.error(error);
+                    return;
+                }
+
+                // Clean up
+                localStorage.removeItem('reset_code_' + resetEmailAddress);
+                localStorage.removeItem('reset_code_expiry_' + resetEmailAddress);
+
+                alert('✅ Password reset successful! You can now login with your new password.');
+
+                closeForgotModal();
+
+                // Clear notification
+                const notif = document.getElementById('notification');
+                notif.className = 'notification success';
+                notif.textContent = '✅ Password reset successful! Please login with your new password.';
+
+            } catch (error) {
+                alert('❌ Error resetting password. Please try again.');
+                console.error(error);
+            }
         }
     </script>
 </body>
