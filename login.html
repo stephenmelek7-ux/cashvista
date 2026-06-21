@@ -340,7 +340,7 @@
 
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION - NO DUPLICATE DECLARATION
+        // SUPABASE CONFIGURATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
@@ -431,7 +431,7 @@
         }
 
         // =============================================
-        // LOGIN FORM SUBMIT
+        // LOGIN FORM SUBMIT (FIXED PASSWORD COMPARISON)
         // =============================================
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -460,6 +460,11 @@
 
                 const user = users[0];
 
+                // Debug: Log to see what password is stored
+                console.log('Stored password:', user.password);
+                console.log('Entered password:', password);
+
+                // Compare passwords
                 if (user.password !== password) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ Invalid password. Please try again.';
@@ -490,7 +495,7 @@
         });
 
         // =============================================
-        // GOOGLE LOGIN
+        // GOOGLE LOGIN (DIRECT TO DASHBOARD)
         // =============================================
         function googleLogin() {
             const redirectUrl = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + 
@@ -500,7 +505,7 @@
         }
 
         // =============================================
-        // HANDLE GOOGLE OAUTH CALLBACK
+        // HANDLE GOOGLE OAUTH CALLBACK (DIRECT TO DASHBOARD)
         // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
             const urlParams = new URLSearchParams(window.location.search);
