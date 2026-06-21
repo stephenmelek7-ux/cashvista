@@ -517,11 +517,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION (ONLY ONCE)
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // =============================================
         // ADMIN SESSION CHECK
@@ -551,78 +551,76 @@
         async function renderDashboard() {
             try {
                 console.log('🔄 Loading dashboard...');
-                console.log('🔑 Using Supabase URL:', SUPABASE_URL);
 
                 // --- 1. FETCH ALL USERS ---
-                const { data: users, error: usersError } = await supabase
+                const { data: users, error: usersError } = await supabaseClient
                     .from('users')
                     .select('*')
                     .order('joined_date', { ascending: false });
 
                 if (usersError) {
-                    console.error('Error fetching users:', usersError);
-                    alert('❌ Error fetching users: ' + usersError.message);
+                    console.error('❌ Error fetching users:', usersError);
                 } else {
                     console.log('✅ Users fetched:', users?.length || 0);
                 }
 
                 // --- 2. FETCH ALL CAMPAIGNS ---
-                const { data: campaigns, error: campaignsError } = await supabase
+                const { data: campaigns, error: campaignsError } = await supabaseClient
                     .from('campaigns')
                     .select('*')
                     .order('date', { ascending: false });
 
                 if (campaignsError) {
-                    console.error('Error fetching campaigns:', campaignsError);
+                    console.error('❌ Error fetching campaigns:', campaignsError);
                 } else {
                     console.log('✅ Campaigns fetched:', campaigns?.length || 0);
                 }
 
                 // --- 3. FETCH ALL INVEST MEMBERS ---
-                const { data: investMembers, error: investError } = await supabase
+                const { data: investMembers, error: investError } = await supabaseClient
                     .from('invest_members')
                     .select('*')
                     .order('date', { ascending: false });
 
                 if (investError) {
-                    console.error('Error fetching invest members:', investError);
+                    console.error('❌ Error fetching invest members:', investError);
                 } else {
                     console.log('✅ Invest Members fetched:', investMembers?.length || 0);
                 }
 
                 // --- 4. FETCH ALL WITHDRAWALS ---
-                const { data: withdrawals, error: withdrawError } = await supabase
+                const { data: withdrawals, error: withdrawError } = await supabaseClient
                     .from('withdrawals')
                     .select('*')
                     .order('date', { ascending: false });
 
                 if (withdrawError) {
-                    console.error('Error fetching withdrawals:', withdrawError);
+                    console.error('❌ Error fetching withdrawals:', withdrawError);
                 } else {
                     console.log('✅ Withdrawals fetched:', withdrawals?.length || 0);
                 }
 
                 // --- 5. FETCH ALL ACTIVITY ---
-                const { data: activity, error: activityError } = await supabase
+                const { data: activity, error: activityError } = await supabaseClient
                     .from('activity')
                     .select('*')
                     .order('date', { ascending: false })
                     .limit(20);
 
                 if (activityError) {
-                    console.error('Error fetching activity:', activityError);
+                    console.error('❌ Error fetching activity:', activityError);
                 } else {
                     console.log('✅ Activity fetched:', activity?.length || 0);
                 }
 
                 // --- 6. FETCH ALL BATCHES ---
-                const { data: batches, error: batchesError } = await supabase
+                const { data: batches, error: batchesError } = await supabaseClient
                     .from('batches')
                     .select('*')
                     .order('created_at', { ascending: true });
 
                 if (batchesError) {
-                    console.error('Error fetching batches:', batchesError);
+                    console.error('❌ Error fetching batches:', batchesError);
                 } else {
                     console.log('✅ Batches fetched:', batches?.length || 0);
                 }
@@ -876,8 +874,7 @@
                 console.log('✅ Dashboard updated successfully!');
 
             } catch (error) {
-                console.error('Error rendering dashboard:', error);
-                alert('❌ Error: ' + error.message);
+                console.error('❌ Error rendering dashboard:', error);
             }
         }
 
@@ -921,8 +918,8 @@
             if (batchName) {
                 document.getElementById('assignBatch').value = batchName;
             }
-            supabase.from('campaigns').select('*').then(({ data: campaigns }) => {
-                supabase.from('batches').select('*').then(({ data: batches }) => {
+            supabaseClient.from('campaigns').select('*').then(({ data: campaigns }) => {
+                supabaseClient.from('batches').select('*').then(({ data: batches }) => {
                     populateAssignDropdowns(campaigns, batches);
                     if (batchName) {
                         document.getElementById('assignBatch').value = batchName;
@@ -947,7 +944,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('campaigns')
                     .update({
                         assigned_batch: batchName,
@@ -962,7 +959,7 @@
                     return;
                 }
 
-                await supabase.from('activity').insert([{
+                await supabaseClient.from('activity').insert([{
                     user_name: 'Admin',
                     action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
                     amount: 0,
@@ -984,17 +981,17 @@
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
             try {
-                await supabase.from(table).update({ status: 'approved' }).eq('id', id);
+                await supabaseClient.from(table).update({ status: 'approved' }).eq('id', id);
 
                 if (table === 'invest_members') {
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
                     const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
-                    await supabase.from('users').update({
+                    await supabaseClient.from('users').update({
                         is_invest_member: true,
                         referral_link: referralLink,
                         referral_code: uniqueId
                     }).eq('email', userEmail);
-                    await supabase.from(table).update({ referral_link: referralLink }).eq('id', id);
+                    await supabaseClient.from(table).update({ referral_link: referralLink }).eq('id', id);
                     alert(`✅ ${userEmail} approved! Referral link generated.`);
                 } else if (table === 'campaigns') {
                     alert(`✅ Campaign approved! You can now assign it to batches.`);
@@ -1010,7 +1007,7 @@
         async function rejectItem(table, id, userEmail) {
             if (!confirm(`❌ Reject this ${table} for ${userEmail}?`)) return;
             try {
-                await supabase.from(table).update({ status: 'rejected' }).eq('id', id);
+                await supabaseClient.from(table).update({ status: 'rejected' }).eq('id', id);
                 alert(`❌ ${userEmail} rejected.`);
                 renderDashboard();
             } catch (error) {
@@ -1028,24 +1025,24 @@
         // USER ACTIONS
         // =============================================
         async function viewUser(email) {
-            const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+            const { data, error } = await supabaseClient.from('users').select('*').eq('email', email).single();
             if (error || !data) { alert('User not found.'); return; }
             alert(`👤 USER DETAILS\n\nName: ${data.name || 'N/A'}\nEmail: ${data.email || 'N/A'}\nPhone: ${data.phone || 'N/A'}\nBalance: ₦${(data.balance || 0).toLocaleString()}\nInvest Member: ${data.is_invest_member ? 'Yes' : 'No'}\nReferral Link: ${data.referral_link || 'N/A'}\nBatch: ${data.batch || 'Not assigned'}\nStatus: ${data.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${data.joined_date ? new Date(data.joined_date).toLocaleString() : 'N/A'}`);
         }
 
         async function toggleUser(email) {
             if (!confirm(`Toggle status for ${email}?`)) return;
-            const { data, error } = await supabase.from('users').select('is_active').eq('email', email).single();
+            const { data, error } = await supabaseClient.from('users').select('is_active').eq('email', email).single();
             if (error || !data) { alert('User not found.'); return; }
             const newStatus = data.is_active === false ? true : false;
-            await supabase.from('users').update({ is_active: newStatus }).eq('email', email);
+            await supabaseClient.from('users').update({ is_active: newStatus }).eq('email', email);
             alert(`✅ User status updated.`);
             renderDashboard();
         }
 
         async function deleteUser(email) {
             if (!confirm(`⚠️ Delete ${email}? This cannot be undone!`)) return;
-            await supabase.from('users').delete().eq('email', email);
+            await supabaseClient.from('users').delete().eq('email', email);
             alert(`✅ User ${email} deleted.`);
             renderDashboard();
         }
@@ -1066,7 +1063,6 @@
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             renderDashboard();
-            // Auto-refresh every 10 seconds
             setInterval(renderDashboard, 10000);
         });
     </script>
