@@ -36,8 +36,13 @@
             font-weight: 800;
             color: #f5c842;
         }
-        .topbar .logo span { color: #fff; }
-        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+        .topbar .logo span {
+            color: #fff;
+        }
+        .topbar .logo .play-icon {
+            color: #f5c842;
+            margin-right: 5px;
+        }
         .topbar .user-info {
             display: flex;
             align-items: center;
@@ -101,7 +106,9 @@
             font-size: 28px;
             font-weight: 800;
         }
-        .welcome-banner h1 span { color: #f5c842; }
+        .welcome-banner h1 span {
+            color: #f5c842;
+        }
         .welcome-banner p {
             color: #aac;
             font-size: 15px;
@@ -148,7 +155,10 @@
             transform: translateY(-6px);
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
         }
-        .card .card-icon { font-size: 32px; margin-bottom: 8px; }
+        .card .card-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
         .card h3 {
             color: #0d1b2a;
             font-size: 17px;
@@ -454,7 +464,7 @@
         <!-- ===== DASHBOARD GRID ===== -->
         <div class="dashboard-grid">
 
-            <!-- 1. WALLET CARD -->
+            <!-- Wallet Card -->
             <div class="card card-gradient-1">
                 <div class="card-icon">💰</div>
                 <h3>Wallet Balance</h3>
@@ -463,7 +473,7 @@
                 <button class="btn btn-green" onclick="window.location.href='withdraw.html'">💸 Withdraw Funds</button>
             </div>
 
-            <!-- 2. INVEST & GROW CARD -->
+            <!-- Invest & Grow Card -->
             <div class="card card-gradient-2">
                 <div class="card-icon">📈</div>
                 <h3>Invest & Grow</h3>
@@ -474,7 +484,7 @@
                 <button class="btn btn-gold" onclick="window.location.href='invest.html'">🚀 Go to Invest & Grow</button>
             </div>
 
-            <!-- 3. ADVERTISE VIDEO CARD -->
+            <!-- Advertise Card -->
             <div class="card card-gradient-3">
                 <div class="card-icon">📹</div>
                 <h3>Advertise Video</h3>
@@ -482,7 +492,7 @@
                 <button class="btn btn-blue" onclick="window.location.href='advertise.html'">📢 Start Campaign</button>
             </div>
 
-            <!-- 4. WATCH & EARN CARD -->
+            <!-- Watch & Earn Card -->
             <div class="card card-gradient-4">
                 <div class="card-icon">🎬</div>
                 <h3>Watch & Earn</h3>
@@ -493,13 +503,13 @@
                 <button class="btn btn-purple" onclick="window.location.href='watch.html'">▶️ Watch Videos</button>
             </div>
 
-            <!-- 5. REFERRAL LINK CARD -->
+            <!-- Referral Link Card -->
             <div class="card card-gradient-5">
                 <div class="card-icon">🔗</div>
                 <h3>Your Referral Link</h3>
                 <div class="sub">Share and earn 55% commission</div>
                 <div class="referral-link-box">
-                    <span class="link-text" id="referralLinkDisplay">https://cashvista.com/ref/guest</span>
+                    <span class="link-text" id="referralLinkDisplay">https://cashvista.vercel.app/register.html?ref=guest</span>
                     <button class="copy-btn-sm" onclick="copyReferralLink()">📋 Copy</button>
                 </div>
                 <div style="font-size:12px; color:#888; margin-top:6px;">
@@ -508,7 +518,7 @@
                 <button class="btn btn-outline" onclick="window.location.href='invest.html'" style="margin-top:8px;">🔍 View Details</button>
             </div>
 
-            <!-- 6. REFERRAL NETWORK CARD -->
+            <!-- Referral Network Card -->
             <div class="card card-gradient-6">
                 <div class="card-icon">🌐</div>
                 <h3>Referral Network</h3>
@@ -518,7 +528,7 @@
                     <span><strong style="color:#0d1b2a;">Downline:</strong> <span id="downlineCount">0</span></span>
                     <span><strong style="color:#f5c842;">Earned:</strong> <span id="referralEarned">₦0</span></span>
                 </div>
-                <button class="btn btn-teal" onclick="alert('🌐 Referral network visualization coming soon!')">👥 View Network</button>
+                <button class="btn btn-teal" onclick="window.location.href='referral-network.html'">👥 View Network</button>
             </div>
 
         </div>
@@ -553,6 +563,69 @@
         <p>&copy; 2026 CashVista. All rights reserved.</p>
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
+
+    <!-- ============================================= -->
+    <!-- INSTALL APP PROMPT                           -->
+    <!-- ============================================= -->
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Create install button
+            const installBtn = document.createElement('button');
+            installBtn.textContent = '📲 Install App';
+            installBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #f5c842;
+                color: #0d1b2a;
+                border: none;
+                padding: 14px 35px;
+                border-radius: 50px;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 9999;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                display: none;
+                font-family: 'Inter', 'Segoe UI', sans-serif;
+            `;
+            installBtn.id = 'installBtn';
+            document.body.appendChild(installBtn);
+
+            // Show install button
+            installBtn.style.display = 'block';
+
+            installBtn.addEventListener('click', function() {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function(choiceResult) {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('✅ User accepted the install prompt');
+                        } else {
+                            console.log('❌ User dismissed the install prompt');
+                        }
+                        deferredPrompt = null;
+                        installBtn.style.display = 'none';
+                    });
+                }
+            });
+        });
+
+        // Hide install button if already installed
+        window.addEventListener('appinstalled', function() {
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) {
+                installBtn.style.display = 'none';
+            }
+            console.log('📲 App installed successfully!');
+        });
+    </script>
 
     <script>
         // =============================================
@@ -618,7 +691,7 @@
             document.getElementById('statEarnings').textContent = '₦' + (user.total_earned || 0).toLocaleString();
             document.getElementById('statTasks').textContent = '12';
 
-            const refLink = user.referral_link || 'https://cashvista.com/ref/' + (user.username || user.email.split('@')[0]);
+            const refLink = user.referral_link || 'https://cashvista.vercel.app/register.html?ref=' + (user.username || user.email.split('@')[0]);
             document.getElementById('referralLinkDisplay').textContent = refLink;
             document.getElementById('directCount').textContent = user.direct_count || 0;
             document.getElementById('downlineCount').textContent = user.downline_count || 0;
