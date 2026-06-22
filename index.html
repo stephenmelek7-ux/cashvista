@@ -4,6 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CashVista - Earn, Watch, Advertise & Grow</title>
+
+    <!-- ===== PWA META TAGS ===== -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#f5c842" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="https://cashvista.vercel.app/icons/icon-192x192.png" />
+
+    <!-- Register Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('CashVista: Service Worker registered successfully');
+                }).catch(function(err) {
+                    console.log('CashVista: Service Worker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
         /* ===== RESET & BASE ===== */
@@ -67,6 +88,7 @@
         }
         .topbar nav .btn-login:hover {
             background: #e6b800;
+            color: #0d1b2a;
         }
         .topbar nav .btn-signup {
             background: #fff;
