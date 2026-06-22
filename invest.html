@@ -6,11 +6,7 @@
     <title>Invest & Grow - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
@@ -24,16 +20,12 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .topbar .logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: #f5c842;
-        }
+        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
         .topbar .logo span { color: #fff; }
         .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .user-info {
@@ -42,16 +34,10 @@
             gap: 18px;
             flex-wrap: wrap;
         }
-        .topbar .user-info .greeting {
-            color: #ddd;
-            font-size: 14px;
-        }
-        .topbar .user-info .greeting strong {
-            color: #f5c842;
-            font-weight: 700;
-        }
+        .topbar .user-info .greeting { color: #ddd; font-size: 14px; }
+        .topbar .user-info .greeting strong { color: #f5c842; font-weight: 700; }
         .topbar .user-info .balance-badge {
-            background: rgba(245, 200, 66, 0.15);
+            background: rgba(245,200,66,0.15);
             border: 1px solid #f5c842;
             padding: 6px 18px;
             border-radius: 30px;
@@ -60,7 +46,7 @@
             color: #f5c842;
         }
         .topbar .user-info .logout {
-            background: rgba(231, 76, 60, 0.2);
+            background: rgba(231,76,60,0.2);
             color: #e74c3c;
             border: 1px solid #e74c3c;
             padding: 6px 18px;
@@ -70,14 +56,11 @@
             font-size: 13px;
             transition: 0.3s;
         }
-        .topbar .user-info .logout:hover {
-            background: #e74c3c;
-            color: #fff;
-        }
+        .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
         .topbar .back-btn {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
             padding: 6px 18px;
             border-radius: 30px;
             cursor: pointer;
@@ -86,41 +69,19 @@
             text-decoration: none;
             transition: 0.3s;
         }
-        .topbar .back-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
+        .topbar .back-btn:hover { background: rgba(255,255,255,0.2); }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 25px 20px;
-        }
-
+        .container { max-width: 900px; margin: 0 auto; padding: 25px 20px; }
         .card {
             background: #fff;
             border-radius: 20px;
             padding: 30px 35px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
             margin-bottom: 25px;
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0,0,0,0.03);
         }
-        .card h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0d1b2a;
-            margin-bottom: 6px;
-        }
-        .card .subtitle {
-            color: #888;
-            font-size: 15px;
-            margin-bottom: 20px;
-        }
-        .card p {
-            color: #555;
-            font-size: 15px;
-            line-height: 1.7;
-        }
-
+        .card h2 { font-size: 24px; font-weight: 700; color: #0d1b2a; margin-bottom: 6px; }
+        .card .subtitle { color: #888; font-size: 15px; margin-bottom: 20px; }
         .price-tag {
             font-size: 36px;
             font-weight: 800;
@@ -131,7 +92,6 @@
             display: inline-block;
             margin: 10px 0 20px;
         }
-
         .bank-details {
             background: #e8f5e9;
             padding: 20px 25px;
@@ -139,21 +99,9 @@
             border-left: 5px solid #2e7d32;
             margin: 15px 0;
         }
-        .bank-details p {
-            font-size: 15px;
-            margin: 5px 0;
-            color: #1a1a2e;
-        }
-        .bank-details strong {
-            color: #0d1b2a;
-        }
-        .bank-details .number {
-            font-size: 24px;
-            font-weight: 800;
-            color: #0d1b2a;
-            letter-spacing: 2px;
-        }
-
+        .bank-details p { font-size: 15px; margin: 5px 0; color: #1a1a2e; }
+        .bank-details strong { color: #0d1b2a; }
+        .bank-details .number { font-size: 24px; font-weight: 800; color: #0d1b2a; letter-spacing: 2px; }
         .btn {
             display: inline-block;
             padding: 14px 35px;
@@ -166,45 +114,20 @@
             text-align: center;
             text-decoration: none;
         }
-        .btn-gold {
-            background: #f5c842;
-            color: #0d1b2a;
-        }
-        .btn-gold:hover {
-            background: #e6b800;
-            transform: scale(1.02);
-        }
-        .btn-green {
-            background: #2e7d32;
-            color: #fff;
-        }
-        .btn-green:hover {
-            background: #1b5e20;
-        }
-        .btn-block {
-            width: 100%;
-        }
-
+        .btn-gold { background: #f5c842; color: #0d1b2a; }
+        .btn-gold:hover { background: #e6b800; transform: scale(1.02); }
+        .btn-green { background: #2e7d32; color: #fff; }
+        .btn-green:hover { background: #1b5e20; }
+        .btn-block { width: 100%; }
         .commission-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
             margin-top: 10px;
         }
-        .commission-table th {
-            background: #0d1b2a;
-            color: #fff;
-            padding: 10px 16px;
-            text-align: left;
-        }
-        .commission-table td {
-            padding: 10px 16px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .commission-table tr:hover td {
-            background: #f8fafc;
-        }
-
+        .commission-table th { background: #0d1b2a; color: #fff; padding: 10px 16px; text-align: left; }
+        .commission-table td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+        .commission-table tr:hover td { background: #f8fafc; }
         .badge {
             padding: 6px 18px;
             border-radius: 30px;
@@ -212,19 +135,8 @@
             font-weight: 600;
             display: inline-block;
         }
-        .badge-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        .badge-warning {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        .badge-info {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #e65100; }
         .notification {
             padding: 15px 20px;
             border-radius: 16px;
@@ -232,25 +144,10 @@
             display: none;
             font-weight: 500;
         }
-        .notification.show {
-            display: block;
-        }
-        .notification.success {
-            background: #e8f5e9;
-            color: #1b5e20;
-            border-left: 5px solid #2e7d32;
-        }
-        .notification.error {
-            background: #fce4ec;
-            color: #b71c1c;
-            border-left: 5px solid #c62828;
-        }
-        .notification.info {
-            background: #e3f2fd;
-            color: #0d47a1;
-            border-left: 5px solid #0d47a1;
-        }
-
+        .notification.show { display: block; }
+        .notification.success { background: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
+        .notification.error { background: #fce4ec; color: #b71c1c; border-left: 5px solid #c62828; }
+        .notification.info { background: #e3f2fd; color: #0d47a1; border-left: 5px solid #0d47a1; }
         .referral-link-box {
             background: #f8fafc;
             padding: 15px 20px;
@@ -265,10 +162,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .referral-link-box .link-text {
-            font-weight: 600;
-            color: #0d1b2a;
-        }
+        .referral-link-box .link-text { font-weight: 600; color: #0d1b2a; }
         .referral-link-box .copy-btn {
             background: #0d1b2a;
             color: #fff;
@@ -280,10 +174,7 @@
             transition: 0.3s;
             font-size: 13px;
         }
-        .referral-link-box .copy-btn:hover {
-            background: #1b3a5c;
-        }
-
+        .referral-link-box .copy-btn:hover { background: #1b3a5c; }
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -292,12 +183,7 @@
             margin-top: 30px;
             border-radius: 20px 20px 0 0;
         }
-        .footer .founder {
-            color: #f5c842;
-            font-weight: 600;
-        }
-
-        /* ===== MODAL ===== */
+        .footer .founder { color: #f5c842; font-weight: 600; }
         .modal {
             display: none;
             position: fixed;
@@ -305,14 +191,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
             z-index: 999;
         }
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
         .modal-content {
             background: #fff;
             padding: 30px;
@@ -320,19 +204,9 @@
             max-width: 500px;
             width: 90%;
         }
-        .modal-content h3 {
-            color: #0d1b2a;
-            margin-bottom: 10px;
-            font-size: 22px;
-        }
-        .modal-content p {
-            color: #555;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        .modal-content .form-group {
-            margin-bottom: 15px;
-        }
+        .modal-content h3 { color: #0d1b2a; margin-bottom: 10px; font-size: 22px; }
+        .modal-content p { color: #555; font-size: 14px; margin-bottom: 15px; }
+        .modal-content .form-group { margin-bottom: 15px; }
         .modal-content .form-group label {
             font-weight: 600;
             color: #333;
@@ -351,7 +225,7 @@
         .modal-content .form-group input:focus {
             border-color: #f5c842;
             outline: none;
-            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
         }
         .modal-content .btn {
             padding: 12px 30px;
@@ -363,21 +237,10 @@
             transition: 0.3s;
             width: 100%;
         }
-        .modal-content .btn-gold {
-            background: #f5c842;
-            color: #0d1b2a;
-        }
-        .modal-content .btn-gold:hover {
-            background: #e6b800;
-        }
-        .modal-content .btn-gray {
-            background: #e0e0e0;
-            color: #333;
-            margin-top: 8px;
-        }
-        .modal-content .btn-gray:hover {
-            background: #ccc;
-        }
+        .modal-content .btn-gold { background: #f5c842; color: #0d1b2a; }
+        .modal-content .btn-gold:hover { background: #e6b800; }
+        .modal-content .btn-gray { background: #e0e0e0; color: #333; margin-top: 8px; }
+        .modal-content .btn-gray:hover { background: #ccc; }
         .modal-content .modal-close {
             background: none;
             border: none;
@@ -388,41 +251,16 @@
             width: 100%;
             text-align: center;
         }
-        .modal-content .modal-close:hover {
-            color: #0d1b2a;
-        }
-
+        .modal-content .modal-close:hover { color: #0d1b2a; }
         @media (max-width: 768px) {
-            .topbar {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-                padding: 15px;
-            }
-            .topbar .user-info {
-                justify-content: center;
-            }
-            .card {
-                padding: 20px;
-            }
-            .price-tag {
-                font-size: 28px;
-                padding: 10px 20px;
-            }
-            .bank-details .number {
-                font-size: 18px;
-            }
-            .referral-link-box {
-                flex-direction: column;
-                text-align: center;
-            }
-            .commission-table {
-                font-size: 12px;
-            }
-            .commission-table th,
-            .commission-table td {
-                padding: 8px 10px;
-            }
+            .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
+            .topbar .user-info { justify-content: center; }
+            .card { padding: 20px; }
+            .price-tag { font-size: 28px; padding: 10px 20px; }
+            .bank-details .number { font-size: 18px; }
+            .referral-link-box { flex-direction: column; text-align: center; }
+            .commission-table { font-size: 12px; }
+            .commission-table th, .commission-table td { padding: 8px 10px; }
         }
     </style>
 </head>
@@ -536,7 +374,7 @@
             </div>
 
             <div class="referral-link-box" id="referralLinkBox" style="display:none;">
-                <span class="link-text" id="referralLinkText">https://cashvista.com/ref/guest</span>
+                <span class="link-text" id="referralLinkText">https://cashvista.vercel.app/register.html?ref=guest</span>
                 <button class="copy-btn" onclick="copyReferralLink()">📋 Copy Link</button>
             </div>
 
@@ -588,9 +426,6 @@
         let currentUser = null;
         let platformSettings = {};
 
-        // =============================================
-        // HELPER FUNCTIONS
-        // =============================================
         async function fetchSupabase(table, params = '') {
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
@@ -645,9 +480,6 @@
             }
         }
 
-        // =============================================
-        // GET LOGGED-IN USER
-        // =============================================
         async function getLoggedInUser() {
             const userEmail = sessionStorage.getItem('userEmail');
             if (!userEmail) {
@@ -667,9 +499,6 @@
             }
         }
 
-        // =============================================
-        // LOAD PLATFORM SETTINGS
-        // =============================================
         async function loadPlatformSettings() {
             try {
                 const data = await fetchSupabase('platform_settings', '?limit=1');
@@ -683,9 +512,6 @@
             }
         }
 
-        // =============================================
-        // OPEN / CLOSE PAYMENT MODAL
-        // =============================================
         function openPaymentModal() {
             document.getElementById('paymentModal').classList.add('active');
         }
@@ -694,27 +520,19 @@
             document.getElementById('paymentModal').classList.remove('active');
         }
 
-        // =============================================
-        // REFRESH USER STATUS (CALLED EVERY 10 SECONDS)
-        // =============================================
         async function refreshUserStatus() {
             if (!currentUser) return;
             try {
                 const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(currentUser.email));
                 if (users && users.length > 0) {
                     const updatedUser = users[0];
-                    
-                    // Check if status changed
                     if (updatedUser.is_invest_member !== currentUser.is_invest_member) {
                         currentUser = updatedUser;
                         updateMembershipStatus(currentUser.is_invest_member);
-                        
                         if (currentUser.is_invest_member) {
                             showNotification('✅ Your membership has been activated! Your referral link is now available.', 'success');
                         }
                     }
-                    
-                    // Always update balance
                     if (updatedUser.balance !== currentUser.balance) {
                         currentUser.balance = updatedUser.balance;
                         document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
@@ -725,9 +543,6 @@
             }
         }
 
-        // =============================================
-        // LOAD PAGE
-        // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
             currentUser = await getLoggedInUser();
             if (!currentUser) return;
@@ -761,20 +576,15 @@
             document.getElementById('displayDownline3').textContent = d3 + '%';
             document.getElementById('displayDownline3Amount').textContent = '₦' + ((investAmt * d3) / 100).toLocaleString();
 
-            // Check if user is already an invest member
             if (currentUser.is_invest_member) {
                 updateMembershipStatus(true);
             } else {
                 updateMembershipStatus(false);
             }
 
-            // Start auto-refresh every 10 seconds to check for status changes
             setInterval(refreshUserStatus, 10000);
         });
 
-        // =============================================
-        // SUBMIT PAYMENT CONFIRMATION
-        // =============================================
         async function submitPaymentConfirmation() {
             const ref = document.getElementById('transactionRef').value.trim();
 
@@ -813,9 +623,6 @@
             }
         }
 
-        // =============================================
-        // UPDATE MEMBERSHIP STATUS (UPDATES UI INSTANTLY)
-        // =============================================
         function updateMembershipStatus(isActive) {
             const statusEl = document.getElementById('membershipStatus');
             const referralDisplay = document.getElementById('referralLinkDisplay');
@@ -823,28 +630,20 @@
             const payBtn = document.getElementById('payBtn');
 
             if (isActive) {
-                // Change status to Active
                 statusEl.innerHTML = '<span class="badge badge-success">✅ Active</span>';
-                
-                // Change referral link display
                 referralDisplay.innerHTML = `
                     <div style="background:#e8f5e9; padding:15px; border-radius:12px; border-left:5px solid #2e7d32;">
                         <p style="color:#2e7d32; font-weight:600;">✅ Your referral link is active! Share it to start earning.</p>
                     </div>
                 `;
-                
-                // Show referral link
                 referralBox.style.display = 'flex';
-                const link = currentUser.referral_link || 'https://cashvista.com/ref/' + currentUser.email.split('@')[0];
+                const link = currentUser.referral_link || 'https://cashvista.vercel.app/register.html?ref=' + currentUser.email.split('@')[0];
                 document.getElementById('referralLinkText').textContent = link;
-                
-                // Disable payment button
                 payBtn.textContent = '✅ Already Activated';
                 payBtn.style.background = '#888';
                 payBtn.style.cursor = 'not-allowed';
                 payBtn.disabled = true;
             } else {
-                // Not active
                 statusEl.innerHTML = '<span class="badge badge-warning">⚠️ Not Activated</span>';
                 referralDisplay.innerHTML = `
                     <div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
@@ -859,9 +658,6 @@
             }
         }
 
-        // =============================================
-        // COPY REFERRAL LINK
-        // =============================================
         function copyReferralLink() {
             const link = document.getElementById('referralLinkText').textContent;
             navigator.clipboard.writeText(link).then(() => {
@@ -871,9 +667,6 @@
             });
         }
 
-        // =============================================
-        // SHARE LINK
-        // =============================================
         function shareLink(platform) {
             const link = document.getElementById('referralLinkText').textContent;
             const message = '🎯 Join CashVista and earn money by watching videos! Use my referral link: ' + link;
@@ -891,22 +684,14 @@
             }
         }
 
-        // =============================================
-        // NOTIFICATION
-        // =============================================
         function showNotification(message, type) {
             const el = document.getElementById('notification');
             const msg = document.getElementById('notificationMessage');
             el.className = 'notification show ' + (type || 'info');
             msg.textContent = message;
-            setTimeout(() => {
-                el.classList.remove('show');
-            }, 5000);
+            setTimeout(() => { el.classList.remove('show'); }, 5000);
         }
 
-        // =============================================
-        // LOGOUT
-        // =============================================
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
@@ -914,14 +699,11 @@
             }
         }
 
-        // =============================================
-        // ADMIN FUNCTIONS (Called from Admin Dashboard)
-        // =============================================
         async function adminApproveInvest(userEmail) {
             await updateSupabase('invest_members', userEmail, { status: 'approved' });
 
             const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-            const referralLink = 'https://cashvista.com/ref/' + uniqueId;
+            const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
 
             await updateSupabase('users', userEmail, {
                 is_invest_member: true,
