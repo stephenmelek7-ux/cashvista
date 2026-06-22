@@ -183,6 +183,8 @@
         .btn-link:hover { background: #0d47a1; color: #fff; }
         .btn-assign { background: #fef7e0; color: #e65100; }
         .btn-assign:hover { background: #e65100; color: #fff; }
+        .btn-details { background: #f3e5f5; color: #7b1fa2; }
+        .btn-details:hover { background: #7b1fa2; color: #fff; }
 
         .footer {
             background: #0d1b2a;
@@ -261,6 +263,12 @@
             border-radius: 20px;
             font-size: 12px;
             border: 1px solid #ddd;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .batch-box .batch-users .user-tag:hover {
+            border-color: #f5c842;
+            background: #fef7e0;
         }
         .batch-box .batch-users .user-tag.active { border-color: #2e7d32; background: #e8f5e9; }
 
@@ -276,54 +284,87 @@
             align-items: center;
             z-index: 999;
         }
+        .modal.active { display: flex; }
         .modal-content {
             background: #fff;
             padding: 30px;
             border-radius: 20px;
-            max-width: 600px;
-            width: 90%;
+            max-width: 700px;
+            width: 95%;
             max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-content h3 { color: #0d1b2a; margin-bottom: 15px; }
-        .modal-content .form-group { margin-bottom: 15px; }
-        .modal-content .form-group label {
-            font-weight: 600;
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
+        .modal-content h3 {
+            color: #0d1b2a;
+            margin-bottom: 10px;
+            font-size: 22px;
         }
-        .modal-content .form-group input,
-        .modal-content .form-group select {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #e8ecf0;
-            border-radius: 10px;
-            font-size: 15px;
-        }
-        .modal-content .btn {
-            padding: 12px 30px;
+        .modal-content .close-modal {
+            float: right;
+            background: none;
             border: none;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 15px;
+            font-size: 24px;
             cursor: pointer;
-            transition: 0.3s;
-            width: 100%;
+            color: #888;
         }
-        .modal-content .btn-gold { background: #f5c842; color: #0d1b2a; }
-        .modal-content .btn-gold:hover { background: #e6b800; }
-        .modal-close {
+        .modal-content .close-modal:hover { color: #0d1b2a; }
+        .modal-content .user-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .modal-content .detail-item {
+            background: #f8fafc;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border-left: 3px solid #f5c842;
+        }
+        .modal-content .detail-item .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .modal-content .detail-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0d1b2a;
+            word-break: break-all;
+        }
+        .modal-content .detail-item .value.gold { color: #f5c842; }
+        .modal-content .detail-item .value.green { color: #2e7d32; }
+        .modal-content .detail-item .value.red { color: #c62828; }
+        .modal-content .detail-item .value.blue { color: #0d47a1; }
+        .modal-content .detail-item .value.small { font-size: 13px; font-weight: 600; }
+        .modal-content .detail-item .video-link-sm {
+            color: #0d47a1;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .modal-content .detail-item .video-link-sm:hover { color: #f5c842; }
+        .modal-content .detail-item .downliner-tag {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #0d47a1;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        .modal-content .full-width { grid-column: 1 / -1; }
+        .modal-content .btn-close-modal {
             background: #e0e0e0;
             border: none;
-            padding: 8px 20px;
+            padding: 10px 30px;
             border-radius: 30px;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
             font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
         }
+        .modal-content .btn-close-modal:hover { background: #ccc; }
 
         @media (max-width: 768px) {
             .topbar { flex-direction: column; gap: 10px; text-align: center; padding: 15px; }
@@ -338,6 +379,7 @@
             .nav-tabs { flex-direction: column; }
             .nav-tabs button { width: 100%; }
             .modal-content { padding: 20px; }
+            .modal-content .user-detail-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -357,7 +399,6 @@
 
     <div class="container">
 
-        <!-- STATS GRID -->
         <div class="stats-grid" id="statsGrid">
             <div class="stat-card"><div class="icon">👥</div><div class="number gold" id="totalUsers">0</div><div class="label">Total Users</div></div>
             <div class="stat-card"><div class="icon">💰</div><div class="number green" id="totalRevenue">₦0</div><div class="label">Total Revenue</div></div>
@@ -367,7 +408,6 @@
             <div class="stat-card"><div class="icon">📊</div><div class="number" id="todaySignups">0</div><div class="label">Today's Signups</div></div>
         </div>
 
-        <!-- NAVIGATION TABS -->
         <div class="nav-tabs">
             <button class="active" onclick="switchTab('pending')">📋 Pending <span id="pendingTabBadge" style="background:red; color:#fff; border-radius:50%; padding:0 8px; font-size:11px;">0</span></button>
             <button onclick="switchTab('campaigns')">📹 Campaigns</button>
@@ -487,25 +527,37 @@
         <div class="modal-content">
             <h3>📹 Assign Campaign to Batch</h3>
             <form id="assignForm">
-                <div class="form-group">
-                    <label>Select Campaign</label>
-                    <select id="assignCampaign" required>
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Select Campaign</label>
+                    <select id="assignCampaign" required style="width:100%; padding:10px 15px; border:2px solid #e8ecf0; border-radius:10px; font-size:15px;">
                         <option value="">-- Select Campaign --</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Select Batch</label>
-                    <select id="assignBatch" required>
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Select Batch</label>
+                    <select id="assignBatch" required style="width:100%; padding:10px 15px; border:2px solid #e8ecf0; border-radius:10px; font-size:15px;">
                         <option value="">-- Select Batch --</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Number of Viewers (max 20 per batch)</label>
-                    <input type="number" id="assignViewers" value="20" min="1" max="20" required />
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Number of Viewers (max 20 per batch)</label>
+                    <input type="number" id="assignViewers" value="20" min="1" max="20" required style="width:100%; padding:10px 15px; border:2px solid #e8ecf0; border-radius:10px; font-size:15px;" />
                 </div>
-                <button type="submit" class="btn btn-gold">📤 Assign Campaign</button>
-                <button type="button" class="modal-close" onclick="closeAssignModal()">Cancel</button>
+                <button type="submit" class="btn" style="padding:12px 30px; border:none; border-radius:30px; font-weight:700; font-size:15px; cursor:pointer; transition:0.3s; width:100%; background:#f5c842; color:#0d1b2a;">📤 Assign Campaign</button>
+                <button type="button" class="btn" onclick="closeAssignModal()" style="padding:10px 30px; border:none; border-radius:30px; font-weight:600; font-size:14px; cursor:pointer; transition:0.3s; width:100%; margin-top:8px; background:#e0e0e0; color:#333;">Cancel</button>
             </form>
+        </div>
+    </div>
+
+    <!-- ===== USER DETAILS MODAL ===== -->
+    <div id="userDetailModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeUserDetailModal()">✕</button>
+            <h3 id="detailUserName">👤 User Details</h3>
+            <div id="userDetailContent">
+                <div class="empty-state"><div class="icon">👤</div><p>Loading user details...</p></div>
+            </div>
+            <button class="btn-close-modal" onclick="closeUserDetailModal()">Close</button>
         </div>
     </div>
 
@@ -520,6 +572,14 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        // =============================================
+        // ADMIN SESSION CHECK
+        // =============================================
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
 
         // =============================================
         // HELPER FUNCTIONS
@@ -579,14 +639,6 @@
         }
 
         // =============================================
-        // ADMIN SESSION CHECK
-        // =============================================
-        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
-            window.location.href = 'admin-login.html';
-        }
-        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
-
-        // =============================================
         // SWITCH TABS
         // =============================================
         function switchTab(tabName) {
@@ -599,6 +651,322 @@
             if (index !== -1) buttons[index].classList.add('active');
             if (tabName === 'batches') renderBatches();
         }
+
+        // =============================================
+        // RENDER BATCHES (FIXED)
+        // =============================================
+        async function renderBatches() {
+            try {
+                const batches = await fetchSupabase('batches', '?order=created_at.asc');
+                const users = await fetchSupabase('users', '');
+
+                const container = document.getElementById('batchesContainer');
+
+                if (!batches || batches.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No batches created yet.</p></div>`;
+                    return;
+                }
+
+                let html = '';
+                for (const batch of batches) {
+                    const batchUsers = users ? users.filter(u => u.batch === batch.name) : [];
+
+                    html += `
+                        <div class="batch-box">
+                            <div class="batch-header">
+                                <h4>📦 ${batch.name}</h4>
+                                <span style="font-size:13px; color:#888;">${batchUsers.length} users</span>
+                            </div>
+                            <div class="batch-users">
+                                ${batchUsers.length === 0 ? '<span style="color:#999; font-size:13px;">No users assigned yet</span>' : batchUsers.map(u => `
+                                    <span class="user-tag active" onclick="openUserDetailModal('${u.email}')" title="Click to view user details">
+                                        ${u.name || u.email}
+                                    </span>
+                                `).join('')}
+                            </div>
+                            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                                <button class="btn-sm btn-assign" onclick="openAssignModal('${batch.name}')">📤 Assign Campaign</button>
+                                <button class="btn-sm btn-details" onclick="openBatchUserDetails('${batch.name}')">👁️ View All</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error rendering batches:', error);
+            }
+        }
+
+        // =============================================
+        // OPEN USER DETAIL MODAL
+        // =============================================
+        async function openUserDetailModal(email) {
+            const modal = document.getElementById('userDetailModal');
+            const content = document.getElementById('userDetailContent');
+            const nameEl = document.getElementById('detailUserName');
+
+            modal.classList.add('active');
+            content.innerHTML = '<div class="empty-state"><div class="icon">🔄</div><p>Loading user details...</p></div>';
+
+            try {
+                // Fetch user data
+                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
+                if (!users || users.length === 0) {
+                    content.innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>User not found.</p></div>';
+                    return;
+                }
+                const user = users[0];
+                nameEl.textContent = '👤 ' + (user.name || 'User') + ' Details';
+
+                // Fetch user's withdrawals
+                const withdrawals = await fetchSupabase('withdrawals', '?user_email=eq.' + encodeURIComponent(email));
+
+                // Fetch user's task completions (watch history)
+                const tasks = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(email));
+
+                // Fetch user's campaigns (advertised videos)
+                const campaigns = await fetchSupabase('campaigns', '?user_email=eq.' + encodeURIComponent(email));
+
+                // Fetch user's invest members
+                const invest = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
+
+                // Fetch downliners (users referred by this user)
+                const downliners = await fetchSupabase('users', '?referred_by=eq.' + encodeURIComponent(email));
+
+                // Calculate totals
+                const totalWithdrawn = withdrawals ? withdrawals.reduce((sum, w) => sum + (w.amount || 0), 0) : 0;
+                const totalWatchEarnings = tasks ? tasks.reduce((sum, t) => sum + (t.amount_earned || 0), 0) : 0;
+                const videosWatched = tasks ? tasks.length : 0;
+
+                const isInvestMember = user.is_invest_member || false;
+                const referralLink = user.referral_link || 'Not generated yet';
+                const activeCampaigns = campaigns ? campaigns.filter(c => c.status === 'approved' || c.status === 'live') : [];
+
+                let html = `
+                    <div class="user-detail-grid">
+                        <div class="detail-item">
+                            <div class="label">📧 Email</div>
+                            <div class="value">${user.email || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">📞 Phone</div>
+                            <div class="value">${user.phone || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">💰 Wallet Balance</div>
+                            <div class="value gold">₦${(user.balance || 0).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">🏦 Total Withdrawn</div>
+                            <div class="value red">₦${totalWithdrawn.toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">📊 Remaining Balance</div>
+                            <div class="value green">₦${((user.balance || 0) - totalWithdrawn).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">📈 Invest Member</div>
+                            <div class="value ${isInvestMember ? 'green' : 'red'}">${isInvestMember ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <div class="label">🔗 Referral Link</div>
+                            <div class="value small">${referralLink}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">👥 Direct Referrals</div>
+                            <div class="value blue">${user.direct_count || 0}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">🌳 Downliners</div>
+                            <div class="value small">
+                                ${downliners && downliners.length > 0 ? downliners.map(d => `<span class="downliner-tag">${d.name || d.email}</span>`).join('') : 'No downliners yet'}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">🎬 Videos Watched</div>
+                            <div class="value blue">${videosWatched}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">💰 Watch Earnings</div>
+                            <div class="value gold">₦${totalWatchEarnings.toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <div class="label">📹 Advertised Videos (${activeCampaigns.length})</div>
+                            <div class="value small">
+                                ${activeCampaigns.length > 0 ? activeCampaigns.map(c => `
+                                    <div style="margin:4px 0;">
+                                        📹 ${c.title} - 
+                                        <a href="${c.video_link}" target="_blank" class="video-link-sm">🔗 Watch Video</a>
+                                    </div>
+                                `).join('') : 'No advertised videos yet'}
+                            </div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <div class="label">📅 Joined Date</div>
+                            <div class="value small">${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}</div>
+                        </div>
+                    </div>
+                `;
+                content.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                content.innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>Error loading user details. Please try again.</p></div>';
+            }
+        }
+
+        function closeUserDetailModal() {
+            document.getElementById('userDetailModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('userDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeUserDetailModal();
+            }
+        });
+
+        // =============================================
+        // OPEN BATCH USER DETAILS
+        // =============================================
+        async function openBatchUserDetails(batchName) {
+            const users = await fetchSupabase('users', '');
+            const batchUsers = users ? users.filter(u => u.batch === batchName) : [];
+
+            if (batchUsers.length === 0) {
+                alert('No users in this batch.');
+                return;
+            }
+
+            let message = `📦 ${batchName} Users Details:\n\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+            for (const user of batchUsers) {
+                const withdrawals = await fetchSupabase('withdrawals', '?user_email=eq.' + encodeURIComponent(user.email));
+                const tasks = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(user.email));
+                const campaigns = await fetchSupabase('campaigns', '?user_email=eq.' + encodeURIComponent(user.email));
+                const invest = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(user.email));
+
+                const totalWithdrawn = withdrawals ? withdrawals.reduce((sum, w) => sum + (w.amount || 0), 0) : 0;
+                const totalWatchEarnings = tasks ? tasks.reduce((sum, t) => sum + (t.amount_earned || 0), 0) : 0;
+                const videosWatched = tasks ? tasks.length : 0;
+                const isInvestMember = user.is_invest_member || false;
+
+                message += `👤 ${user.name || user.email}\n`;
+                message += `   Balance: ₦${(user.balance || 0).toLocaleString()}\n`;
+                message += `   Withdrawn: ₦${totalWithdrawn.toLocaleString()}\n`;
+                message += `   Invest Member: ${isInvestMember ? '✅ Yes' : '❌ No'}\n`;
+                message += `   Videos Watched: ${videosWatched}\n`;
+                message += `   Watch Earnings: ₦${totalWatchEarnings.toLocaleString()}\n`;
+                message += `   Advertised Videos: ${campaigns ? campaigns.length : 0}\n`;
+                message += `   Referral Link: ${user.referral_link || 'Not generated'}\n`;
+                message += `   Direct Referrals: ${user.direct_count || 0}\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            }
+
+            alert(message);
+        }
+
+        // =============================================
+        // POPULATE DROPDOWNS
+        // =============================================
+        function populateAssignDropdowns(campaigns, batches) {
+            const campaignSelect = document.getElementById('assignCampaign');
+            const batchSelect = document.getElementById('assignBatch');
+
+            if (campaignSelect) {
+                campaignSelect.innerHTML = '<option value="">-- Select Campaign --</option>';
+                if (campaigns) {
+                    campaigns.filter(c => c.status === 'approved' || c.status === 'APPROVED' || c.status === 'live' || c.status === 'LIVE').forEach(c => {
+                        const option = document.createElement('option');
+                        option.value = c.id;
+                        option.textContent = c.title + ' (₦' + (c.amount || 0).toLocaleString() + ')';
+                        campaignSelect.appendChild(option);
+                    });
+                }
+            }
+
+            if (batchSelect) {
+                batchSelect.innerHTML = '<option value="">-- Select Batch --</option>';
+                if (batches) {
+                    batches.forEach(b => {
+                        const option = document.createElement('option');
+                        option.value = b.name;
+                        option.textContent = b.name;
+                        batchSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        // =============================================
+        // ASSIGN CAMPAIGN MODAL
+        // =============================================
+        function openAssignModal(batchName) {
+            document.getElementById('assignModal').style.display = 'flex';
+            if (batchName) {
+                document.getElementById('assignBatch').value = batchName;
+            }
+            fetchSupabase('campaigns').then(campaigns => {
+                fetchSupabase('batches').then(batches => {
+                    populateAssignDropdowns(campaigns, batches);
+                    if (batchName) {
+                        document.getElementById('assignBatch').value = batchName;
+                    }
+                });
+            });
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assignModal').style.display = 'none';
+        }
+
+        document.getElementById('assignModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAssignModal();
+            }
+        });
+
+        document.getElementById('assignForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const campaignId = document.getElementById('assignCampaign').value;
+            const batchName = document.getElementById('assignBatch').value;
+            const viewers = parseInt(document.getElementById('assignViewers').value);
+
+            if (!campaignId || !batchName) {
+                alert('❌ Please select both campaign and batch.');
+                return;
+            }
+
+            try {
+                const success = await updateSupabase('campaigns', campaignId, {
+                    assigned_batch: batchName,
+                    assigned_viewers: viewers,
+                    status: 'live',
+                    assigned_at: new Date().toISOString()
+                });
+
+                if (!success) {
+                    alert('❌ Error assigning campaign. Please try again.');
+                    return;
+                }
+
+                await insertSupabase('activity', {
+                    user_name: 'Admin',
+                    action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
+                    amount: 0,
+                    date: new Date().toISOString()
+                });
+
+                alert('✅ Campaign assigned successfully!');
+                closeAssignModal();
+                renderDashboard();
+
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
 
         // =============================================
         // RENDER DASHBOARD
@@ -777,6 +1145,7 @@
                                 <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
                                 <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" onclick="toggleUser('${user.email}')">${user.is_active !== false ? '🔒' : '🔓'}</button>
                                 <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
+                                <button class="btn-sm btn-details" onclick="openUserDetailModal('${user.email}')">📊</button>
                             </td>
                         </tr>
                     `).join('');
@@ -797,32 +1166,6 @@
                     `).join('');
                 }
 
-                // --- BATCHES ---
-                const batchesContainer = document.getElementById('batchesContainer');
-                if (!batches || batches.length === 0) {
-                    batchesContainer.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No batches created yet.</p></div>`;
-                } else {
-                    let html = '';
-                    for (const batch of batches) {
-                        const batchUsers = users ? users.filter(u => u.batch === batch.name) : [];
-                        html += `
-                            <div class="batch-box">
-                                <div class="batch-header">
-                                    <h4>📦 ${batch.name}</h4>
-                                    <span style="font-size:13px; color:#888;">${batchUsers.length} users</span>
-                                </div>
-                                <div class="batch-users">
-                                    ${batchUsers.length === 0 ? '<span style="color:#999; font-size:13px;">No users assigned yet</span>' : batchUsers.map(u => `<span class="user-tag active">${u.name || u.email}</span>`).join('')}
-                                </div>
-                                <div style="margin-top:10px;">
-                                    <button class="btn-sm btn-assign" onclick="openAssignModal('${batch.name}')">📤 Assign Campaign</button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    batchesContainer.innerHTML = html;
-                }
-
                 // --- POPULATE DROPDOWNS ---
                 populateAssignDropdowns(campaigns, batches);
 
@@ -834,101 +1177,7 @@
         }
 
         // =============================================
-        // POPULATE DROPDOWNS
-        // =============================================
-        function populateAssignDropdowns(campaigns, batches) {
-            const campaignSelect = document.getElementById('assignCampaign');
-            const batchSelect = document.getElementById('assignBatch');
-
-            if (campaignSelect) {
-                campaignSelect.innerHTML = '<option value="">-- Select Campaign --</option>';
-                if (campaigns) {
-                    campaigns.filter(c => c.status === 'approved' || c.status === 'APPROVED' || c.status === 'live' || c.status === 'LIVE').forEach(c => {
-                        const option = document.createElement('option');
-                        option.value = c.id;
-                        option.textContent = c.title + ' (₦' + (c.amount || 0).toLocaleString() + ')';
-                        campaignSelect.appendChild(option);
-                    });
-                }
-            }
-
-            if (batchSelect) {
-                batchSelect.innerHTML = '<option value="">-- Select Batch --</option>';
-                if (batches) {
-                    batches.forEach(b => {
-                        const option = document.createElement('option');
-                        option.value = b.name;
-                        option.textContent = b.name;
-                        batchSelect.appendChild(option);
-                    });
-                }
-            }
-        }
-
-        // =============================================
-        // ASSIGN CAMPAIGN MODAL
-        // =============================================
-        function openAssignModal(batchName) {
-            document.getElementById('assignModal').style.display = 'flex';
-            if (batchName) {
-                document.getElementById('assignBatch').value = batchName;
-            }
-            fetchSupabase('campaigns').then(campaigns => {
-                fetchSupabase('batches').then(batches => {
-                    populateAssignDropdowns(campaigns, batches);
-                    if (batchName) {
-                        document.getElementById('assignBatch').value = batchName;
-                    }
-                });
-            });
-        }
-
-        function closeAssignModal() {
-            document.getElementById('assignModal').style.display = 'none';
-        }
-
-        document.getElementById('assignForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const campaignId = document.getElementById('assignCampaign').value;
-            const batchName = document.getElementById('assignBatch').value;
-            const viewers = parseInt(document.getElementById('assignViewers').value);
-
-            if (!campaignId || !batchName) {
-                alert('❌ Please select both campaign and batch.');
-                return;
-            }
-
-            try {
-                const success = await updateSupabase('campaigns', campaignId, {
-                    assigned_batch: batchName,
-                    assigned_viewers: viewers,
-                    status: 'live',
-                    assigned_at: new Date().toISOString()
-                });
-
-                if (!success) {
-                    alert('❌ Error assigning campaign. Please try again.');
-                    return;
-                }
-
-                await insertSupabase('activity', {
-                    user_name: 'Admin',
-                    action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
-                    amount: 0,
-                    date: new Date().toISOString()
-                });
-
-                alert('✅ Campaign assigned successfully!');
-                closeAssignModal();
-                renderDashboard();
-
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
-        });
-
-        // =============================================
-        // APPROVE / REJECT - FIXED WITH REFERRAL LINK GENERATION
+        // APPROVE / REJECT
         // =============================================
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
@@ -940,12 +1189,10 @@
                     return;
                 }
 
-                // If Invest & Grow, generate referral link
                 if (table === 'invest_members') {
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
                     const referralLink = 'https://cashvista.com/ref/' + uniqueId;
 
-                    // Update user with referral link
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                         method: 'PATCH',
                         headers: {
@@ -960,10 +1207,8 @@
                         })
                     });
 
-                    // Update invest_members with referral link
                     await updateSupabase(table, id, { referral_link: referralLink });
 
-                    // Add activity
                     await insertSupabase('activity', {
                         user_name: userEmail,
                         action: 'Invest & Grow approved - referral link generated: ' + referralLink,
