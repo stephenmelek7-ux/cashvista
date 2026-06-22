@@ -271,6 +271,29 @@
             background: #fef7e0;
         }
         .batch-box .batch-users .user-tag.active { border-color: #2e7d32; background: #e8f5e9; }
+        .batch-box .batch-select-all {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .batch-box .batch-select-all label {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+        .batch-box .batch-select-all input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .batch-box .batch-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
         .modal {
             display: none;
@@ -684,9 +707,14 @@
                                     </span>
                                 `).join('')}
                             </div>
-                            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                            <div class="batch-select-all">
+                                <input type="checkbox" id="selectAll_${batch.name}" onchange="toggleSelectAll('${batch.name}')" />
+                                <label for="selectAll_${batch.name}">Select All (${batchUsers.length} users)</label>
+                            </div>
+                            <div class="batch-actions">
                                 <button class="btn-sm btn-assign" onclick="openAssignModal('${batch.name}')">📤 Assign Campaign</button>
                                 <button class="btn-sm btn-details" onclick="openBatchUserDetails('${batch.name}')">👁️ View All</button>
+                                <button class="btn-sm btn-approve" onclick="approveBatch('${batch.name}')">✅ Approve All</button>
                             </div>
                         </div>
                     `;
@@ -695,6 +723,67 @@
 
             } catch (error) {
                 console.error('Error rendering batches:', error);
+            }
+        }
+
+        // =============================================
+        // SELECT ALL / APPROVE ALL FUNCTIONS
+        // =============================================
+        function toggleSelectAll(batchName) {
+            const checkbox = document.getElementById('selectAll_' + batchName);
+            // This will be used to select all users in the batch for campaign assignment
+            alert('✅ ' + batchName + ' selected for campaign assignment. Use "Assign Campaign" to continue.');
+        }
+
+        async function approveBatch(batchName) {
+            if (!confirm(`✅ Approve ALL users in ${batchName} for current campaign?`)) return;
+            
+            try {
+                // Get all users in this batch
+                const users = await fetchSupabase('users', '');
+                const batchUsers = users ? users.filter(u => u.batch === batchName) : [];
+
+                if (batchUsers.length === 0) {
+                    alert('No users in this batch to approve.');
+                    return;
+                }
+
+                // Get the latest approved campaign
+                const campaigns = await fetchSupabase('campaigns', '?status=approved&order=date.desc&limit=1');
+                if (!campaigns || campaigns.length === 0) {
+                    alert('No approved campaign available to assign.');
+                    return;
+                }
+
+                const campaign = campaigns[0];
+                
+                // Assign the campaign to all users in the batch
+                for (const user of batchUsers) {
+                    // For each user, create a task completion entry
+                    await insertSupabase('task_completions', {
+                        user_email: user.email,
+                        campaign_id: campaign.id,
+                        seconds_watched: 0,
+                        amount_earned: 0,
+                        status: 'pending',
+                        completed_at: new Date().toISOString()
+                    });
+                }
+
+                // Update campaign with batch assignment
+                await updateSupabase('campaigns', campaign.id, {
+                    assigned_batch: batchName,
+                    assigned_viewers: batchUsers.length,
+                    status: 'live',
+                    assigned_at: new Date().toISOString()
+                });
+
+                alert(`✅ ${batchUsers.length} users in ${batchName} have been approved for the campaign!`);
+                renderDashboard();
+                
+            } catch (error) {
+                alert('❌ Error approving batch: ' + error.message);
+                console.error(error);
             }
         }
 
@@ -710,7 +799,6 @@
             content.innerHTML = '<div class="empty-state"><div class="icon">🔄</div><p>Loading user details...</p></div>';
 
             try {
-                // Fetch user data
                 const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
                 if (!users || users.length === 0) {
                     content.innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>User not found.</p></div>';
@@ -719,22 +807,17 @@
                 const user = users[0];
                 nameEl.textContent = '👤 ' + (user.name || 'User') + ' Details';
 
-                // Fetch user's withdrawals
                 const withdrawals = await fetchSupabase('withdrawals', '?user_email=eq.' + encodeURIComponent(email));
-
-                // Fetch user's task completions (watch history)
                 const tasks = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(email));
-
-                // Fetch user's campaigns (advertised videos)
                 const campaigns = await fetchSupabase('campaigns', '?user_email=eq.' + encodeURIComponent(email));
-
-                // Fetch user's invest members
                 const invest = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
 
-                // Fetch downliners (users referred by this user)
-                const downliners = await fetchSupabase('users', '?referred_by=eq.' + encodeURIComponent(email));
+                // Get downliners using referral_code
+                let downliners = [];
+                if (user.referral_code) {
+                    downliners = await fetchSupabase('users', '?referred_by=eq.' + encodeURIComponent(email));
+                }
 
-                // Calculate totals
                 const totalWithdrawn = withdrawals ? withdrawals.reduce((sum, w) => sum + (w.amount || 0), 0) : 0;
                 const totalWatchEarnings = tasks ? tasks.reduce((sum, t) => sum + (t.amount_earned || 0), 0) : 0;
                 const videosWatched = tasks ? tasks.length : 0;
@@ -820,7 +903,6 @@
             document.getElementById('userDetailModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
         document.getElementById('userDetailModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeUserDetailModal();
@@ -846,7 +928,6 @@
                 const withdrawals = await fetchSupabase('withdrawals', '?user_email=eq.' + encodeURIComponent(user.email));
                 const tasks = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(user.email));
                 const campaigns = await fetchSupabase('campaigns', '?user_email=eq.' + encodeURIComponent(user.email));
-                const invest = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(user.email));
 
                 const totalWithdrawn = withdrawals ? withdrawals.reduce((sum, w) => sum + (w.amount || 0), 0) : 0;
                 const totalWatchEarnings = tasks ? tasks.reduce((sum, t) => sum + (t.amount_earned || 0), 0) : 0;
