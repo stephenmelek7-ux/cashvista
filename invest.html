@@ -6,7 +6,6 @@
     <title>Invest & Grow - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -17,8 +16,6 @@
             background: #f0f4f8;
             color: #1a1a2e;
         }
-
-        /* ===== TOP BAR ===== */
         .topbar {
             background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
             color: #fff;
@@ -93,14 +90,12 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* ===== CONTAINER ===== */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 25px 20px;
         }
 
-        /* ===== CARDS ===== */
         .card {
             background: #fff;
             border-radius: 20px;
@@ -137,7 +132,6 @@
             margin: 10px 0 20px;
         }
 
-        /* ===== BANK DETAILS ===== */
         .bank-details {
             background: #e8f5e9;
             padding: 20px 25px;
@@ -160,36 +154,6 @@
             letter-spacing: 2px;
         }
 
-        /* ===== FORM ELEMENTS ===== */
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e8ecf0;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: 0.3s;
-            background: #fafbfc;
-        }
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #f5c842;
-            outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
-        }
-
-        /* ===== BUTTONS ===== */
         .btn {
             display: inline-block;
             padding: 14px 35px;
@@ -220,17 +184,7 @@
         .btn-block {
             width: 100%;
         }
-        .btn-disabled {
-            background: #ccc;
-            color: #888;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        .btn-disabled:hover {
-            transform: none;
-        }
 
-        /* ===== COMMISSION TABLE ===== */
         .commission-table {
             width: 100%;
             border-collapse: collapse;
@@ -251,7 +205,6 @@
             background: #f8fafc;
         }
 
-        /* ===== STATUS BADGE ===== */
         .badge {
             padding: 6px 18px;
             border-radius: 30px;
@@ -272,7 +225,6 @@
             color: #0d47a1;
         }
 
-        /* ===== NOTIFICATION ===== */
         .notification {
             padding: 15px 20px;
             border-radius: 16px;
@@ -299,7 +251,6 @@
             border-left: 5px solid #0d47a1;
         }
 
-        /* ===== REFERRAL LINK DISPLAY ===== */
         .referral-link-box {
             background: #f8fafc;
             padding: 15px 20px;
@@ -333,7 +284,6 @@
             background: #1b3a5c;
         }
 
-        /* ===== FOOTER ===== */
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -347,7 +297,101 @@
             font-weight: 600;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+        }
+        .modal-content h3 {
+            color: #0d1b2a;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        .modal-content p {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .modal-content .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-content .form-group label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .modal-content .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fafbfc;
+        }
+        .modal-content .form-group input:focus {
+            border-color: #f5c842;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .modal-content .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .modal-content .btn-gold {
+            background: #f5c842;
+            color: #0d1b2a;
+        }
+        .modal-content .btn-gold:hover {
+            background: #e6b800;
+        }
+        .modal-content .btn-gray {
+            background: #e0e0e0;
+            color: #333;
+            margin-top: 8px;
+        }
+        .modal-content .btn-gray:hover {
+            background: #ccc;
+        }
+        .modal-content .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        .modal-content .modal-close:hover {
+            color: #0d1b2a;
+        }
+
         @media (max-width: 768px) {
             .topbar {
                 flex-direction: column;
@@ -384,7 +428,6 @@
 </head>
 <body>
 
-    <!-- ===== TOP BAR ===== -->
     <div class="topbar">
         <div class="logo">
             <span class="play-icon">▶</span>Cash<span>Vista</span>
@@ -399,12 +442,10 @@
 
     <div class="container">
 
-        <!-- ===== NOTIFICATION ===== -->
         <div id="notification" class="notification">
             <span id="notificationMessage">Welcome to Invest & Grow!</span>
         </div>
 
-        <!-- ===== MAIN CARD ===== -->
         <div class="card">
             <h2>📈 Invest & Grow</h2>
             <p class="subtitle">Pay <span id="investAmountDisplay">₦5,000</span> to unlock your permanent referral link and start earning commissions.</p>
@@ -425,44 +466,22 @@
 
             <hr style="border:1px solid #f0f0f0; margin:20px 0;" />
 
-            <h3 style="color:#0d1b2a; margin-bottom:15px;">💰 Choose Payment Method</h3>
+            <h3 style="color:#0d1b2a; margin-bottom:15px;">💰 Payment Details</h3>
 
-            <div class="form-group">
-                <label>Select Payment Method</label>
-                <select id="paymentMethod">
-                    <option value="bank">🏦 Bank Transfer</option>
-                </select>
-            </div>
-
-            <!-- Bank Transfer Details (Loaded from Supabase) -->
-            <div id="bankTransferDetails" class="bank-details">
-                <p><strong>🏦 Bank:</strong> <span id="displayBankName">Loading...</span></p>
-                <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Loading...</span></p>
-                <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">Loading...</span></p>
+            <div class="bank-details">
+                <p><strong>🏦 Bank:</strong> <span id="displayBankName">United Bank for Africa (UBA)</span></p>
+                <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Stephen Melek</span></p>
+                <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">2355380747</span></p>
                 <p style="font-size:13px; color:#555; margin-top:10px;">
-                    After payment, click the "I Have Paid" button below and fill in your transaction details.
+                    After payment, click the button below to submit your transaction details.
                 </p>
             </div>
 
-            <!-- Paystack Section (Hidden by default, shown if enabled in settings) -->
-            <div id="paystackSection" style="display:none;">
-                <p style="font-size:12px; color:#e65100; margin-top:4px;">
-                    💳 Pay with your card via Paystack.
-                </p>
-                <button class="btn btn-gold btn-block" id="paystackBtn" onclick="payWithPaystack()">
-                    💳 Pay with Paystack
-                </button>
-            </div>
-
-            <!-- I Have Paid (Bank Transfer) -->
-            <div style="margin-top:12px;">
-                <button class="btn btn-green btn-block" onclick="showPaymentConfirmation()">
-                    ✅ I Have Paid (Bank Transfer)
-                </button>
-            </div>
+            <button class="btn btn-green btn-block" onclick="openPaymentModal()" id="payBtn">
+                ✅ I Have Paid (Bank Transfer)
+            </button>
         </div>
 
-        <!-- ===== COMMISSION STRUCTURE ===== -->
         <div class="card">
             <h3>💰 Commission Structure</h3>
             <p style="color:#555; font-size:14px; margin-bottom:15px;">
@@ -504,7 +523,6 @@
             </p>
         </div>
 
-        <!-- ===== REFERRAL LINK SECTION ===== -->
         <div class="card" id="referralSection">
             <h3>🔗 Your Referral Link</h3>
             <p style="color:#555; font-size:14px; margin-bottom:10px;">
@@ -531,17 +549,11 @@
 
     </div>
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-        <p>&copy; 2026 CashVista. All rights reserved.</p>
-        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
-    </footer>
-
     <!-- ===== PAYMENT CONFIRMATION MODAL ===== -->
-    <div id="paymentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
-        <div style="background:#fff; padding:30px; border-radius:20px; max-width:500px; width:90%;">
-            <h3 style="color:#0d1b2a; margin-bottom:15px;">✅ Confirm Payment</h3>
-            <p style="color:#555; margin-bottom:15px;">Enter your transaction details below.</p>
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <h3>✅ Confirm Payment</h3>
+            <p>Enter your transaction details below.</p>
 
             <div class="form-group">
                 <label>Transaction Reference</label>
@@ -549,17 +561,22 @@
             </div>
             <div class="form-group">
                 <label>Amount Paid</label>
-                <input type="text" id="amountPaid" value="₦5,000" disabled />
+                <input type="text" id="amountPaid" value="₦5,000" disabled style="background:#f0f0f0;" />
             </div>
             <div class="form-group">
                 <label>Upload Payment Receipt (Optional)</label>
                 <input type="file" id="receiptUpload" accept="image/*" />
             </div>
 
-            <button class="btn btn-gold btn-block" onclick="submitPaymentConfirmation()">Submit for Approval</button>
-            <button onclick="closePaymentModal()" style="margin-top:10px; background:#e0e0e0; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; width:100%;">Cancel</button>
+            <button class="btn btn-gold" onclick="submitPaymentConfirmation()">✅ Submit for Approval</button>
+            <button class="btn btn-gray" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
 
     <script>
         // =============================================
@@ -572,6 +589,63 @@
         let platformSettings = {};
 
         // =============================================
+        // HELPER FUNCTIONS
+        // =============================================
+        async function fetchSupabase(table, params = '') {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Fetch error:', e);
+                return [];
+            }
+        }
+
+        async function insertSupabase(table, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Insert error:', e);
+                return false;
+            }
+        }
+
+        async function updateSupabase(table, email, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Update error:', e);
+                return false;
+            }
+        }
+
+        // =============================================
         // GET LOGGED-IN USER
         // =============================================
         async function getLoggedInUser() {
@@ -581,18 +655,7 @@
                 return null;
             }
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
-                if (!response.ok) {
-                    window.location.href = 'login.html';
-                    return null;
-                }
-                const users = await response.json();
+                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(userEmail));
                 if (!users || users.length === 0) {
                     window.location.href = 'login.html';
                     return null;
@@ -605,25 +668,60 @@
         }
 
         // =============================================
-        // LOAD PLATFORM SETTINGS FROM SUPABASE
+        // LOAD PLATFORM SETTINGS
         // =============================================
         async function loadPlatformSettings() {
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/platform_settings?limit=1', {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
-                if (!response.ok) return null;
-                const data = await response.json();
-                if (!data || data.length === 0) return null;
-                platformSettings = data[0];
+                const data = await fetchSupabase('platform_settings', '?limit=1');
+                if (data && data.length > 0) {
+                    platformSettings = data[0];
+                }
                 return platformSettings;
             } catch (e) {
                 console.error('Error loading settings:', e);
                 return null;
+            }
+        }
+
+        // =============================================
+        // OPEN / CLOSE PAYMENT MODAL
+        // =============================================
+        function openPaymentModal() {
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        // =============================================
+        // REFRESH USER STATUS (CALLED EVERY 10 SECONDS)
+        // =============================================
+        async function refreshUserStatus() {
+            if (!currentUser) return;
+            try {
+                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(currentUser.email));
+                if (users && users.length > 0) {
+                    const updatedUser = users[0];
+                    
+                    // Check if status changed
+                    if (updatedUser.is_invest_member !== currentUser.is_invest_member) {
+                        currentUser = updatedUser;
+                        updateMembershipStatus(currentUser.is_invest_member);
+                        
+                        if (currentUser.is_invest_member) {
+                            showNotification('✅ Your membership has been activated! Your referral link is now available.', 'success');
+                        }
+                    }
+                    
+                    // Always update balance
+                    if (updatedUser.balance !== currentUser.balance) {
+                        currentUser.balance = updatedUser.balance;
+                        document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
+                    }
+                }
+            } catch (e) {
+                console.error('Error refreshing status:', e);
             }
         }
 
@@ -637,21 +735,17 @@
             document.getElementById('userName').textContent = currentUser.name || 'User';
             document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
 
-            // Load settings from Supabase
             await loadPlatformSettings();
 
-            // Update Invest amount
             const investAmount = platformSettings.invest_amount || 5000;
             document.getElementById('investAmountDisplay').textContent = '₦' + investAmount.toLocaleString();
             document.getElementById('investPriceTag').textContent = '₦' + investAmount.toLocaleString();
             document.getElementById('amountPaid').value = '₦' + investAmount.toLocaleString();
 
-            // Update Bank Details
             document.getElementById('displayBankName').textContent = platformSettings.bank_name || 'United Bank for Africa (UBA)';
             document.getElementById('displayAccountName').textContent = platformSettings.account_name || 'Stephen Melek';
             document.getElementById('displayAccountNumber').textContent = platformSettings.account_number || '2355380747';
 
-            // Update Commission Rates
             const direct = platformSettings.direct_commission || 55;
             const d1 = platformSettings.downline1 || 0.5;
             const d2 = platformSettings.downline2 || 0.3;
@@ -667,187 +761,101 @@
             document.getElementById('displayDownline3').textContent = d3 + '%';
             document.getElementById('displayDownline3Amount').textContent = '₦' + ((investAmt * d3) / 100).toLocaleString();
 
-            // --- SHOW/HIDE PAYSTACK BASED ON SETTINGS ---
-            const paystackEnabled = platformSettings.paystack_enabled || false;
-            const paystackSection = document.getElementById('paystackSection');
-
-            if (paystackEnabled) {
-                paystackSection.style.display = 'block';
-                // Add Paystack option to dropdown
-                const paymentMethod = document.getElementById('paymentMethod');
-                const option = document.createElement('option');
-                option.value = 'paystack';
-                option.textContent = '💳 Pay with Paystack (Card)';
-                paymentMethod.appendChild(option);
+            // Check if user is already an invest member
+            if (currentUser.is_invest_member) {
+                updateMembershipStatus(true);
             } else {
-                paystackSection.style.display = 'none';
+                updateMembershipStatus(false);
             }
 
-            // Update membership status
-            updateMembershipStatus();
+            // Start auto-refresh every 10 seconds to check for status changes
+            setInterval(refreshUserStatus, 10000);
         });
 
         // =============================================
-        // PAYMENT METHOD TOGGLE
+        // SUBMIT PAYMENT CONFIRMATION
         // =============================================
-        document.getElementById('paymentMethod').addEventListener('change', function() {
-            const bankDetails = document.getElementById('bankTransferDetails');
-            const paystackSection = document.getElementById('paystackSection');
-
-            if (this.value === 'bank') {
-                bankDetails.style.display = 'block';
-                paystackSection.style.display = 'none';
-            } else if (this.value === 'paystack') {
-                bankDetails.style.display = 'none';
-                paystackSection.style.display = 'block';
-            }
-        });
-
-        // =============================================
-        // PAY WITH PAYSTACK
-        // =============================================
-        function payWithPaystack() {
-            showNotification('🔐 Paystack payment is being processed...', 'info');
-            setTimeout(() => {
-                showNotification('✅ Paystack payment successful! Your membership is now active.', 'success');
-                activateMembership();
-            }, 2000);
-        }
-
-        // =============================================
-        // SHOW PAYMENT CONFIRMATION (Bank Transfer)
-        // =============================================
-        function showPaymentConfirmation() {
-            document.getElementById('paymentModal').style.display = 'flex';
-        }
-
-        function closePaymentModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-        }
-
         async function submitPaymentConfirmation() {
             const ref = document.getElementById('transactionRef').value.trim();
+
             if (!ref) {
-                showNotification('❌ Please enter your transaction reference.', 'error');
+                alert('❌ Please enter your transaction reference.');
                 return;
             }
 
-            closePaymentModal();
-            showNotification('✅ Payment submitted for admin approval. You will be notified once approved.', 'success');
-
-            // Save to Supabase
-            await fetch(SUPABASE_URL + '/rest/v1/invest_members', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({
+            try {
+                const success = await insertSupabase('invest_members', {
                     user_email: currentUser.email,
                     amount: platformSettings.invest_amount || 5000,
                     status: 'pending',
-                    date: new Date().toISOString()
-                })
-            });
+                    date: new Date().toISOString(),
+                    receipt_url: 'pending'
+                });
 
-            // Add activity
-            await fetch(SUPABASE_URL + '/rest/v1/activity', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({
+                if (!success) {
+                    alert('❌ Error submitting payment. Please try again.');
+                    return;
+                }
+
+                await insertSupabase('activity', {
                     user_name: currentUser.name,
                     action: 'Submitted Invest & Grow payment',
                     amount: platformSettings.invest_amount || 5000,
                     date: new Date().toISOString()
-                })
-            });
+                });
+
+                closePaymentModal();
+                showNotification('✅ Payment submitted for admin approval! You will be notified once approved.', 'success');
+
+            } catch (error) {
+                alert('❌ Error submitting payment. Please try again.');
+                console.error(error);
+            }
         }
 
         // =============================================
-        // ACTIVATE MEMBERSHIP (Called by Admin or Paystack)
+        // UPDATE MEMBERSHIP STATUS (UPDATES UI INSTANTLY)
         // =============================================
-        async function activateMembership() {
-            currentUser.is_invest_member = true;
-            const uniqueId = 'REF_' + Date.now() + '_' + currentUser.email.split('@')[0];
-            currentUser.referral_link = 'https://cashvista.com/ref/' + uniqueId;
-
-            // Update user in Supabase
-            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(currentUser.email), {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({
-                    is_invest_member: true,
-                    referral_link: currentUser.referral_link
-                })
-            });
-
-            // Add to invest members
-            await fetch(SUPABASE_URL + '/rest/v1/invest_members', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({
-                    user_email: currentUser.email,
-                    amount: platformSettings.invest_amount || 5000,
-                    status: 'active',
-                    date: new Date().toISOString()
-                })
-            });
-
-            // Add activity
-            await fetch(SUPABASE_URL + '/rest/v1/activity', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({
-                    user_name: currentUser.name,
-                    action: 'Invest & Grow activated',
-                    amount: platformSettings.invest_amount || 5000,
-                    date: new Date().toISOString()
-                })
-            });
-
-            updateMembershipStatus();
-            showNotification('✅ Congratulations! Your referral link is now active.', 'success');
-        }
-
-        // =============================================
-        // UPDATE MEMBERSHIP STATUS
-        // =============================================
-        function updateMembershipStatus() {
+        function updateMembershipStatus(isActive) {
             const statusEl = document.getElementById('membershipStatus');
+            const referralDisplay = document.getElementById('referralLinkDisplay');
+            const referralBox = document.getElementById('referralLinkBox');
+            const payBtn = document.getElementById('payBtn');
 
-            if (currentUser.is_invest_member) {
+            if (isActive) {
+                // Change status to Active
                 statusEl.innerHTML = '<span class="badge badge-success">✅ Active</span>';
-                document.getElementById('referralLinkDisplay').innerHTML =
-                    `<div style="background:#e8f5e9; padding:15px; border-radius:12px; border-left:5px solid #2e7d32;">
+                
+                // Change referral link display
+                referralDisplay.innerHTML = `
+                    <div style="background:#e8f5e9; padding:15px; border-radius:12px; border-left:5px solid #2e7d32;">
                         <p style="color:#2e7d32; font-weight:600;">✅ Your referral link is active! Share it to start earning.</p>
-                    </div>`;
-                document.getElementById('referralLinkBox').style.display = 'flex';
-                document.getElementById('referralLinkText').textContent = currentUser.referral_link ||
-                    'https://cashvista.com/ref/' + currentUser.email.split('@')[0];
+                    </div>
+                `;
+                
+                // Show referral link
+                referralBox.style.display = 'flex';
+                const link = currentUser.referral_link || 'https://cashvista.com/ref/' + currentUser.email.split('@')[0];
+                document.getElementById('referralLinkText').textContent = link;
+                
+                // Disable payment button
+                payBtn.textContent = '✅ Already Activated';
+                payBtn.style.background = '#888';
+                payBtn.style.cursor = 'not-allowed';
+                payBtn.disabled = true;
             } else {
+                // Not active
                 statusEl.innerHTML = '<span class="badge badge-warning">⚠️ Not Activated</span>';
-                document.getElementById('referralLinkDisplay').innerHTML =
-                    `<div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
+                referralDisplay.innerHTML = `
+                    <div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
                         <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay to unlock your referral link.</p>
-                    </div>`;
-                document.getElementById('referralLinkBox').style.display = 'none';
+                    </div>
+                `;
+                referralBox.style.display = 'none';
+                payBtn.textContent = '✅ I Have Paid (Bank Transfer)';
+                payBtn.style.background = '#2e7d32';
+                payBtn.style.cursor = 'pointer';
+                payBtn.disabled = false;
             }
         }
 
@@ -872,8 +880,7 @@
 
             const urls = {
                 whatsapp: 'https://api.whatsapp.com/send?text=' + encodeURIComponent(message),
-                facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' +
-                    encodeURIComponent('Join CashVista and earn money!'),
+                facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent('Join CashVista and earn money!'),
                 instagram: 'instagram://?message=' + encodeURIComponent(message)
             };
 
@@ -885,7 +892,7 @@
         }
 
         // =============================================
-        // NOTIFICATION SYSTEM
+        // NOTIFICATION
         // =============================================
         function showNotification(message, type) {
             const el = document.getElementById('notification');
@@ -911,46 +918,24 @@
         // ADMIN FUNCTIONS (Called from Admin Dashboard)
         // =============================================
         async function adminApproveInvest(userEmail) {
-            await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userEmail), {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({ status: 'approved' })
-            });
+            await updateSupabase('invest_members', userEmail, { status: 'approved' });
 
             const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-            await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({
-                    is_invest_member: true,
-                    referral_link: 'https://cashvista.com/ref/' + uniqueId
-                })
+            const referralLink = 'https://cashvista.com/ref/' + uniqueId;
+
+            await updateSupabase('users', userEmail, {
+                is_invest_member: true,
+                referral_link: referralLink,
+                referral_code: uniqueId
             });
 
-            alert('✅ User ' + userEmail + ' has been approved for Invest & Grow!');
+            alert('✅ User ' + userEmail + ' has been approved for Invest & Grow! Referral link generated.');
         }
 
         async function adminRejectInvest(userEmail) {
-            await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userEmail), {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({ status: 'rejected' })
-            });
+            await updateSupabase('invest_members', userEmail, { status: 'rejected' });
             alert('❌ User ' + userEmail + ' has been rejected for Invest & Grow.');
         }
     </script>
-
 </body>
 </html>
