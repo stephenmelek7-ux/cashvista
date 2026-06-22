@@ -522,33 +522,9 @@
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
         // =============================================
-        // ADMIN SESSION CHECK - THIS PREVENTS REDIRECT TO USER DASHBOARD
+        // HELPER FUNCTIONS
         // =============================================
-        // Check if admin is logged in using admin session
-        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
-            // Redirect to admin login page, NOT user login
-            window.location.href = 'admin-login.html';
-        }
-        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
-
-        // =============================================
-        // SWITCH TABS
-        // =============================================
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-            const buttons = document.querySelectorAll('.nav-tabs button');
-            const tabs = ['pending', 'campaigns', 'invest', 'withdrawals', 'batches', 'users', 'activity'];
-            const index = tabs.indexOf(tabName);
-            if (index !== -1) buttons[index].classList.add('active');
-            if (tabName === 'batches') renderBatches();
-        }
-
-        // =============================================
-        // FETCH HELPERS
-        // =============================================
-        async function fetchFromSupabase(table, params = '') {
+        async function fetchSupabase(table, params = '') {
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
                     method: 'GET',
@@ -562,6 +538,25 @@
             } catch (e) {
                 console.error('Fetch error:', e);
                 return [];
+            }
+        }
+
+        async function insertSupabase(table, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Insert error:', e);
+                return false;
             }
         }
 
@@ -584,18 +579,40 @@
         }
 
         // =============================================
+        // ADMIN SESSION CHECK
+        // =============================================
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
+
+        // =============================================
+        // SWITCH TABS
+        // =============================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            const buttons = document.querySelectorAll('.nav-tabs button');
+            const tabs = ['pending', 'campaigns', 'invest', 'withdrawals', 'batches', 'users', 'activity'];
+            const index = tabs.indexOf(tabName);
+            if (index !== -1) buttons[index].classList.add('active');
+            if (tabName === 'batches') renderBatches();
+        }
+
+        // =============================================
         // RENDER DASHBOARD
         // =============================================
         async function renderDashboard() {
             try {
                 console.log('🔄 Loading admin dashboard...');
 
-                const users = await fetchFromSupabase('users', '?order=joined_date.desc');
-                const campaigns = await fetchFromSupabase('campaigns', '?order=date.desc');
-                const investMembers = await fetchFromSupabase('invest_members', '?order=date.desc');
-                const withdrawals = await fetchFromSupabase('withdrawals', '?order=date.desc');
-                const activity = await fetchFromSupabase('activity', '?order=date.desc&limit=20');
-                const batches = await fetchFromSupabase('batches', '?order=created_at.asc');
+                const users = await fetchSupabase('users', '?order=joined_date.desc');
+                const campaigns = await fetchSupabase('campaigns', '?order=date.desc');
+                const investMembers = await fetchSupabase('invest_members', '?order=date.desc');
+                const withdrawals = await fetchSupabase('withdrawals', '?order=date.desc');
+                const activity = await fetchSupabase('activity', '?order=date.desc&limit=20');
+                const batches = await fetchSupabase('batches', '?order=created_at.asc');
 
                 console.log('Users:', users?.length || 0);
                 console.log('Campaigns:', campaigns?.length || 0);
@@ -856,8 +873,8 @@
             if (batchName) {
                 document.getElementById('assignBatch').value = batchName;
             }
-            fetchFromSupabase('campaigns').then(campaigns => {
-                fetchFromSupabase('batches').then(batches => {
+            fetchSupabase('campaigns').then(campaigns => {
+                fetchSupabase('batches').then(batches => {
                     populateAssignDropdowns(campaigns, batches);
                     if (batchName) {
                         document.getElementById('assignBatch').value = batchName;
@@ -894,20 +911,11 @@
                     return;
                 }
 
-                await fetch(SUPABASE_URL + '/rest/v1/activity', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({
-                        user_name: 'Admin',
-                        action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
-                        amount: 0,
-                        date: new Date().toISOString()
-                    })
+                await insertSupabase('activity', {
+                    user_name: 'Admin',
+                    action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
+                    amount: 0,
+                    date: new Date().toISOString()
                 });
 
                 alert('✅ Campaign assigned successfully!');
@@ -920,7 +928,7 @@
         });
 
         // =============================================
-        // APPROVE / REJECT
+        // APPROVE / REJECT - FIXED WITH REFERRAL LINK GENERATION
         // =============================================
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
@@ -932,9 +940,12 @@
                     return;
                 }
 
+                // If Invest & Grow, generate referral link
                 if (table === 'invest_members') {
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-                    const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
+                    const referralLink = 'https://cashvista.com/ref/' + uniqueId;
+
+                    // Update user with referral link
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                         method: 'PATCH',
                         headers: {
@@ -948,8 +959,19 @@
                             referral_code: uniqueId
                         })
                     });
+
+                    // Update invest_members with referral link
                     await updateSupabase(table, id, { referral_link: referralLink });
-                    alert(`✅ ${userEmail} approved! Referral link generated.`);
+
+                    // Add activity
+                    await insertSupabase('activity', {
+                        user_name: userEmail,
+                        action: 'Invest & Grow approved - referral link generated: ' + referralLink,
+                        amount: 5000,
+                        date: new Date().toISOString()
+                    });
+
+                    alert(`✅ ${userEmail} approved! Referral link generated: ${referralLink}`);
                 } else if (table === 'campaigns') {
                     alert(`✅ Campaign approved! You can now assign it to batches.`);
                 } else if (table === 'withdrawals') {
@@ -986,7 +1008,7 @@
         // USER ACTIONS
         // =============================================
         async function viewUser(email) {
-            const users = await fetchFromSupabase('users', '?email=eq.' + encodeURIComponent(email));
+            const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
             if (!users || users.length === 0) { alert('User not found.'); return; }
             const user = users[0];
             alert(`👤 USER DETAILS\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email || 'N/A'}\nPhone: ${user.phone || 'N/A'}\nBalance: ₦${(user.balance || 0).toLocaleString()}\nInvest Member: ${user.is_invest_member ? 'Yes' : 'No'}\nReferral Link: ${user.referral_link || 'N/A'}\nBatch: ${user.batch || 'Not assigned'}\nStatus: ${user.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}`);
@@ -994,7 +1016,7 @@
 
         async function toggleUser(email) {
             if (!confirm(`Toggle status for ${email}?`)) return;
-            const users = await fetchFromSupabase('users', '?email=eq.' + encodeURIComponent(email));
+            const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
             if (!users || users.length === 0) { alert('User not found.'); return; }
             const user = users[0];
             const newStatus = user.is_active === false ? true : false;
@@ -1025,7 +1047,7 @@
         }
 
         // =============================================
-        // ADMIN LOGOUT - CLEARS ADMIN SESSION ONLY
+        // ADMIN LOGOUT
         // =============================================
         function adminLogout() {
             if (confirm('Logout from admin panel?')) {
