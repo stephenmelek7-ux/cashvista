@@ -676,7 +676,7 @@
         }
 
         // =============================================
-        // RENDER BATCHES (FIXED)
+        // RENDER BATCHES
         // =============================================
         async function renderBatches() {
             try {
@@ -727,11 +727,10 @@
         }
 
         // =============================================
-        // SELECT ALL / APPROVE ALL FUNCTIONS
+        // SELECT ALL / APPROVE ALL
         // =============================================
         function toggleSelectAll(batchName) {
             const checkbox = document.getElementById('selectAll_' + batchName);
-            // This will be used to select all users in the batch for campaign assignment
             alert('✅ ' + batchName + ' selected for campaign assignment. Use "Assign Campaign" to continue.');
         }
 
@@ -739,7 +738,6 @@
             if (!confirm(`✅ Approve ALL users in ${batchName} for current campaign?`)) return;
             
             try {
-                // Get all users in this batch
                 const users = await fetchSupabase('users', '');
                 const batchUsers = users ? users.filter(u => u.batch === batchName) : [];
 
@@ -748,7 +746,6 @@
                     return;
                 }
 
-                // Get the latest approved campaign
                 const campaigns = await fetchSupabase('campaigns', '?status=approved&order=date.desc&limit=1');
                 if (!campaigns || campaigns.length === 0) {
                     alert('No approved campaign available to assign.');
@@ -757,9 +754,7 @@
 
                 const campaign = campaigns[0];
                 
-                // Assign the campaign to all users in the batch
                 for (const user of batchUsers) {
-                    // For each user, create a task completion entry
                     await insertSupabase('task_completions', {
                         user_email: user.email,
                         campaign_id: campaign.id,
@@ -770,7 +765,6 @@
                     });
                 }
 
-                // Update campaign with batch assignment
                 await updateSupabase('campaigns', campaign.id, {
                     assigned_batch: batchName,
                     assigned_viewers: batchUsers.length,
@@ -810,9 +804,7 @@
                 const withdrawals = await fetchSupabase('withdrawals', '?user_email=eq.' + encodeURIComponent(email));
                 const tasks = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(email));
                 const campaigns = await fetchSupabase('campaigns', '?user_email=eq.' + encodeURIComponent(email));
-                const invest = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
 
-                // Get downliners using referral_code
                 let downliners = [];
                 if (user.referral_code) {
                     downliners = await fetchSupabase('users', '?referred_by=eq.' + encodeURIComponent(email));
@@ -1258,7 +1250,7 @@
         }
 
         // =============================================
-        // APPROVE / REJECT
+        // APPROVE ITEM - UPDATED WITH CORRECT REFERRAL LINK
         // =============================================
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
@@ -1271,8 +1263,9 @@
                 }
 
                 if (table === 'invest_members') {
+                    // CORRECT REFERRAL LINK URL
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-                    const referralLink = 'https://cashvista.com/ref/' + uniqueId;
+                    const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
 
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                         method: 'PATCH',
