@@ -6,11 +6,7 @@
     <title>Register - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
@@ -23,7 +19,7 @@
             background: #fff;
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
             width: 100%;
             max-width: 420px;
         }
@@ -62,7 +58,7 @@
             border-color: #f5c842;
             outline: none;
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
         }
         .register-container .btn {
             background: #f5c842;
@@ -123,6 +119,16 @@
             display: block;
             border-left: 4px solid #0d47a1;
         }
+        .referral-badge {
+            background: #fef7e0;
+            border: 1px solid #f5c842;
+            padding: 8px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #e65100;
+        }
         @media (max-width: 480px) {
             .register-container { padding: 25px 20px; margin: 10px; }
         }
@@ -134,6 +140,9 @@
             <span class="play-icon">▶</span>Cash<span>Vista</span>
         </div>
         <p class="subtitle">Create your free account</p>
+        <div id="referralInfo" class="referral-badge" style="display:none;">
+            🔗 You were referred by someone! When you invest ₦5,000, they earn 55% commission.
+        </div>
         <div id="notification" class="notification"></div>
         <form id="registerForm">
             <label>Full Name</label>
@@ -146,6 +155,7 @@
             <input type="text" id="username" placeholder="Choose a unique username" />
             <label>Password</label>
             <input type="password" id="password" placeholder="Min 6 characters" required />
+            <input type="hidden" id="referralCode" value="" />
             <button type="submit" class="btn">Create Account</button>
         </form>
         <p class="links">Already have an account? <a href="login.html">Login</a></p>
@@ -160,6 +170,21 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        // =============================================
+        // CAPTURE REFERRAL CODE FROM URL
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+
+            if (refCode) {
+                document.getElementById('referralCode').value = refCode;
+                document.getElementById('referralInfo').style.display = 'block';
+                document.getElementById('referralInfo').innerHTML = 
+                    '🔗 You were referred by someone! When you invest ₦5,000, they earn 55% commission.';
+            }
+        });
 
         // =============================================
         // HELPER FUNCTIONS
@@ -211,6 +236,7 @@
             const phone = document.getElementById('phone').value.trim();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
+            const referralCode = document.getElementById('referralCode').value.trim();
             const notification = document.getElementById('notification');
 
             if (!name) {
@@ -233,17 +259,15 @@
                 notification.className = 'notification info';
                 notification.textContent = '⏳ Creating your account...';
 
-                // Check if user exists
                 const existing = await fetchSupabase('users', email);
-
                 if (existing && existing.length > 0) {
                     notification.className = 'notification error';
                     notification.textContent = '❌ This email is already registered. Please login.';
                     return;
                 }
 
-                // Insert user
-                const success = await insertSupabase('users', {
+                // Save user with referral code
+                const userData = {
                     name: name,
                     email: email,
                     phone: phone || '',
@@ -255,7 +279,14 @@
                     is_invest_member: false,
                     is_active: true,
                     joined_date: new Date().toISOString()
-                });
+                };
+
+                // If referral code exists, save it
+                if (referralCode) {
+                    userData.referred_by = referralCode;
+                }
+
+                const success = await insertSupabase('users', userData);
 
                 if (!success) {
                     notification.className = 'notification error';
@@ -268,7 +299,6 @@
                 notification.className = 'notification success';
                 notification.textContent = '✅ Account created! Redirecting...';
 
-                // Add activity
                 await fetch(SUPABASE_URL + '/rest/v1/activity', {
                     method: 'POST',
                     headers: {
@@ -279,7 +309,7 @@
                     },
                     body: JSON.stringify({
                         user_name: name,
-                        action: 'Registered',
+                        action: referralCode ? 'Registered with referral: ' + referralCode : 'Registered',
                         amount: 0,
                         date: new Date().toISOString()
                     })
