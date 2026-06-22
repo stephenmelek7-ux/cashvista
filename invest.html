@@ -418,7 +418,7 @@
 
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION (USING FETCH API)
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
@@ -426,6 +426,9 @@
         let currentUser = null;
         let platformSettings = {};
 
+        // =============================================
+        // HELPER FUNCTIONS
+        // =============================================
         async function fetchSupabase(table, params = '') {
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
@@ -480,6 +483,9 @@
             }
         }
 
+        // =============================================
+        // GET LOGGED-IN USER
+        // =============================================
         async function getLoggedInUser() {
             const userEmail = sessionStorage.getItem('userEmail');
             if (!userEmail) {
@@ -499,6 +505,9 @@
             }
         }
 
+        // =============================================
+        // LOAD PLATFORM SETTINGS
+        // =============================================
         async function loadPlatformSettings() {
             try {
                 const data = await fetchSupabase('platform_settings', '?limit=1');
@@ -512,6 +521,9 @@
             }
         }
 
+        // =============================================
+        // OPEN / CLOSE PAYMENT MODAL
+        // =============================================
         function openPaymentModal() {
             document.getElementById('paymentModal').classList.add('active');
         }
@@ -520,6 +532,9 @@
             document.getElementById('paymentModal').classList.remove('active');
         }
 
+        // =============================================
+        // REFRESH USER STATUS
+        // =============================================
         async function refreshUserStatus() {
             if (!currentUser) return;
             try {
@@ -543,6 +558,9 @@
             }
         }
 
+        // =============================================
+        // LOAD PAGE
+        // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
             currentUser = await getLoggedInUser();
             if (!currentUser) return;
@@ -585,6 +603,9 @@
             setInterval(refreshUserStatus, 10000);
         });
 
+        // =============================================
+        // SUBMIT PAYMENT CONFIRMATION - FIXED
+        // =============================================
         async function submitPaymentConfirmation() {
             const ref = document.getElementById('transactionRef').value.trim();
 
@@ -594,6 +615,13 @@
             }
 
             try {
+                // Show loading
+                const btn = document.querySelector('.modal-content .btn-gold');
+                const originalText = btn.textContent;
+                btn.textContent = '⏳ Submitting...';
+                btn.disabled = true;
+
+                // Insert into invest_members table
                 const success = await insertSupabase('invest_members', {
                     user_email: currentUser.email,
                     amount: platformSettings.invest_amount || 5000,
@@ -603,26 +631,40 @@
                 });
 
                 if (!success) {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
                     alert('❌ Error submitting payment. Please try again.');
                     return;
                 }
 
+                // Add activity log
                 await insertSupabase('activity', {
                     user_name: currentUser.name,
-                    action: 'Submitted Invest & Grow payment',
+                    action: 'Submitted Invest & Grow payment (₦' + (platformSettings.invest_amount || 5000) + ')',
                     amount: platformSettings.invest_amount || 5000,
                     date: new Date().toISOString()
                 });
 
+                btn.textContent = originalText;
+                btn.disabled = false;
                 closePaymentModal();
                 showNotification('✅ Payment submitted for admin approval! You will be notified once approved.', 'success');
 
             } catch (error) {
+                console.error('Error submitting payment:', error);
                 alert('❌ Error submitting payment. Please try again.');
-                console.error(error);
+                // Re-enable button
+                const btn = document.querySelector('.modal-content .btn-gold');
+                if (btn) {
+                    btn.textContent = '✅ Submit for Approval';
+                    btn.disabled = false;
+                }
             }
         }
 
+        // =============================================
+        // UPDATE MEMBERSHIP STATUS
+        // =============================================
         function updateMembershipStatus(isActive) {
             const statusEl = document.getElementById('membershipStatus');
             const referralDisplay = document.getElementById('referralLinkDisplay');
@@ -658,6 +700,9 @@
             }
         }
 
+        // =============================================
+        // COPY REFERRAL LINK
+        // =============================================
         function copyReferralLink() {
             const link = document.getElementById('referralLinkText').textContent;
             navigator.clipboard.writeText(link).then(() => {
@@ -667,6 +712,9 @@
             });
         }
 
+        // =============================================
+        // SHARE LINK
+        // =============================================
         function shareLink(platform) {
             const link = document.getElementById('referralLinkText').textContent;
             const message = '🎯 Join CashVista and earn money by watching videos! Use my referral link: ' + link;
@@ -684,14 +732,22 @@
             }
         }
 
+        // =============================================
+        // NOTIFICATION
+        // =============================================
         function showNotification(message, type) {
             const el = document.getElementById('notification');
             const msg = document.getElementById('notificationMessage');
             el.className = 'notification show ' + (type || 'info');
             msg.textContent = message;
-            setTimeout(() => { el.classList.remove('show'); }, 5000);
+            setTimeout(() => {
+                el.classList.remove('show');
+            }, 5000);
         }
 
+        // =============================================
+        // LOGOUT
+        // =============================================
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
@@ -699,6 +755,9 @@
             }
         }
 
+        // =============================================
+        // ADMIN FUNCTIONS
+        // =============================================
         async function adminApproveInvest(userEmail) {
             await updateSupabase('invest_members', userEmail, { status: 'approved' });
 
