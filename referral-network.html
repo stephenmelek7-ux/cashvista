@@ -115,11 +115,6 @@
             font-size: 15px;
             margin-bottom: 20px;
         }
-        .card p {
-            color: #555;
-            font-size: 15px;
-            line-height: 1.7;
-        }
 
         .stats-grid {
             display: grid;
@@ -240,24 +235,6 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-        .tree-line {
-            width: 2px;
-            height: 20px;
-            background: #ddd;
-            margin: 0 auto;
-        }
-        .tree-connector {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            padding: 0 20px;
-        }
-        .tree-connector .line {
-            width: 100px;
-            height: 2px;
-            background: #ddd;
-            margin: 0 auto;
-        }
 
         .footer {
             background: #0d1b2a;
@@ -292,15 +269,6 @@
                 flex-direction: column;
                 align-items: center;
             }
-            .tree-connector {
-                flex-direction: column;
-                align-items: center;
-                gap: 0;
-            }
-            .tree-connector .line {
-                width: 2px;
-                height: 20px;
-            }
         }
     </style>
 </head>
@@ -324,7 +292,6 @@
             <h2>🌐 Your Referral Network</h2>
             <p class="subtitle">View everyone you've invited and your downline structure.</p>
 
-            <!-- Stats -->
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-box">
                     <div class="number gold" id="statDirect">0</div>
@@ -400,9 +367,6 @@
             earnings: 0
         };
 
-        // =============================================
-        // HELPER FUNCTIONS
-        // =============================================
         async function fetchSupabase(table, params = '') {
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
@@ -420,9 +384,6 @@
             }
         }
 
-        // =============================================
-        // GET LOGGED-IN USER
-        // =============================================
         async function getLoggedInUser() {
             const userEmail = sessionStorage.getItem('userEmail');
             if (!userEmail) {
@@ -442,16 +403,11 @@
             }
         }
 
-        // =============================================
-        // LOAD REFERRAL NETWORK
-        // =============================================
         async function loadReferralNetwork() {
             try {
-                // Get all users
                 const allUsers = await fetchSupabase('users', '');
 
                 // Find direct referrals (users who have this user's referral_code as their referred_by)
-                // For now, we'll use a simple approach: if referral_code matches
                 const directRefs = allUsers.filter(u => 
                     u.referral_code === currentUser.referral_code || 
                     u.referred_by === currentUser.email
@@ -464,11 +420,10 @@
                     directEmails.includes(u.referral_code)
                 );
 
-                // Calculate earnings (55% of each direct referral's invest amount)
                 let totalEarnings = 0;
                 for (const ref of directRefs) {
                     if (ref.is_invest_member) {
-                        totalEarnings += 2750; // 55% of 5000
+                        totalEarnings += 2750;
                     }
                 }
 
@@ -476,16 +431,12 @@
                 referralData.downline = downlineRefs;
                 referralData.earnings = totalEarnings;
 
-                // Update stats
                 document.getElementById('statDirect').textContent = directRefs.length;
                 document.getElementById('statDownline').textContent = downlineRefs.length;
                 document.getElementById('statEarnings').textContent = '₦' + totalEarnings.toLocaleString();
                 document.getElementById('statTotal').textContent = directRefs.length + downlineRefs.length;
 
-                // Render tree
                 renderTree(currentUser, directRefs, downlineRefs);
-
-                // Render list
                 renderReferralList(directRefs, downlineRefs);
 
             } catch (error) {
@@ -493,9 +444,6 @@
             }
         }
 
-        // =============================================
-        // RENDER REFERRAL TREE
-        // =============================================
         function renderTree(user, directRefs, downlineRefs) {
             const container = document.getElementById('treeContainer');
 
@@ -511,7 +459,6 @@
 
             let html = `
                 <div class="tree-view">
-                    <!-- Level 0: You -->
                     <div class="tree-level">
                         <div class="tree-node" style="border-color:#0d1b2a; background:#0d1b2a; color:#fff;">
                             <div class="node-name" style="color:#f5c842;">👤 ${user.name || 'You'}</div>
@@ -522,7 +469,7 @@
             `;
 
             if (directRefs.length > 0) {
-                html += `<div class="tree-line"></div>`;
+                html += `<div style="width:2px; height:20px; background:#ddd; margin:0 auto;"></div>`;
                 html += `
                     <div class="tree-level">
                         ${directRefs.map(ref => `
@@ -537,7 +484,7 @@
             }
 
             if (downlineRefs.length > 0) {
-                html += `<div class="tree-line"></div>`;
+                html += `<div style="width:2px; height:20px; background:#ddd; margin:0 auto;"></div>`;
                 html += `
                     <div class="tree-level">
                         ${downlineRefs.map(ref => `
@@ -555,9 +502,6 @@
             container.innerHTML = html;
         }
 
-        // =============================================
-        // RENDER REFERRAL LIST
-        // =============================================
         function renderReferralList(directRefs, downlineRefs) {
             const tbody = document.getElementById('referralListBody');
 
@@ -582,9 +526,6 @@
             `).join('');
         }
 
-        // =============================================
-        // LOAD PAGE
-        // =============================================
         document.addEventListener('DOMContentLoaded', async function() {
             currentUser = await getLoggedInUser();
             if (!currentUser) return;
@@ -595,9 +536,6 @@
             await loadReferralNetwork();
         });
 
-        // =============================================
-        // LOGOUT
-        // =============================================
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
