@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>View Receipt</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #0d1b2a;
+            font-family: Arial, sans-serif;
+        }
+        img {
+            max-width: 95%;
+            max-height: 95vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.8);
+        }
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 1000;
+            transition: 0.3s;
+            font-family: Arial, sans-serif;
+        }
+        .close-btn:hover { 
+            color: #f5c842; 
+            transform: scale(1.2); 
+        }
+        .hint {
+            position: fixed;
+            bottom: 30px;
+            color: rgba(255,255,255,0.3);
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+        }
+        .download-btn {
+            position: fixed;
+            bottom: 80px;
+            padding: 12px 30px;
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: Arial, sans-serif;
+        }
+        .download-btn:hover {
+            background: #e6b800;
+            transform: scale(1.05);
+        }
+        .error-msg {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="close-btn" onclick="window.close()">✕</button>
+    <img id="receiptImage" src="" alt="Receipt" />
+    <button class="download-btn" onclick="downloadImage()">⬇️ Download Image</button>
+    <div class="hint">Press ESC or click ✕ to close</div>
+    
+    <script>
+        // Get image data from URL parameter
+        const params = new URLSearchParams(window.location.search);
+        const imageData = params.get('image');
+        
+        if (imageData) {
+            document.getElementById('receiptImage').src = imageData;
+        } else {
+            document.body.innerHTML = '<div class="error-msg">❌ No image data provided</div>';
+        }
+        
+        // Download function
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = imageData;
+            link.download = 'receipt_' + Date.now() + '.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Close on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') window.close();
+        });
+    </script>
+</body>
+</html>
