@@ -252,6 +252,15 @@
             text-align: center;
         }
         .modal-content .modal-close:hover { color: #0d1b2a; }
+        .receipt-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .receipt-preview:hover { border-color: #f5c842; }
         @media (max-width: 768px) {
             .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
             .topbar .user-info { justify-content: center; }
@@ -394,8 +403,8 @@
             <p>Enter your transaction details below.</p>
 
             <div class="form-group">
-                <label>Transaction Reference</label>
-                <input type="text" id="transactionRef" placeholder="Enter reference number" />
+                <label>Transaction Reference *</label>
+                <input type="text" id="transactionRef" placeholder="Enter your transaction reference" />
             </div>
             <div class="form-group">
                 <label>Amount Paid</label>
@@ -404,6 +413,7 @@
             <div class="form-group">
                 <label>Upload Payment Receipt (Optional)</label>
                 <input type="file" id="receiptUpload" accept="image/*" />
+                <div class="hint">Upload a clear image of your payment receipt (JPG, PNG).</div>
             </div>
 
             <button class="btn btn-gold" onclick="submitPaymentConfirmation()">✅ Submit for Approval</button>
@@ -418,7 +428,7 @@
 
     <script>
         // =============================================
-        // SUPABASE CONFIGURATION (USING FETCH API)
+        // SUPABASE CONFIGURATION
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
@@ -481,6 +491,18 @@
                 console.error('Update error:', e);
                 return false;
             }
+        }
+
+        // =============================================
+        // CONVERT FILE TO BASE64
+        // =============================================
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
         }
 
         // =============================================
@@ -604,31 +626,43 @@
         });
 
         // =============================================
-        // SUBMIT PAYMENT CONFIRMATION - FIXED
+        // SUBMIT PAYMENT CONFIRMATION - WITH RECEIPT
         // =============================================
         async function submitPaymentConfirmation() {
             const ref = document.getElementById('transactionRef').value.trim();
+            const fileInput = document.getElementById('receiptUpload');
+            const file = fileInput.files[0];
 
             if (!ref) {
                 alert('❌ Please enter your transaction reference.');
                 return;
             }
 
-            try {
-                // Show loading
-                const btn = document.querySelector('.modal-content .btn-gold');
-                const originalText = btn.textContent;
-                btn.textContent = '⏳ Submitting...';
-                btn.disabled = true;
+            // Show loading state
+            const btn = document.querySelector('.modal-content .btn-gold');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Submitting...';
+            btn.disabled = true;
 
-                // Insert into invest_members table
-                const success = await insertSupabase('invest_members', {
+            try {
+                const investAmount = platformSettings.invest_amount || 5000;
+
+                // Prepare data
+                const paymentData = {
                     user_email: currentUser.email,
-                    amount: platformSettings.invest_amount || 5000,
+                    amount: investAmount,
                     status: 'pending',
-                    date: new Date().toISOString(),
-                    receipt_url: 'pending'
-                });
+                    date: new Date().toISOString()
+                };
+
+                // If receipt uploaded, convert to base64 and store
+                if (file) {
+                    const base64 = await fileToBase64(file);
+                    paymentData.receipt_url = base64;
+                }
+
+                // Insert into invest_members
+                const success = await insertSupabase('invest_members', paymentData);
 
                 if (!success) {
                     btn.textContent = originalText;
@@ -640,8 +674,8 @@
                 // Add activity log
                 await insertSupabase('activity', {
                     user_name: currentUser.name,
-                    action: 'Submitted Invest & Grow payment (₦' + (platformSettings.invest_amount || 5000) + ')',
-                    amount: platformSettings.invest_amount || 5000,
+                    action: 'Submitted Invest & Grow payment (₦' + investAmount + ')',
+                    amount: investAmount,
                     date: new Date().toISOString()
                 });
 
@@ -651,14 +685,10 @@
                 showNotification('✅ Payment submitted for admin approval! You will be notified once approved.', 'success');
 
             } catch (error) {
-                console.error('Error submitting payment:', error);
+                console.error('❌ Submit error:', error);
                 alert('❌ Error submitting payment. Please try again.');
-                // Re-enable button
-                const btn = document.querySelector('.modal-content .btn-gold');
-                if (btn) {
-                    btn.textContent = '✅ Submit for Approval';
-                    btn.disabled = false;
-                }
+                btn.textContent = originalText;
+                btn.disabled = false;
             }
         }
 
@@ -753,29 +783,6 @@
                 sessionStorage.removeItem('userEmail');
                 window.location.href = 'login.html';
             }
-        }
-
-        // =============================================
-        // ADMIN FUNCTIONS
-        // =============================================
-        async function adminApproveInvest(userEmail) {
-            await updateSupabase('invest_members', userEmail, { status: 'approved' });
-
-            const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-            const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
-
-            await updateSupabase('users', userEmail, {
-                is_invest_member: true,
-                referral_link: referralLink,
-                referral_code: uniqueId
-            });
-
-            alert('✅ User ' + userEmail + ' has been approved for Invest & Grow! Referral link generated.');
-        }
-
-        async function adminRejectInvest(userEmail) {
-            await updateSupabase('invest_members', userEmail, { status: 'rejected' });
-            alert('❌ User ' + userEmail + ' has been rejected for Invest & Grow.');
         }
     </script>
 </body>
