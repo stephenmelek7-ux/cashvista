@@ -91,6 +91,42 @@
         .topbar nav a:hover {
             color: #f5c842;
         }
+        
+        /* ===== PERMANENT INSTALL BUTTON IN NAV ===== */
+        .install-nav-btn {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+        .install-nav-btn:hover {
+            background: #e6b800;
+            transform: scale(1.05);
+        }
+        .install-nav-btn .icon {
+            font-size: 16px;
+        }
+        
+        /* Hide install button if app is already installed */
+        .install-nav-btn.hidden {
+            display: none !important;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 200, 66, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0); }
+        }
+
         .topbar nav .btn-login {
             background: #f5c842;
             color: #0d1b2a;
@@ -98,6 +134,7 @@
             border-radius: 30px;
             font-weight: 700;
             transition: 0.3s;
+            text-decoration: none;
         }
         .topbar nav .btn-login:hover {
             background: #e6b800;
@@ -110,42 +147,10 @@
             border-radius: 30px;
             font-weight: 700;
             transition: 0.3s;
+            text-decoration: none;
         }
         .topbar nav .btn-signup:hover {
             background: #e6e6e6;
-        }
-
-        /* ===== PERMANENT INSTALL BUTTON - NEW ===== */
-        .install-btn-top {
-            background: #f5c842;
-            color: #0d1b2a;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            animation: pulse 2s infinite;
-        }
-        .install-btn-top:hover {
-            background: #e6b800;
-            transform: scale(1.05);
-        }
-        .install-btn-top.show {
-            display: inline-flex;
-        }
-        .install-btn-top .icon {
-            font-size: 18px;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(245, 200, 66, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0); }
         }
 
         /* ===== HERO SECTION ===== */
@@ -335,17 +340,28 @@
                 flex-direction: column;
                 gap: 12px;
                 text-align: center;
+                padding: 12px 15px;
             }
             .topbar nav {
                 justify-content: center;
+                gap: 10px;
+            }
+            .topbar nav a {
+                font-size: 13px;
+            }
+            .install-nav-btn {
+                font-size: 12px;
+                padding: 6px 15px;
+                order: 10;
             }
             .contact-section {
                 padding: 20px;
                 margin: 0 10px;
             }
-            .install-btn-top {
-                font-size: 12px;
-                padding: 6px 15px;
+            .topbar nav .btn-login,
+            .topbar nav .btn-signup {
+                padding: 6px 16px;
+                font-size: 13px;
             }
         }
         
@@ -413,16 +429,16 @@
             <a href="#how-it-works">How It Works</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact</a>
-            <!-- ===== PERMANENT INSTALL BUTTON ===== -->
-            <button id="topInstallBtn" class="install-btn-top" onclick="triggerInstall()">
-                <span class="icon">📲</span> Install App
+            <!-- ===== PERMANENT INSTALL BUTTON IN NAV ===== -->
+            <button id="installNavBtn" class="install-nav-btn" onclick="triggerInstall()">
+                <span class="icon">📲</span> Install CashVista
             </button>
             <a href="login.html" class="btn-login">Login</a>
             <a href="register.html" class="btn-signup">Sign Up</a>
         </nav>
     </div>
 
-    <!-- ===== INSTALL BANNER (Bottom - Fallback) ===== -->
+    <!-- ===== INSTALL BANNER (Bottom - Fallback if needed) ===== -->
     <div id="installBanner">
         <div class="app-icon">📱</div>
         <div>
@@ -586,12 +602,12 @@
         let deferredPrompt;
         const installBanner = document.getElementById('installBanner');
         const installBtn = document.getElementById('installBtn');
-        const topInstallBtn = document.getElementById('topInstallBtn');
+        const installNavBtn = document.getElementById('installNavBtn');
 
-        // Check if app is already installed
+        // Check if app is already installed - hide the install button
         if (window.matchMedia('(display-mode: standalone)').matches) {
+            installNavBtn.classList.add('hidden');
             installBanner.style.display = 'none';
-            topInstallBtn.style.display = 'none';
         }
 
         // Listen for beforeinstallprompt event
@@ -599,15 +615,14 @@
             e.preventDefault();
             deferredPrompt = e;
             
-            // Show the install banner at bottom
-            installBanner.style.display = 'block';
+            // Show the install button in nav (it's always visible, but this ensures it's shown)
+            installNavBtn.classList.remove('hidden');
             
-            // Show the top install button
-            topInstallBtn.classList.add('show');
-            topInstallBtn.style.display = 'inline-flex';
+            // Also show bottom banner as fallback
+            installBanner.style.display = 'block';
         });
 
-        // Trigger install from top button
+        // Trigger install from nav button
         function triggerInstall() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -615,17 +630,16 @@
                     if (choiceResult.outcome === 'accepted') {
                         console.log('User accepted the install prompt');
                         installBanner.style.display = 'none';
-                        topInstallBtn.style.display = 'none';
+                        installNavBtn.classList.add('hidden');
                     } else {
                         console.log('User dismissed the install prompt');
                     }
                     deferredPrompt = null;
                 });
             } else {
-                // If no deferredPrompt, try the bottom banner
-                if (installBtn) {
-                    installBtn.click();
-                }
+                // If no deferredPrompt, try to show the bottom banner
+                installBanner.style.display = 'block';
+                alert('Please click the "Install App" button in the banner below.');
             }
         }
 
@@ -637,7 +651,7 @@
                     if (choiceResult.outcome === 'accepted') {
                         console.log('User accepted the install prompt');
                         installBanner.style.display = 'none';
-                        topInstallBtn.style.display = 'none';
+                        installNavBtn.classList.add('hidden');
                     } else {
                         console.log('User dismissed the install prompt');
                         installBanner.style.display = 'none';
@@ -651,7 +665,7 @@
         window.addEventListener('appinstalled', function() {
             console.log('CashVista app installed!');
             installBanner.style.display = 'none';
-            topInstallBtn.style.display = 'none';
+            installNavBtn.classList.add('hidden');
         });
     </script>
 
