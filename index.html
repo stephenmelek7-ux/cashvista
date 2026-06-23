@@ -2,28 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CashVista - Earn, Watch, Advertise & Grow</title>
-
-    <!-- ===== SVG FAVICON (NO MORE 404 ERRORS) ===== -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d1b2a' rx='20'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='50' font-weight='bold' fill='%23f5c842' text-anchor='middle'%3E%24%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
-
-    <!-- ===== PWA META TAGS ===== -->
-    <link rel="manifest" href="manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <meta name="theme-color" content="#f5c842" />
+    
+    <!-- ===== PWA META TAGS - CRITICAL FOR INSTALLATION ===== -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d1b2a' rx='20'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='50' font-weight='bold' fill='%23f5c842' text-anchor='middle'%3E%24%3C/text%3E%3C/svg%3E" />
+    <meta name="apple-mobile-web-app-title" content="CashVista" />
+    
+    <!-- ===== PWA MANIFEST ===== -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- ===== FAVICON ===== -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    
+    <title>CashVista - Earn, Watch, Advertise & Grow</title>
 
     <!-- Register Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('CashVista: Service Worker registered successfully');
-                }).catch(function(err) {
-                    console.log('CashVista: Service Worker registration failed: ', err);
-                });
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('CashVista: Service Worker registered successfully');
+                    })
+                    .catch(function(err) {
+                        console.log('CashVista: Service Worker registration failed: ', err);
+                    });
             });
         }
     </script>
@@ -301,6 +308,57 @@
                 margin: 0 10px;
             }
         }
+        
+        /* ===== INSTALL BANNER ===== */
+        #installBanner {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0d1b2a;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #f5c842;
+        }
+        #installBanner button {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 8px 5px 0;
+            transition: 0.3s;
+        }
+        #installBanner button:hover {
+            background: #e6b800;
+        }
+        #installBanner .close-banner {
+            background: rgba(255,255,255,0.1);
+            color: #aaa;
+            padding: 8px 20px;
+        }
+        #installBanner .close-banner:hover {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        #installBanner .app-icon {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        #installBanner .app-name {
+            font-weight: 700;
+            color: #f5c842;
+        }
     </style>
 </head>
 <body>
@@ -318,6 +376,19 @@
             <a href="login.html" class="btn-login">Login</a>
             <a href="register.html" class="btn-signup">Sign Up</a>
         </nav>
+    </div>
+
+    <!-- ===== INSTALL BANNER ===== -->
+    <div id="installBanner">
+        <div class="app-icon">📱</div>
+        <div>
+            <strong>Install <span class="app-name">CashVista</span></strong>
+            <p style="font-size:13px; color:#aaa; margin:5px 0;">Get the app for faster access</p>
+        </div>
+        <div>
+            <button id="installBtn">📲 Install App</button>
+            <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none'">✕</button>
+        </div>
     </div>
 
     <!-- ===== HERO SECTION ===== -->
@@ -463,6 +534,48 @@
             } catch (e) {
                 // Stats stay as default
             }
+        });
+    </script>
+    
+    <!-- ===== INSTALL APP SCRIPT ===== -->
+    <script>
+        let deferredPrompt;
+        const installBanner = document.getElementById('installBanner');
+        const installBtn = document.getElementById('installBtn');
+
+        // Check if app is already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            installBanner.style.display = 'none';
+        }
+
+        // Listen for beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBanner.style.display = 'block';
+        });
+
+        // Install button click
+        installBtn.addEventListener('click', function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(choiceResult) {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        installBanner.style.display = 'none';
+                    } else {
+                        console.log('User dismissed the install prompt');
+                        installBanner.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
+
+        // Detect if app was installed successfully
+        window.addEventListener('appinstalled', function() {
+            console.log('CashVista app installed!');
+            installBanner.style.display = 'none';
         });
     </script>
 
