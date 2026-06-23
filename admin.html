@@ -395,6 +395,54 @@
         }
         .modal-content .btn-close-modal:hover { background: #ccc; }
 
+        /* Image Viewer Modal Styles */
+        .image-viewer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .image-viewer-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.8);
+            cursor: default;
+        }
+        .image-viewer-overlay .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 10001;
+            transition: 0.3s;
+            font-family: Arial, sans-serif;
+        }
+        .image-viewer-overlay .close-btn:hover {
+            color: #f5c842;
+            transform: scale(1.2);
+        }
+        .image-viewer-overlay .hint {
+            position: fixed;
+            bottom: 30px;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
         @media (max-width: 768px) {
             .topbar { flex-direction: column; gap: 10px; text-align: center; padding: 15px; }
             .topbar .admin-info { justify-content: center; }
@@ -409,6 +457,8 @@
             .nav-tabs button { width: 100%; }
             .modal-content { padding: 20px; }
             .modal-content .user-detail-grid { grid-template-columns: 1fr; }
+            .image-viewer-overlay .close-btn { font-size: 30px; top: 10px; right: 15px; }
+            .image-viewer-overlay .hint { font-size: 11px; bottom: 15px; }
         }
     </style>
 </head>
@@ -477,7 +527,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: INVEST & GROW (FIXED - NO 404) -->
+        <!-- TAB 3: INVEST & GROW -->
         <div id="tab-invest" class="tab-content">
             <div class="section-card">
                 <div class="header"><h2>📈 Invest Members <span class="count-badge" id="investCountBadge">0</span></h2>
@@ -1060,7 +1110,77 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD (WITH FIXED RECEIPT DISPLAY)
+        // FIXED: VIEW RECEIPT - Opens in Modal (No More Data URL Error)
+        // =============================================
+        function viewReceipt(imageData) {
+            if (!isValidReceipt(imageData)) {
+                alert('❌ No valid receipt image available.');
+                return;
+            }
+
+            // Remove any existing viewer
+            const existingViewer = document.querySelector('.image-viewer-overlay');
+            if (existingViewer) {
+                existingViewer.remove();
+            }
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'image-viewer-overlay';
+            
+            // Create close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '✕';
+            closeBtn.title = 'Close (ESC)';
+            
+            // Create image
+            const img = document.createElement('img');
+            img.src = imageData;
+            img.alt = 'Receipt Image';
+            
+            // Create hint text
+            const hint = document.createElement('div');
+            hint.className = 'hint';
+            hint.textContent = 'Click anywhere or press ESC to close';
+            
+            // Add elements to overlay
+            overlay.appendChild(closeBtn);
+            overlay.appendChild(img);
+            overlay.appendChild(hint);
+            document.body.appendChild(overlay);
+            
+            // Close on click (anywhere on overlay)
+            overlay.addEventListener('click', function(e) {
+                // Don't close if clicking on the image itself (user might want to zoom or inspect)
+                if (e.target === overlay || e.target === closeBtn || e.target === hint) {
+                    overlay.remove();
+                }
+            });
+            
+            // Close on ESC key
+            const escHandler = function(e) {
+                if (e.key === 'Escape' && document.body.contains(overlay)) {
+                    overlay.remove();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        }
+
+        // =============================================
+        // VIEW VIDEO
+        // =============================================
+        function viewVideo(url) { 
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                alert('No video link available.');
+            }
+        }
+
+        // =============================================
+        // RENDER DASHBOARD
         // =============================================
         async function renderDashboard() {
             try {
@@ -1179,7 +1299,7 @@
                     }).join('');
                 }
 
-                // --- INVEST TABLE (FIXED - NO 404) ---
+                // --- INVEST TABLE ---
                 const investBody = document.getElementById('investTableBody');
                 if (!investMembers || investMembers.length === 0) {
                     investBody.innerHTML = `<tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr>`;
@@ -1344,19 +1464,6 @@
                 alert('❌ Error rejecting: ' + error.message);
             }
         }
-
-        // =============================================
-        // VIEW FUNCTIONS
-        // =============================================
-        function viewReceipt(url) {
-            if (isValidReceipt(url)) {
-                window.open(url, '_blank');
-            } else {
-                alert('No valid receipt available.');
-            }
-        }
-
-        function viewVideo(url) { window.open(url, '_blank'); }
 
         // =============================================
         // USER ACTIONS
