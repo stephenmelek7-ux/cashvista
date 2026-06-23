@@ -17,6 +17,7 @@
     <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.svg" />
     
     <title>CashVista - Earn, Watch, Advertise & Grow</title>
 
@@ -77,14 +78,14 @@
         }
         .topbar nav {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
             flex-wrap: wrap;
         }
         .topbar nav a {
             color: #ddd;
             text-decoration: none;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             transition: 0.3s;
         }
@@ -92,7 +93,7 @@
             color: #f5c842;
         }
         
-        /* ===== PERMANENT INSTALL BUTTON IN NAV ===== */
+        /* ===== PERMANENT INSTALL BUTTON - TOP RIGHT ===== */
         .install-nav-btn {
             background: #f5c842;
             color: #0d1b2a;
@@ -135,6 +136,7 @@
             font-weight: 700;
             transition: 0.3s;
             text-decoration: none;
+            font-size: 14px;
         }
         .topbar nav .btn-login:hover {
             background: #e6b800;
@@ -148,6 +150,7 @@
             font-weight: 700;
             transition: 0.3s;
             text-decoration: none;
+            font-size: 14px;
         }
         .topbar nav .btn-signup:hover {
             background: #e6e6e6;
@@ -344,14 +347,14 @@
             }
             .topbar nav {
                 justify-content: center;
-                gap: 10px;
+                gap: 8px;
             }
             .topbar nav a {
-                font-size: 13px;
+                font-size: 12px;
             }
             .install-nav-btn {
                 font-size: 12px;
-                padding: 6px 15px;
+                padding: 6px 14px;
                 order: 10;
             }
             .contact-section {
@@ -360,8 +363,26 @@
             }
             .topbar nav .btn-login,
             .topbar nav .btn-signup {
-                padding: 6px 16px;
-                font-size: 13px;
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .topbar nav {
+                gap: 5px;
+            }
+            .topbar nav a {
+                font-size: 11px;
+            }
+            .install-nav-btn {
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+            .topbar nav .btn-login,
+            .topbar nav .btn-signup {
+                padding: 5px 10px;
+                font-size: 11px;
             }
         }
         
@@ -429,12 +450,12 @@
             <a href="#how-it-works">How It Works</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact</a>
-            <!-- ===== PERMANENT INSTALL BUTTON IN NAV ===== -->
+            <a href="login.html" class="btn-login">Login</a>
+            <a href="register.html" class="btn-signup">Sign Up</a>
+            <!-- ===== PERMANENT INSTALL BUTTON - VISIBLE TO EVERYONE ===== -->
             <button id="installNavBtn" class="install-nav-btn" onclick="triggerInstall()">
                 <span class="icon">📲</span> Install CashVista
             </button>
-            <a href="login.html" class="btn-login">Login</a>
-            <a href="register.html" class="btn-signup">Sign Up</a>
         </nav>
     </div>
 
@@ -615,7 +636,7 @@
             e.preventDefault();
             deferredPrompt = e;
             
-            // Show the install button in nav (it's always visible, but this ensures it's shown)
+            // Show the install button in nav
             installNavBtn.classList.remove('hidden');
             
             // Also show bottom banner as fallback
@@ -639,7 +660,10 @@
             } else {
                 // If no deferredPrompt, try to show the bottom banner
                 installBanner.style.display = 'block';
-                alert('Please click the "Install App" button in the banner below.');
+                // If on iOS, show a message
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    alert('To install CashVista on iPhone:\n1. Tap the Share button (box with arrow)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" to confirm');
+                }
             }
         }
 
@@ -667,6 +691,12 @@
             installBanner.style.display = 'none';
             installNavBtn.classList.add('hidden');
         });
+
+        // iOS detection - show instruction if on iPhone/iPad
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            // On iOS, the install button will show a helpful message
+            console.log('iOS device detected - Add to Home Screen is the install method');
+        }
     </script>
 
 </body>
