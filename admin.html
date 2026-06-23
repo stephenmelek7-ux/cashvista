@@ -477,7 +477,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: INVEST & GROW (FIXED RECEIPT DISPLAY) -->
+        <!-- TAB 3: INVEST & GROW (FIXED - NO 404) -->
         <div id="tab-invest" class="tab-content">
             <div class="section-card">
                 <div class="header"><h2>📈 Invest Members <span class="count-badge" id="investCountBadge">0</span></h2>
@@ -1048,7 +1048,19 @@
         });
 
         // =============================================
-        // RENDER DASHBOARD
+        // CHECK IF RECEIPT IS VALID
+        // =============================================
+        function isValidReceipt(url) {
+            return url && 
+                   url !== 'pending' && 
+                   url !== '' && 
+                   url !== null && 
+                   url !== 'null' &&
+                   url.startsWith('data:image/');
+        }
+
+        // =============================================
+        // RENDER DASHBOARD (WITH FIXED RECEIPT DISPLAY)
         // =============================================
         async function renderDashboard() {
             try {
@@ -1128,7 +1140,7 @@
                             <td>${item.title}</td>
                             <td>${item.amount}</td>
                             <td>
-                                ${item.receipt && item.receipt !== 'pending' && item.receipt.startsWith('data:image/') ? 
+                                ${isValidReceipt(item.receipt) ? 
                                     `<img src="${item.receipt}" class="receipt-img" onclick="viewReceipt('${item.receipt}')" title="Click to view receipt" />` 
                                     : 
                                     '<span class="no-receipt">No receipt</span>'
@@ -1167,7 +1179,7 @@
                     }).join('');
                 }
 
-                // --- INVEST TABLE (FIXED RECEIPT DISPLAY) ---
+                // --- INVEST TABLE (FIXED - NO 404) ---
                 const investBody = document.getElementById('investTableBody');
                 if (!investMembers || investMembers.length === 0) {
                     investBody.innerHTML = `<tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr>`;
@@ -1182,7 +1194,7 @@
                             <td><strong>${i.user_email || 'Unknown'}</strong></td>
                             <td>₦${(i.amount || 5000).toLocaleString()}</td>
                             <td>
-                                ${i.receipt_url && i.receipt_url !== 'pending' && i.receipt_url.startsWith('data:image/') ? 
+                                ${isValidReceipt(i.receipt_url) ? 
                                     `<img src="${i.receipt_url}" class="receipt-img" onclick="viewReceipt('${i.receipt_url}')" title="View receipt" />` 
                                     : 
                                     '<span class="no-receipt">No receipt</span>'
@@ -1257,7 +1269,6 @@
                     `).join('');
                 }
 
-                // --- POPULATE DROPDOWNS ---
                 populateAssignDropdowns(campaigns, batches);
 
                 console.log('✅ Admin dashboard updated successfully!');
@@ -1338,7 +1349,7 @@
         // VIEW FUNCTIONS
         // =============================================
         function viewReceipt(url) {
-            if (url && url.startsWith('data:image/')) {
+            if (isValidReceipt(url)) {
                 window.open(url, '_blank');
             } else {
                 alert('No valid receipt available.');
