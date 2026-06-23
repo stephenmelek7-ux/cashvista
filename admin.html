@@ -395,7 +395,7 @@
         }
         .modal-content .btn-close-modal:hover { background: #ccc; }
 
-        /* Receipt Viewer Overlay - FIXED */
+        /* Receipt Viewer Overlay */
         #receiptViewerOverlay {
             position: fixed;
             top: 0;
@@ -407,16 +407,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
             flex-direction: column;
-        }
-        #receiptViewerOverlay img {
-            max-width: 95%;
-            max-height: 85vh;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 4px 40px rgba(0,0,0,0.8);
-            cursor: default;
+            cursor: pointer;
         }
         #receiptViewerOverlay .close-btn {
             position: fixed;
@@ -435,6 +427,14 @@
         #receiptViewerOverlay .close-btn:hover {
             color: #f5c842;
             transform: scale(1.2);
+        }
+        #receiptViewerOverlay img {
+            max-width: 95%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.8);
+            cursor: default;
         }
         #receiptViewerOverlay .download-btn {
             margin-top: 20px;
@@ -1130,7 +1130,7 @@
         }
 
         // =============================================
-        // FIXED: VIEW RECEIPT - Opens in Modal (NO MORE DATA URL ERROR)
+        // FIXED: VIEW RECEIPT - Converts data URL to Blob URL (NO MORE DATA URL ERROR)
         // =============================================
         function viewReceipt(imageData) {
             if (!isValidReceipt(imageData)) {
@@ -1138,6 +1138,44 @@
                 return;
             }
 
+            // Try to open in new tab using blob URL (the CORRECT way)
+            try {
+                // Convert data URL to blob using fetch
+                fetch(imageData)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        // Create a proper URL from the blob
+                        const url = URL.createObjectURL(blob);
+                        
+                        // Open in new tab
+                        const newWindow = window.open(url, '_blank');
+                        
+                        if (!newWindow) {
+                            // If popup blocked, use modal fallback
+                            URL.revokeObjectURL(url);
+                            showImageModal(imageData);
+                        } else {
+                            // Clean up the URL after 30 seconds to free memory
+                            setTimeout(() => {
+                                URL.revokeObjectURL(url);
+                            }, 30000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error converting image:', error);
+                        // Fallback to modal
+                        showImageModal(imageData);
+                    });
+            } catch (error) {
+                console.error('Error displaying receipt:', error);
+                showImageModal(imageData);
+            }
+        }
+
+        // =============================================
+        // SHOW IMAGE IN MODAL (FALLBACK WHEN POPUP IS BLOCKED)
+        // =============================================
+        function showImageModal(imageData) {
             // Remove any existing viewer
             const existingViewer = document.getElementById('receiptViewerOverlay');
             if (existingViewer) {
@@ -1148,21 +1186,22 @@
             const overlay = document.createElement('div');
             overlay.id = 'receiptViewerOverlay';
 
-            // Create close button
+            // Close button
             const closeBtn = document.createElement('button');
             closeBtn.className = 'close-btn';
             closeBtn.innerHTML = '✕';
             closeBtn.title = 'Close (ESC)';
 
-            // Create image container
+            // Image container
             const imgContainer = document.createElement('div');
             imgContainer.style.cssText = 'max-width:95%; max-height:85vh; display:flex; justify-content:center; align-items:center; overflow:hidden;';
 
+            // Image
             const img = document.createElement('img');
             img.src = imageData;
             img.alt = 'Receipt Image';
 
-            // Create download button
+            // Download button
             const downloadBtn = document.createElement('button');
             downloadBtn.className = 'download-btn';
             downloadBtn.innerHTML = '⬇️ Download Image';
@@ -1176,12 +1215,12 @@
                 document.body.removeChild(link);
             };
 
-            // Create hint text
+            // Hint
             const hint = document.createElement('div');
             hint.className = 'hint';
-            hint.textContent = 'Click anywhere or press ESC to close';
+            hint.textContent = 'Click ✕ or press ESC to close';
 
-            // Add elements
+            // Build overlay
             imgContainer.appendChild(img);
             overlay.appendChild(closeBtn);
             overlay.appendChild(imgContainer);
