@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <meta name="theme-color" content="#f5c842" />
     
-    <!-- ===== PWA META TAGS - CORRECTED ===== -->
+    <!-- ===== PWA META TAGS ===== -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -59,6 +59,9 @@
             align-items: center;
             flex-wrap: wrap;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .topbar .logo {
             font-size: 28px;
@@ -110,6 +113,39 @@
         }
         .topbar nav .btn-signup:hover {
             background: #e6e6e6;
+        }
+
+        /* ===== PERMANENT INSTALL BUTTON - NEW ===== */
+        .install-btn-top {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+        .install-btn-top:hover {
+            background: #e6b800;
+            transform: scale(1.05);
+        }
+        .install-btn-top.show {
+            display: inline-flex;
+        }
+        .install-btn-top .icon {
+            font-size: 18px;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 200, 66, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0); }
         }
 
         /* ===== HERO SECTION ===== */
@@ -307,9 +343,13 @@
                 padding: 20px;
                 margin: 0 10px;
             }
+            .install-btn-top {
+                font-size: 12px;
+                padding: 6px 15px;
+            }
         }
         
-        /* ===== INSTALL BANNER ===== */
+        /* ===== INSTALL BANNER (Bottom - Fallback) ===== */
         #installBanner {
             display: none;
             position: fixed;
@@ -363,7 +403,7 @@
 </head>
 <body>
 
-    <!-- ===== TOP BAR ===== -->
+    <!-- ===== TOP BAR WITH PERMANENT INSTALL BUTTON ===== -->
     <div class="topbar">
         <div class="logo">
             <span class="play-icon">▶</span>Cash<span>Vista</span>
@@ -373,12 +413,16 @@
             <a href="#how-it-works">How It Works</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact</a>
+            <!-- ===== PERMANENT INSTALL BUTTON ===== -->
+            <button id="topInstallBtn" class="install-btn-top" onclick="triggerInstall()">
+                <span class="icon">📲</span> Install App
+            </button>
             <a href="login.html" class="btn-login">Login</a>
             <a href="register.html" class="btn-signup">Sign Up</a>
         </nav>
     </div>
 
-    <!-- ===== INSTALL BANNER ===== -->
+    <!-- ===== INSTALL BANNER (Bottom - Fallback) ===== -->
     <div id="installBanner">
         <div class="app-icon">📱</div>
         <div>
@@ -542,20 +586,50 @@
         let deferredPrompt;
         const installBanner = document.getElementById('installBanner');
         const installBtn = document.getElementById('installBtn');
+        const topInstallBtn = document.getElementById('topInstallBtn');
 
         // Check if app is already installed
         if (window.matchMedia('(display-mode: standalone)').matches) {
             installBanner.style.display = 'none';
+            topInstallBtn.style.display = 'none';
         }
 
         // Listen for beforeinstallprompt event
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredPrompt = e;
+            
+            // Show the install banner at bottom
             installBanner.style.display = 'block';
+            
+            // Show the top install button
+            topInstallBtn.classList.add('show');
+            topInstallBtn.style.display = 'inline-flex';
         });
 
-        // Install button click
+        // Trigger install from top button
+        function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(choiceResult) {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        installBanner.style.display = 'none';
+                        topInstallBtn.style.display = 'none';
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // If no deferredPrompt, try the bottom banner
+                if (installBtn) {
+                    installBtn.click();
+                }
+            }
+        }
+
+        // Bottom install button click
         installBtn.addEventListener('click', function() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -563,6 +637,7 @@
                     if (choiceResult.outcome === 'accepted') {
                         console.log('User accepted the install prompt');
                         installBanner.style.display = 'none';
+                        topInstallBtn.style.display = 'none';
                     } else {
                         console.log('User dismissed the install prompt');
                         installBanner.style.display = 'none';
@@ -576,6 +651,7 @@
         window.addEventListener('appinstalled', function() {
             console.log('CashVista app installed!');
             installBanner.style.display = 'none';
+            topInstallBtn.style.display = 'none';
         });
     </script>
 
