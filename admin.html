@@ -227,8 +227,14 @@
             border-radius: 8px;
             cursor: pointer;
             border: 1px solid #ddd;
+            object-fit: cover;
         }
         .receipt-img:hover { border-color: #f5c842; }
+        .no-receipt {
+            color: #999;
+            font-size: 12px;
+            font-style: italic;
+        }
         .video-link {
             color: #0d47a1;
             text-decoration: underline;
@@ -471,7 +477,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: INVEST & GROW -->
+        <!-- TAB 3: INVEST & GROW (FIXED RECEIPT DISPLAY) -->
         <div id="tab-invest" class="tab-content">
             <div class="section-card">
                 <div class="header"><h2>📈 Invest Members <span class="count-badge" id="investCountBadge">0</span></h2>
@@ -1121,7 +1127,13 @@
                             <td><strong>${item.user}</strong></td>
                             <td>${item.title}</td>
                             <td>${item.amount}</td>
-                            <td>${item.receipt ? `<img src="${item.receipt}" class="receipt-img" onclick="viewReceipt('${item.receipt}')" title="Click to view receipt" />` : 'N/A'}</td>
+                            <td>
+                                ${item.receipt && item.receipt !== 'pending' && item.receipt.startsWith('data:image/') ? 
+                                    `<img src="${item.receipt}" class="receipt-img" onclick="viewReceipt('${item.receipt}')" title="Click to view receipt" />` 
+                                    : 
+                                    '<span class="no-receipt">No receipt</span>'
+                                }
+                            </td>
                             <td>${item.date}</td>
                             <td>
                                 <button class="btn-sm btn-approve" onclick="approveItem('${item.table}', '${item.id}', '${item.user}')">✅ Approve</button>
@@ -1155,7 +1167,7 @@
                     }).join('');
                 }
 
-                // --- INVEST TABLE ---
+                // --- INVEST TABLE (FIXED RECEIPT DISPLAY) ---
                 const investBody = document.getElementById('investTableBody');
                 if (!investMembers || investMembers.length === 0) {
                     investBody.innerHTML = `<tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr>`;
@@ -1169,7 +1181,13 @@
                         return `<tr>
                             <td><strong>${i.user_email || 'Unknown'}</strong></td>
                             <td>₦${(i.amount || 5000).toLocaleString()}</td>
-                            <td>${i.receipt_url ? `<img src="${i.receipt_url}" class="receipt-img" onclick="viewReceipt('${i.receipt_url}')" title="View receipt" />` : 'N/A'}</td>
+                            <td>
+                                ${i.receipt_url && i.receipt_url !== 'pending' && i.receipt_url.startsWith('data:image/') ? 
+                                    `<img src="${i.receipt_url}" class="receipt-img" onclick="viewReceipt('${i.receipt_url}')" title="View receipt" />` 
+                                    : 
+                                    '<span class="no-receipt">No receipt</span>'
+                                }
+                            </td>
                             <td>${i.referral_link || 'Not generated'}</td>
                             <td>${statusBadge}</td>
                             <td>${i.date ? new Date(i.date).toLocaleDateString() : 'N/A'}</td>
@@ -1250,7 +1268,7 @@
         }
 
         // =============================================
-        // APPROVE ITEM - UPDATED WITH CORRECT REFERRAL LINK
+        // APPROVE / REJECT
         // =============================================
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
@@ -1263,7 +1281,6 @@
                 }
 
                 if (table === 'invest_members') {
-                    // CORRECT REFERRAL LINK URL
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
                     const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
 
@@ -1320,7 +1337,14 @@
         // =============================================
         // VIEW FUNCTIONS
         // =============================================
-        function viewReceipt(url) { window.open(url, '_blank'); }
+        function viewReceipt(url) {
+            if (url && url.startsWith('data:image/')) {
+                window.open(url, '_blank');
+            } else {
+                alert('No valid receipt available.');
+            }
+        }
+
         function viewVideo(url) { window.open(url, '_blank'); }
 
         // =============================================
