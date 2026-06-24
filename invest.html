@@ -10,421 +10,241 @@
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
-            color: #1a1a2e;
-        }
-        .topbar {
-            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
-            color: #fff;
-            padding: 15px 25px;
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
-        .topbar .logo span { color: #fff; }
-        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
-        .topbar .user-info {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            flex-wrap: wrap;
-        }
-        .topbar .user-info .greeting { color: #ddd; font-size: 14px; }
-        .topbar .user-info .greeting strong { color: #f5c842; font-weight: 700; }
-        .topbar .user-info .balance-badge {
-            background: rgba(245,200,66,0.15);
-            border: 1px solid #f5c842;
-            padding: 6px 18px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 15px;
-            color: #f5c842;
-        }
-        .topbar .user-info .logout {
-            background: rgba(231,76,60,0.2);
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
-            padding: 6px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: 0.3s;
-        }
-        .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
-        .topbar .back-btn {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 6px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .topbar .back-btn:hover { background: rgba(255,255,255,0.2); }
-
-        .container { max-width: 900px; margin: 0 auto; padding: 25px 20px; }
-        .card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 30px 35px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-            margin-bottom: 25px;
-            border: 1px solid rgba(0,0,0,0.03);
-        }
-        .card h2 { font-size: 24px; font-weight: 700; color: #0d1b2a; margin-bottom: 6px; }
-        .card .subtitle { color: #888; font-size: 15px; margin-bottom: 20px; }
-        .price-tag {
-            font-size: 36px;
-            font-weight: 800;
-            color: #f5c842;
-            background: #fef7e0;
-            padding: 15px 30px;
-            border-radius: 16px;
-            display: inline-block;
-            margin: 10px 0 20px;
-        }
-        .bank-details {
-            background: #e8f5e9;
-            padding: 20px 25px;
-            border-radius: 16px;
-            border-left: 5px solid #2e7d32;
-            margin: 15px 0;
-        }
-        .bank-details p { font-size: 15px; margin: 5px 0; color: #1a1a2e; }
-        .bank-details strong { color: #0d1b2a; }
-        .bank-details .number { font-size: 24px; font-weight: 800; color: #0d1b2a; letter-spacing: 2px; }
-        .btn {
-            display: inline-block;
-            padding: 14px 35px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: center;
-            text-decoration: none;
-        }
-        .btn-gold { background: #f5c842; color: #0d1b2a; }
-        .btn-gold:hover { background: #e6b800; transform: scale(1.02); }
-        .btn-green { background: #2e7d32; color: #fff; }
-        .btn-green:hover { background: #1b5e20; }
-        .btn-block { width: 100%; }
-        .commission-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        .commission-table th { background: #0d1b2a; color: #fff; padding: 10px 16px; text-align: left; }
-        .commission-table td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
-        .commission-table tr:hover td { background: #f8fafc; }
-        .badge {
-            padding: 6px 18px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .badge-success { background: #e8f5e9; color: #2e7d32; }
-        .badge-warning { background: #fff3e0; color: #e65100; }
-        .notification {
-            padding: 15px 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            display: none;
-            font-weight: 500;
-        }
-        .notification.show { display: block; }
-        .notification.success { background: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
-        .notification.error { background: #fce4ec; color: #b71c1c; border-left: 5px solid #c62828; }
-        .notification.info { background: #e3f2fd; color: #0d47a1; border-left: 5px solid #0d47a1; }
-        .referral-link-box {
-            background: #f8fafc;
-            padding: 15px 20px;
-            border-radius: 12px;
-            border: 2px dashed #f5c842;
-            word-break: break-all;
-            font-size: 16px;
-            margin: 15px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .referral-link-box .link-text { font-weight: 600; color: #0d1b2a; }
-        .referral-link-box .copy-btn {
-            background: #0d1b2a;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 13px;
-        }
-        .referral-link-box .copy-btn:hover { background: #1b3a5c; }
-        .footer {
-            background: #0d1b2a;
-            color: #aaa;
-            text-align: center;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 20px 20px 0 0;
-        }
-        .footer .founder { color: #f5c842; font-weight: 600; }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
-            z-index: 999;
+            padding: 20px;
         }
-        .modal.active { display: flex; }
-        .modal-content {
+        .invest-container {
             background: #fff;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 40px 35px;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
             max-width: 500px;
-            width: 90%;
+            width: 95%;
         }
-        .modal-content h3 { color: #0d1b2a; margin-bottom: 10px; font-size: 22px; }
-        .modal-content p { color: #555; font-size: 14px; margin-bottom: 15px; }
-        .modal-content .form-group { margin-bottom: 15px; }
-        .modal-content .form-group label {
-            font-weight: 600;
-            color: #333;
-            display: block;
+        .invest-container .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #f5c842;
+            text-align: center;
             margin-bottom: 5px;
-            font-size: 14px;
         }
-        .modal-content .form-group input {
+        .invest-container .logo span { color: #0d1b2a; }
+        .invest-container .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .invest-container .subtitle a {
+            color: #f5c842;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .invest-container .subtitle a:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #0d1b2a;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 16px;
             border: 2px solid #e8ecf0;
             border-radius: 12px;
             font-size: 15px;
-            background: #fafbfc;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
         }
-        .modal-content .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             border-color: #f5c842;
             outline: none;
-            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
+            box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.15);
         }
-        .modal-content .btn {
-            padding: 12px 30px;
+        .form-group input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #e8ecf0;
+            background: #fafafa;
+            cursor: pointer;
+        }
+        .btn-submit {
+            width: 100%;
+            background: #f5c842;
+            color: #0d1b2a;
             border: none;
-            border-radius: 30px;
+            padding: 14px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             transition: 0.3s;
-            width: 100%;
+            font-family: 'Inter', sans-serif;
         }
-        .modal-content .btn-gold { background: #f5c842; color: #0d1b2a; }
-        .modal-content .btn-gold:hover { background: #e6b800; }
-        .modal-content .btn-gray { background: #e0e0e0; color: #333; margin-top: 8px; }
-        .modal-content .btn-gray:hover { background: #ccc; }
-        .modal-content .modal-close {
-            background: none;
+        .btn-submit:hover { background: #e6b800; transform: scale(1.02); }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-cancel {
+            width: 100%;
+            background: #e0e0e0;
+            color: #333;
             border: none;
-            color: #888;
-            font-size: 13px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
+            transition: 0.3s;
             margin-top: 10px;
-            width: 100%;
-            text-align: center;
+            font-family: 'Inter', sans-serif;
         }
-        .modal-content .modal-close:hover { color: #0d1b2a; }
+        .btn-cancel:hover { background: #ccc; }
+        .error-msg {
+            background: #fce4ec;
+            color: #c62828;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .success-msg {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .info-box {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #f5c842;
+            margin-bottom: 20px;
+        }
+        .info-box h4 { color: #0d1b2a; font-size: 16px; margin-bottom: 5px; }
+        .info-box p { color: #555; font-size: 14px; }
+        .info-box .amount { font-size: 28px; font-weight: 800; color: #f5c842; }
+        .bank-details {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e8ecf0;
+        }
+        .bank-details h4 { color: #0d1b2a; font-size: 14px; margin-bottom: 5px; }
+        .bank-details p { color: #555; font-size: 14px; }
+        .bank-details .highlight { color: #0d1b2a; font-weight: 700; }
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #0d1b2a;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-text { display: inline-flex; align-items: center; justify-content: center; }
+        .referral-link-box {
+            background: #fef7e0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 15px;
+            border-left: 3px solid #f5c842;
+            word-break: break-all;
+        }
+        .referral-link-box strong { color: #0d1b2a; }
+        .referral-link-box .link {
+            color: #f5c842;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .copy-btn {
+            background: #0d1b2a;
+            color: #fff;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-left: 8px;
+        }
+        .copy-btn:hover { background: #1a3a5c; }
         .receipt-preview {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 150px;
             border-radius: 8px;
+            margin-top: 8px;
             border: 1px solid #ddd;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-        .receipt-preview:hover { border-color: #f5c842; }
-        @media (max-width: 768px) {
-            .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
-            .topbar .user-info { justify-content: center; }
-            .card { padding: 20px; }
-            .price-tag { font-size: 28px; padding: 10px 20px; }
-            .bank-details .number { font-size: 18px; }
-            .referral-link-box { flex-direction: column; text-align: center; }
-            .commission-table { font-size: 12px; }
-            .commission-table th, .commission-table td { padding: 8px 10px; }
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="topbar">
-        <div class="logo">
-            <span class="play-icon">▶</span>Cash<span>Vista</span>
-        </div>
-        <div class="user-info">
-            <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
-            <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
-            <a href="dashboard.html" class="back-btn">← Dashboard</a>
-            <button class="logout" onclick="logout()">🚪 Logout</button>
-        </div>
-    </div>
+    <div class="invest-container">
+        <div class="logo">📈 Cash<span>Vista</span></div>
+        <p class="subtitle">Invest & Grow — ₦5,000</p>
 
-    <div class="container">
+        <div id="errorMsg" class="error-msg"></div>
+        <div id="successMsg" class="success-msg"></div>
 
-        <div id="notification" class="notification">
-            <span id="notificationMessage">Welcome to Invest & Grow!</span>
+        <div class="info-box">
+            <h4>🚀 Unlock Your Referral Link</h4>
+            <p>Pay ₦5,000 to unlock your permanent referral link and start earning <strong>55% commission</strong> on every referral!</p>
+            <div class="amount">₦5,000</div>
         </div>
 
-        <div class="card">
-            <h2>📈 Invest & Grow</h2>
-            <p class="subtitle">Pay <span id="investAmountDisplay">₦5,000</span> to unlock your permanent referral link and start earning commissions.</p>
-
-            <div style="text-align:center;">
-                <div class="price-tag" id="investPriceTag">₦5,000</div>
-            </div>
-
-            <div style="margin:15px 0; background:#f8fafc; padding:20px; border-radius:16px;">
-                <h4 style="color:#0d1b2a; margin-bottom:10px;">📌 Your Status</h4>
-                <p id="membershipStatus" style="font-size:16px;">
-                    <span class="badge badge-warning">⚠️ Not Activated</span>
-                </p>
-                <p style="color:#555; font-size:14px; margin-top:6px;">
-                    Pay to activate your referral link and start earning.
-                </p>
-            </div>
-
-            <hr style="border:1px solid #f0f0f0; margin:20px 0;" />
-
-            <h3 style="color:#0d1b2a; margin-bottom:15px;">💰 Payment Details</h3>
-
-            <div class="bank-details">
-                <p><strong>🏦 Bank:</strong> <span id="displayBankName">United Bank for Africa (UBA)</span></p>
-                <p><strong>📋 Account Name:</strong> <span id="displayAccountName">Stephen Melek</span></p>
-                <p><strong>🔢 Account Number:</strong> <span class="number" id="displayAccountNumber">2355380747</span></p>
-                <p style="font-size:13px; color:#555; margin-top:10px;">
-                    After payment, click the button below to submit your transaction details.
-                </p>
-            </div>
-
-            <button class="btn btn-green btn-block" onclick="openPaymentModal()" id="payBtn">
-                ✅ I Have Paid (Bank Transfer)
-            </button>
+        <div class="bank-details">
+            <h4>🏦 Payment Details</h4>
+            <p><strong>Bank:</strong> United Bank for Africa (UBA)</p>
+            <p><strong>Account Name:</strong> Stephen Melek Elisha</p>
+            <p><strong>Account Number:</strong> <span class="highlight">1024967569</span></p>
         </div>
 
-        <div class="card">
-            <h3>💰 Commission Structure</h3>
-            <p style="color:#555; font-size:14px; margin-bottom:15px;">
-                You earn commissions when people register through your referral link.
-            </p>
-            <table class="commission-table">
-                <thead>
-                    <tr>
-                        <th>Level</th>
-                        <th>Percentage</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Direct Referral</strong></td>
-                        <td id="displayDirectCommission">55%</td>
-                        <td id="displayDirectAmount">₦2,750</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Downline (1-20)</strong></td>
-                        <td id="displayDownline1">0.5%</td>
-                        <td id="displayDownline1Amount">₦25</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Downline (21-50)</strong></td>
-                        <td id="displayDownline2">0.3%</td>
-                        <td id="displayDownline2Amount">₦15</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Downline (51-200)</strong></td>
-                        <td id="displayDownline3">0.1%</td>
-                        <td id="displayDownline3Amount">₦5</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p style="font-size:12px; color:#888; margin-top:10px;">
-                Maximum downline bonus: 200 people | Direct referrals: Unlimited
-            </p>
+        <div id="referralLinkBox" class="referral-link-box" style="display:none;">
+            <strong>🔗 Your Referral Link:</strong><br />
+            <span id="referralLinkDisplay" class="link">Loading...</span>
+            <button class="copy-btn" onclick="copyReferralLink()">📋 Copy</button>
         </div>
 
-        <div class="card" id="referralSection">
-            <h3>🔗 Your Referral Link</h3>
-            <p style="color:#555; font-size:14px; margin-bottom:10px;">
-                Share this link to invite others and earn commissions.
-            </p>
-
-            <div id="referralLinkDisplay" style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100; margin-bottom:15px;">
-                <p style="color:#e65100; font-weight:600;">
-                    ⚠️ You need to activate your membership first. Pay to unlock your referral link.
-                </p>
-            </div>
-
-            <div class="referral-link-box" id="referralLinkBox" style="display:none;">
-                <span class="link-text" id="referralLinkText">https://cashvista.vercel.app/register.html?ref=guest</span>
-                <button class="copy-btn" onclick="copyReferralLink()">📋 Copy Link</button>
-            </div>
-
-            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
-                <button class="btn btn-block" style="background:#25d366; color:#fff; padding:10px; font-size:14px;" onclick="shareLink('whatsapp')">📱 WhatsApp</button>
-                <button class="btn btn-block" style="background:#1877f2; color:#fff; padding:10px; font-size:14px;" onclick="shareLink('facebook')">📘 Facebook</button>
-                <button class="btn btn-block" style="background:#e4405f; color:#fff; padding:10px; font-size:14px;" onclick="shareLink('instagram')">📸 Instagram</button>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ===== PAYMENT CONFIRMATION MODAL ===== -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <h3>✅ Confirm Payment</h3>
-            <p>Enter your transaction details below.</p>
-
+        <form id="investForm">
             <div class="form-group">
                 <label>Transaction Reference *</label>
-                <input type="text" id="transactionRef" placeholder="Enter your transaction reference" />
-            </div>
-            <div class="form-group">
-                <label>Amount Paid</label>
-                <input type="text" id="amountPaid" value="₦5,000" disabled style="background:#f0f0f0;" />
-            </div>
-            <div class="form-group">
-                <label>Upload Payment Receipt (Optional)</label>
-                <input type="file" id="receiptUpload" accept="image/*" />
-                <div class="hint">Upload a clear image of your payment receipt (JPG, PNG).</div>
+                <input type="text" id="transactionRef" placeholder="e.g. UBA123456789" required />
             </div>
 
-            <button class="btn btn-gold" onclick="submitPaymentConfirmation()">✅ Submit for Approval</button>
-            <button class="btn btn-gray" onclick="closePaymentModal()">Cancel</button>
-        </div>
+            <div class="form-group">
+                <label>Upload Payment Receipt (JPG, PNG) *</label>
+                <input type="file" id="receiptUpload" accept="image/jpeg,image/png" required />
+                <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview" />
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span class="btn-text">Submit for Approval</span>
+            </button>
+        </form>
+
+        <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
+
+        <p class="subtitle" style="margin-top:15px; font-size:12px;">
+            <a href="dashboard.html">← Back to Dashboard</a>
+        </p>
     </div>
-
-    <footer class="footer">
-        <p>&copy; 2026 CashVista. All rights reserved.</p>
-        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
-    </footer>
 
     <script>
         // =============================================
@@ -432,358 +252,215 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-
-        let currentUser = null;
-        let platformSettings = {};
+        // =============================================
+        // FIXED: APP URL - Using vercel.app not .com
+        // =============================================
+        const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
-        // HELPER FUNCTIONS
+        // CHECK IF USER IS LOGGED IN
         // =============================================
-        async function fetchSupabase(table, params = '') {
+        const userData = JSON.parse(localStorage.getItem('cashvista_user') || 'null');
+        if (!userData) {
+            window.location.href = 'login.html';
+        }
+
+        // =============================================
+        // CHECK IF USER ALREADY INVESTED
+        // =============================================
+        async function checkInvestStatus() {
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
-                    method: 'GET',
+                const response = await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userData.email), {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
-                if (!response.ok) return [];
-                return await response.json();
-            } catch (e) {
-                console.error('Fetch error:', e);
-                return [];
-            }
-        }
-
-        async function insertSupabase(table, data) {
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify(data)
-                });
-                return response.ok;
-            } catch (e) {
-                console.error('Insert error:', e);
-                return false;
-            }
-        }
-
-        async function updateSupabase(table, email, data) {
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
-                    body: JSON.stringify(data)
-                });
-                return response.ok;
-            } catch (e) {
-                console.error('Update error:', e);
-                return false;
-            }
-        }
-
-        // =============================================
-        // CONVERT FILE TO BASE64
-        // =============================================
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        // =============================================
-        // GET LOGGED-IN USER
-        // =============================================
-        async function getLoggedInUser() {
-            const userEmail = sessionStorage.getItem('userEmail');
-            if (!userEmail) {
-                window.location.href = 'login.html';
-                return null;
-            }
-            try {
-                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(userEmail));
-                if (!users || users.length === 0) {
-                    window.location.href = 'login.html';
-                    return null;
-                }
-                return users[0];
-            } catch (e) {
-                window.location.href = 'login.html';
-                return null;
-            }
-        }
-
-        // =============================================
-        // LOAD PLATFORM SETTINGS
-        // =============================================
-        async function loadPlatformSettings() {
-            try {
-                const data = await fetchSupabase('platform_settings', '?limit=1');
-                if (data && data.length > 0) {
-                    platformSettings = data[0];
-                }
-                return platformSettings;
-            } catch (e) {
-                console.error('Error loading settings:', e);
-                return null;
-            }
-        }
-
-        // =============================================
-        // OPEN / CLOSE PAYMENT MODAL
-        // =============================================
-        function openPaymentModal() {
-            document.getElementById('paymentModal').classList.add('active');
-        }
-
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.remove('active');
-        }
-
-        // =============================================
-        // REFRESH USER STATUS
-        // =============================================
-        async function refreshUserStatus() {
-            if (!currentUser) return;
-            try {
-                const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(currentUser.email));
-                if (users && users.length > 0) {
-                    const updatedUser = users[0];
-                    if (updatedUser.is_invest_member !== currentUser.is_invest_member) {
-                        currentUser = updatedUser;
-                        updateMembershipStatus(currentUser.is_invest_member);
-                        if (currentUser.is_invest_member) {
-                            showNotification('✅ Your membership has been activated! Your referral link is now available.', 'success');
-                        }
-                    }
-                    if (updatedUser.balance !== currentUser.balance) {
-                        currentUser.balance = updatedUser.balance;
-                        document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
-                    }
+                const data = await response.json();
+                if (data && data.length > 0 && data[0].status === 'approved') {
+                    alert('✅ You are already an Invest & Grow member!');
+                    window.location.href = 'dashboard.html';
                 }
             } catch (e) {
-                console.error('Error refreshing status:', e);
+                console.error('Error checking invest status:', e);
             }
         }
+        checkInvestStatus();
 
         // =============================================
-        // LOAD PAGE
+        // GET USER'S REFERRAL LINK
         // =============================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            currentUser = await getLoggedInUser();
-            if (!currentUser) return;
-
-            document.getElementById('userName').textContent = currentUser.name || 'User';
-            document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
-
-            await loadPlatformSettings();
-
-            const investAmount = platformSettings.invest_amount || 5000;
-            document.getElementById('investAmountDisplay').textContent = '₦' + investAmount.toLocaleString();
-            document.getElementById('investPriceTag').textContent = '₦' + investAmount.toLocaleString();
-            document.getElementById('amountPaid').value = '₦' + investAmount.toLocaleString();
-
-            document.getElementById('displayBankName').textContent = platformSettings.bank_name || 'United Bank for Africa (UBA)';
-            document.getElementById('displayAccountName').textContent = platformSettings.account_name || 'Stephen Melek';
-            document.getElementById('displayAccountNumber').textContent = platformSettings.account_number || '2355380747';
-
-            const direct = platformSettings.direct_commission || 55;
-            const d1 = platformSettings.downline1 || 0.5;
-            const d2 = platformSettings.downline2 || 0.3;
-            const d3 = platformSettings.downline3 || 0.1;
-            const investAmt = platformSettings.invest_amount || 5000;
-
-            document.getElementById('displayDirectCommission').textContent = direct + '%';
-            document.getElementById('displayDirectAmount').textContent = '₦' + ((investAmt * direct) / 100).toLocaleString();
-            document.getElementById('displayDownline1').textContent = d1 + '%';
-            document.getElementById('displayDownline1Amount').textContent = '₦' + ((investAmt * d1) / 100).toLocaleString();
-            document.getElementById('displayDownline2').textContent = d2 + '%';
-            document.getElementById('displayDownline2Amount').textContent = '₦' + ((investAmt * d2) / 100).toLocaleString();
-            document.getElementById('displayDownline3').textContent = d3 + '%';
-            document.getElementById('displayDownline3Amount').textContent = '₦' + ((investAmt * d3) / 100).toLocaleString();
-
-            if (currentUser.is_invest_member) {
-                updateMembershipStatus(true);
-            } else {
-                updateMembershipStatus(false);
-            }
-
-            setInterval(refreshUserStatus, 10000);
-        });
-
-        // =============================================
-        // SUBMIT PAYMENT CONFIRMATION - WITH RECEIPT
-        // =============================================
-        async function submitPaymentConfirmation() {
-            const ref = document.getElementById('transactionRef').value.trim();
-            const fileInput = document.getElementById('receiptUpload');
-            const file = fileInput.files[0];
-
-            if (!ref) {
-                alert('❌ Please enter your transaction reference.');
-                return;
-            }
-
-            // Show loading state
-            const btn = document.querySelector('.modal-content .btn-gold');
-            const originalText = btn.textContent;
-            btn.textContent = '⏳ Submitting...';
-            btn.disabled = true;
-
+        async function loadReferralLink() {
             try {
-                const investAmount = platformSettings.invest_amount || 5000;
-
-                // Prepare data
-                const paymentData = {
-                    user_email: currentUser.email,
-                    amount: investAmount,
-                    status: 'pending',
-                    date: new Date().toISOString()
-                };
-
-                // If receipt uploaded, convert to base64 and store
-                if (file) {
-                    const base64 = await fileToBase64(file);
-                    paymentData.receipt_url = base64;
-                }
-
-                // Insert into invest_members
-                const success = await insertSupabase('invest_members', paymentData);
-
-                if (!success) {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    alert('❌ Error submitting payment. Please try again.');
+                if (userData.referral_link) {
+                    const fixedLink = userData.referral_link.replace('cashvista.com', 'cashvista.vercel.app');
+                    document.getElementById('referralLinkDisplay').textContent = fixedLink;
+                    document.getElementById('referralLinkBox').style.display = 'block';
                     return;
                 }
 
-                // Add activity log
-                await insertSupabase('activity', {
-                    user_name: currentUser.name,
-                    action: 'Submitted Invest & Grow payment (₦' + investAmount + ')',
-                    amount: investAmount,
-                    date: new Date().toISOString()
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
                 });
-
-                btn.textContent = originalText;
-                btn.disabled = false;
-                closePaymentModal();
-                showNotification('✅ Payment submitted for admin approval! You will be notified once approved.', 'success');
-
-            } catch (error) {
-                console.error('❌ Submit error:', error);
-                alert('❌ Error submitting payment. Please try again.');
-                btn.textContent = originalText;
-                btn.disabled = false;
+                const data = await response.json();
+                if (data && data.length > 0 && data[0].referral_link) {
+                    const fixedLink = data[0].referral_link.replace('cashvista.com', 'cashvista.vercel.app');
+                    document.getElementById('referralLinkDisplay').textContent = fixedLink;
+                    document.getElementById('referralLinkBox').style.display = 'block';
+                    
+                    userData.referral_link = fixedLink;
+                    localStorage.setItem('cashvista_user', JSON.stringify(userData));
+                }
+            } catch (e) {
+                console.error('Error loading referral link:', e);
             }
         }
-
-        // =============================================
-        // UPDATE MEMBERSHIP STATUS
-        // =============================================
-        function updateMembershipStatus(isActive) {
-            const statusEl = document.getElementById('membershipStatus');
-            const referralDisplay = document.getElementById('referralLinkDisplay');
-            const referralBox = document.getElementById('referralLinkBox');
-            const payBtn = document.getElementById('payBtn');
-
-            if (isActive) {
-                statusEl.innerHTML = '<span class="badge badge-success">✅ Active</span>';
-                referralDisplay.innerHTML = `
-                    <div style="background:#e8f5e9; padding:15px; border-radius:12px; border-left:5px solid #2e7d32;">
-                        <p style="color:#2e7d32; font-weight:600;">✅ Your referral link is active! Share it to start earning.</p>
-                    </div>
-                `;
-                referralBox.style.display = 'flex';
-                const link = currentUser.referral_link || 'https://cashvista.vercel.app/register.html?ref=' + currentUser.email.split('@')[0];
-                document.getElementById('referralLinkText').textContent = link;
-                payBtn.textContent = '✅ Already Activated';
-                payBtn.style.background = '#888';
-                payBtn.style.cursor = 'not-allowed';
-                payBtn.disabled = true;
-            } else {
-                statusEl.innerHTML = '<span class="badge badge-warning">⚠️ Not Activated</span>';
-                referralDisplay.innerHTML = `
-                    <div style="background:#fff3e0; padding:15px; border-radius:12px; border-left:5px solid #e65100;">
-                        <p style="color:#e65100; font-weight:600;">⚠️ You need to activate your membership first. Pay to unlock your referral link.</p>
-                    </div>
-                `;
-                referralBox.style.display = 'none';
-                payBtn.textContent = '✅ I Have Paid (Bank Transfer)';
-                payBtn.style.background = '#2e7d32';
-                payBtn.style.cursor = 'pointer';
-                payBtn.disabled = false;
-            }
-        }
+        loadReferralLink();
 
         // =============================================
         // COPY REFERRAL LINK
         // =============================================
         function copyReferralLink() {
-            const link = document.getElementById('referralLinkText').textContent;
+            const link = document.getElementById('referralLinkDisplay').textContent;
             navigator.clipboard.writeText(link).then(() => {
-                showNotification('✅ Referral link copied to clipboard!', 'success');
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
             }).catch(() => {
-                prompt('Copy this link manually:', link);
+                alert('Copy: ' + link);
             });
         }
 
         // =============================================
-        // SHARE LINK
+        // RECEIPT PREVIEW
         // =============================================
-        function shareLink(platform) {
-            const link = document.getElementById('referralLinkText').textContent;
-            const message = '🎯 Join CashVista and earn money by watching videos! Use my referral link: ' + link;
-
-            const urls = {
-                whatsapp: 'https://api.whatsapp.com/send?text=' + encodeURIComponent(message),
-                facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent('Join CashVista and earn money!'),
-                instagram: 'instagram://?message=' + encodeURIComponent(message)
-            };
-
-            if (urls[platform]) {
-                window.open(urls[platform], '_blank');
+        document.getElementById('receiptUpload').addEventListener('change', function(e) {
+            const preview = document.getElementById('receiptPreview');
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             } else {
-                showNotification('Share link: ' + link, 'info');
+                preview.style.display = 'none';
             }
-        }
+        });
 
         // =============================================
-        // NOTIFICATION
+        // INVEST FORM SUBMIT - FIXED
         // =============================================
-        function showNotification(message, type) {
-            const el = document.getElementById('notification');
-            const msg = document.getElementById('notificationMessage');
-            el.className = 'notification show ' + (type || 'info');
-            msg.textContent = message;
-            setTimeout(() => {
-                el.classList.remove('show');
-            }, 5000);
-        }
+        document.getElementById('investForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
 
-        // =============================================
-        // LOGOUT
-        // =============================================
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                sessionStorage.removeItem('userEmail');
-                window.location.href = 'login.html';
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            const transactionRef = document.getElementById('transactionRef').value.trim();
+            const receiptFile = document.getElementById('receiptUpload').files[0];
+
+            if (!transactionRef) {
+                errorMsg.textContent = '❌ Please enter the transaction reference.';
+                errorMsg.style.display = 'block';
+                return;
             }
-        }
+
+            if (!receiptFile) {
+                errorMsg.textContent = '❌ Please upload your payment receipt.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<span class="loader"></span> Submitting...';
+
+            try {
+                const reader = new FileReader();
+                const receiptData = await new Promise((resolve, reject) => {
+                    reader.onload = function(e) { resolve(e.target.result); };
+                    reader.onerror = function(e) { reject(e.target.error); };
+                    reader.readAsDataURL(receiptFile);
+                });
+
+                let referralLink = userData.referral_link || '';
+                if (referralLink) {
+                    referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
+                } else {
+                    const uniqueId = 'REF_' + Date.now() + '_' + userData.email.split('@')[0];
+                    referralLink = APP_URL + '/register.html?ref=' + uniqueId;
+                }
+
+                const investData = {
+                    user_email: userData.email,
+                    amount: 5000,
+                    transaction_ref: transactionRef,
+                    receipt_url: receiptData,
+                    referral_link: referralLink,
+                    status: 'pending',
+                    date: new Date().toISOString()
+                };
+
+                const response = await fetch(SUPABASE_URL + '/rest/v1/invest_members', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(investData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('Submit error:', errorData);
+                    throw new Error('❌ Error submitting payment. Please try again.');
+                }
+
+                if (!userData.referral_link) {
+                    await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            referral_link: referralLink
+                        })
+                    });
+                }
+
+                successMsg.innerHTML = '✅ Payment submitted successfully! Awaiting admin approval. You will be notified once approved.';
+                successMsg.style.display = 'block';
+
+                document.getElementById('transactionRef').value = '';
+                document.getElementById('receiptUpload').value = '';
+                document.getElementById('receiptPreview').style.display = 'none';
+
+                submitBtn.disabled = false;
+                btnText.innerHTML = 'Submit for Approval';
+
+                document.getElementById('referralLinkDisplay').textContent = referralLink;
+                document.getElementById('referralLinkBox').style.display = 'block';
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                errorMsg.textContent = '❌ ' + error.message;
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                btnText.innerHTML = 'Submit for Approval';
+            }
+        });
     </script>
 </body>
 </html>
