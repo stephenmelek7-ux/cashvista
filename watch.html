@@ -313,20 +313,6 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-        .debug-info {
-            background: #f8fafc;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #555;
-            margin-top: 15px;
-            border: 1px dashed #ccc;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 150px;
-            overflow-y: auto;
-        }
         @media (max-width: 500px) {
             .watch-container { padding: 20px 15px; }
             .video-wrapper iframe { height: 200px; }
@@ -393,9 +379,6 @@
         </div>
 
         <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
-
-        <!-- ===== DEBUG INFO ===== -->
-        <div class="debug-info" id="debugInfo">🔍 Debug: Waiting for data...</div>
     </div>
 
     <script>
@@ -405,22 +388,12 @@
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
-        const debug = document.getElementById('debugInfo');
-
-        function logDebug(msg) {
-            console.log('🔍', msg);
-            debug.textContent = '🔍 ' + msg + '\n' + debug.textContent;
-        }
-
         // =============================================
         // GET LOGGED-IN USER
         // =============================================
         const userData = JSON.parse(localStorage.getItem('cashvista_user') || 'null');
         if (!userData) {
-            logDebug('❌ No user logged in, redirecting to login');
             window.location.href = 'login.html';
-        } else {
-            logDebug('✅ User logged in: ' + userData.email);
         }
 
         // =============================================
@@ -428,7 +401,6 @@
         // =============================================
         const urlParams = new URLSearchParams(window.location.search);
         const campaignId = urlParams.get('id');
-        logDebug('📝 Campaign ID from URL: ' + (campaignId || 'None'));
 
         // =============================================
         // VIDEO DATA
@@ -541,7 +513,6 @@
         // DISPLAY VIDEO
         // =============================================
         function displayVideo(url) {
-            logDebug('🎥 Displaying video: ' + url);
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
                 if (videoId) {
@@ -549,7 +520,6 @@
                     videoFrame.style.display = 'block';
                     videoPlaceholder.style.display = 'none';
                     videoLinkBtn.style.display = 'none';
-                    logDebug('✅ YouTube video embedded');
                     return;
                 }
             }
@@ -561,7 +531,6 @@
                     videoFrame.style.display = 'block';
                     videoPlaceholder.style.display = 'none';
                     videoLinkBtn.style.display = 'none';
-                    logDebug('✅ Facebook video embedded');
                     return;
                 }
             }
@@ -575,7 +544,6 @@
                 <p>Watch video on external site</p>
                 <p style="font-size:13px; color:#aaa; margin-top:5px;">Click the button below to watch</p>
             `;
-            logDebug('🌐 External video link provided');
         }
 
         // =============================================
@@ -583,7 +551,6 @@
         // =============================================
         async function fetchUserWatchedVideos() {
             try {
-                logDebug('📊 Fetching watched videos for: ' + userData.email);
                 const response = await fetch(SUPABASE_URL + '/rest/v1/task_completions?user_email=eq.' + encodeURIComponent(userData.email), {
                     method: 'GET',
                     headers: {
@@ -591,15 +558,11 @@
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
-                if (!response.ok) {
-                    logDebug('⚠️ Failed to fetch watched videos: ' + response.status);
-                    return [];
-                }
+                if (!response.ok) return [];
                 const data = await response.json();
-                logDebug('✅ Found ' + data.length + ' watched videos');
                 return data.map(item => item.campaign_id);
             } catch (e) {
-                logDebug('❌ Error fetching watched videos: ' + e.message);
+                console.error('Error fetching watched videos:', e);
                 return [];
             }
         }
@@ -609,7 +572,6 @@
         // =============================================
         async function fetchAvailableVideos() {
             try {
-                logDebug('📹 Fetching available videos (status=approved)');
                 const response = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved&order=date.desc', {
                     method: 'GET',
                     headers: {
@@ -618,15 +580,11 @@
                     }
                 });
 
-                if (!response.ok) {
-                    logDebug('⚠️ Failed to fetch videos: ' + response.status);
-                    return [];
-                }
+                if (!response.ok) throw new Error('Failed to fetch videos');
                 const data = await response.json();
-                logDebug('✅ Found ' + data.length + ' approved videos');
                 return data || [];
             } catch (e) {
-                logDebug('❌ Error fetching videos: ' + e.message);
+                console.error('Error fetching videos:', e);
                 return [];
             }
         }
@@ -635,10 +593,7 @@
         // RENDER VIDEO LIST
         // =============================================
         function renderVideoList(videos, watchedIds) {
-            // Filter out videos the user has already watched
             const availableVideos = videos.filter(v => !watchedIds.includes(v.id));
-
-            logDebug('📋 Available videos: ' + availableVideos.length + ' (after filtering watched)');
 
             if (videos.length === 0) {
                 videoListContainer.innerHTML = `
@@ -690,15 +645,12 @@
         // SELECT VIDEO TO WATCH
         // =============================================
         function selectVideo(videoId) {
-            logDebug('🎯 User selected video ID: ' + videoId);
             selectedVideoId = videoId;
             const video = availableVideos.find(v => v.id === videoId);
             if (video) {
                 videoListSection.style.display = 'none';
                 videoPlayerSection.style.display = 'block';
                 loadVideo(video);
-            } else {
-                logDebug('❌ Video not found in available list');
             }
         }
 
@@ -706,7 +658,6 @@
         // LOAD VIDEO
         // =============================================
         function loadVideo(campaign) {
-            logDebug('📺 Loading video: ' + campaign.title);
             const durationInSeconds = campaign.duration || 300;
 
             videoData = {
@@ -726,11 +677,9 @@
                 displayVideo(videoData.videoUrl);
             } else {
                 showError('No video link available.');
-                logDebug('❌ No video link available');
                 return;
             }
 
-            // Reset timer
             timeRemaining = videoData.duration;
             totalEarned = 0;
             isRunning = false;
@@ -742,9 +691,6 @@
             stopBtn.disabled = false;
             stopBtn.className = 'btn-stop';
             summaryBox.style.display = 'none';
-
-            logDebug('⏱️ Duration: ' + durationInSeconds + ' seconds');
-            logDebug('💰 Reward: ₦' + durationInSeconds);
 
             setTimeout(() => startTimer(), 2000);
         }
@@ -760,7 +706,6 @@
                 return;
             }
 
-            logDebug('▶️ Timer started');
             isRunning = true;
             stopBtn.textContent = '⏹️ Stop & Claim Earnings';
             stopBtn.disabled = false;
@@ -775,7 +720,6 @@
                     timeRemaining = 0;
                     totalEarned = videoData.duration;
                     updateDisplay();
-                    logDebug('⏹️ Timer reached 0! Auto-completing...');
                     completeWatching();
                     return;
                 }
@@ -816,7 +760,6 @@
             summaryStatus.textContent = '✅ Completed & Credited';
 
             showSuccess('✅ Video completed! ₦' + totalEarned.toLocaleString() + ' credited to your wallet.');
-            logDebug('💰 Crediting ₦' + totalEarned + ' to user');
             await creditUserEarnings(totalEarned);
             hasClaimed = true;
 
@@ -860,7 +803,6 @@
             summaryStatus.textContent = '✅ Claimed';
 
             showSuccess('✅ ₦' + totalEarned.toLocaleString() + ' credited to your wallet!');
-            logDebug('💰 Manual stop: Crediting ₦' + totalEarned);
             await creditUserEarnings(totalEarned);
             hasClaimed = true;
 
@@ -881,7 +823,6 @@
             }
 
             try {
-                logDebug('💰 Updating user balance...');
                 await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
                     method: 'PATCH',
                     headers: {
@@ -895,7 +836,6 @@
                     })
                 });
 
-                logDebug('💰 Recording transaction...');
                 await fetch(SUPABASE_URL + '/rest/v1/wallet_transactions', {
                     method: 'POST',
                     headers: {
@@ -913,7 +853,6 @@
                     })
                 });
 
-                logDebug('📝 Recording task completion...');
                 await fetch(SUPABASE_URL + '/rest/v1/task_completions', {
                     method: 'POST',
                     headers: {
@@ -935,39 +874,10 @@
                 userData.total_earned = (userData.total_earned || 0) + amount;
                 localStorage.setItem('cashvista_user', JSON.stringify(userData));
 
-                logDebug('✅ Successfully credited ₦' + amount);
-
             } catch (error) {
                 console.error('Error crediting earnings:', error);
-                logDebug('❌ Error crediting earnings: ' + error.message);
                 showError('❌ Error crediting earnings.');
             }
-        }
-
-        // =============================================
-        // LOAD VIDEO LIST
-        // =============================================
-        async function loadVideoList() {
-            logDebug('🔄 Loading video list...');
-            videoListContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Loading videos...</div>';
-
-            const videos = await fetchAvailableVideos();
-            const watchedIds = await fetchUserWatchedVideos();
-
-            availableVideos = videos;
-
-            if (videos.length === 0) {
-                videoListContainer.innerHTML = `
-                    <div class="no-video-msg">
-                        <div class="icon">🎬</div>
-                        <h3>No Videos Available</h3>
-                        <p>There are no videos available at the moment. Please check back later.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            renderVideoList(videos, watchedIds);
         }
 
         // =============================================
@@ -996,13 +906,37 @@
         });
 
         // =============================================
+        // LOAD VIDEO LIST
+        // =============================================
+        async function loadVideoList() {
+            videoListContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Loading videos...</div>';
+
+            const videos = await fetchAvailableVideos();
+            const watchedIds = await fetchUserWatchedVideos();
+
+            availableVideos = videos;
+
+            if (videos.length === 0) {
+                videoListContainer.innerHTML = `
+                    <div class="no-video-msg">
+                        <div class="icon">🎬</div>
+                        <h3>No Videos Available</h3>
+                        <p>There are no approved videos at the moment. Please check back later.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            renderVideoList(videos, watchedIds);
+        }
+
+        // =============================================
         // INITIALIZE
         // =============================================
         document.addEventListener('DOMContentLoaded', () => {
-            logDebug('🚀 Page loaded');
-
+            // Check if there's a campaign ID in the URL
             if (campaignId) {
-                logDebug('📝 Loading specific video from URL: ' + campaignId);
+                // Load the specific video
                 videoListSection.style.display = 'none';
                 videoPlayerSection.style.display = 'block';
                 fetch(SUPABASE_URL + '/rest/v1/campaigns?id=eq.' + campaignId, {
@@ -1012,30 +946,24 @@
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 })
-                .then(res => {
-                    logDebug('📡 API Response status: ' + res.status);
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => {
-                    logDebug('📊 Campaign data: ' + JSON.stringify(data));
                     if (data && data.length > 0 && data[0].status === 'approved') {
                         loadVideo(data[0]);
                     } else {
-                        logDebug('❌ Video not available or not approved');
                         showError('Video not available. Please select another.');
                         videoListSection.style.display = 'block';
                         videoPlayerSection.style.display = 'none';
                         loadVideoList();
                     }
                 })
-                .catch(err => {
-                    logDebug('❌ Error loading specific video: ' + err.message);
+                .catch(() => {
                     videoListSection.style.display = 'block';
                     videoPlayerSection.style.display = 'none';
                     loadVideoList();
                 });
             } else {
-                logDebug('📋 Showing available videos list');
+                // Show list of available videos
                 videoListSection.style.display = 'block';
                 videoPlayerSection.style.display = 'none';
                 loadVideoList();
