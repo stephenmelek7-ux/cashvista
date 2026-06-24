@@ -671,6 +671,10 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        // =============================================
+        // FIXED: APP URL - Using vercel.app not .com
+        // =============================================
+        const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
         // ADMIN SESSION CHECK
@@ -891,7 +895,11 @@
                 const videosWatched = tasks ? tasks.length : 0;
 
                 const isInvestMember = user.is_invest_member || false;
-                const referralLink = user.referral_link || 'Not generated yet';
+                // FIXED: Ensure referral link uses correct domain
+                let referralLink = user.referral_link || 'Not generated yet';
+                if (referralLink && referralLink !== 'Not generated yet') {
+                    referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
+                }
                 const activeCampaigns = campaigns ? campaigns.filter(c => c.status === 'approved' || c.status === 'live') : [];
 
                 let html = `
@@ -1009,7 +1017,12 @@
                 message += `   Videos Watched: ${videosWatched}\n`;
                 message += `   Watch Earnings: ₦${totalWatchEarnings.toLocaleString()}\n`;
                 message += `   Advertised Videos: ${campaigns ? campaigns.length : 0}\n`;
-                message += `   Referral Link: ${user.referral_link || 'Not generated'}\n`;
+                // FIXED: Ensure referral link uses correct domain
+                let referralLink = user.referral_link || 'Not generated';
+                if (referralLink && referralLink !== 'Not generated') {
+                    referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
+                }
+                message += `   Referral Link: ${referralLink}\n`;
                 message += `   Direct Referrals: ${user.direct_count || 0}\n`;
                 message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             }
@@ -1138,24 +1151,16 @@
                 return;
             }
 
-            // Try to open in new tab using blob URL (the CORRECT way)
             try {
-                // Convert data URL to blob using fetch
                 fetch(imageData)
                     .then(response => response.blob())
                     .then(blob => {
-                        // Create a proper URL from the blob
                         const url = URL.createObjectURL(blob);
-                        
-                        // Open in new tab
                         const newWindow = window.open(url, '_blank');
-                        
                         if (!newWindow) {
-                            // If popup blocked, use modal fallback
                             URL.revokeObjectURL(url);
                             showImageModal(imageData);
                         } else {
-                            // Clean up the URL after 30 seconds to free memory
                             setTimeout(() => {
                                 URL.revokeObjectURL(url);
                             }, 30000);
@@ -1163,7 +1168,6 @@
                     })
                     .catch(error => {
                         console.error('Error converting image:', error);
-                        // Fallback to modal
                         showImageModal(imageData);
                     });
             } catch (error) {
@@ -1176,32 +1180,26 @@
         // SHOW IMAGE IN MODAL (FALLBACK WHEN POPUP IS BLOCKED)
         // =============================================
         function showImageModal(imageData) {
-            // Remove any existing viewer
             const existingViewer = document.getElementById('receiptViewerOverlay');
             if (existingViewer) {
                 existingViewer.remove();
             }
 
-            // Create overlay
             const overlay = document.createElement('div');
             overlay.id = 'receiptViewerOverlay';
 
-            // Close button
             const closeBtn = document.createElement('button');
             closeBtn.className = 'close-btn';
             closeBtn.innerHTML = '✕';
             closeBtn.title = 'Close (ESC)';
 
-            // Image container
             const imgContainer = document.createElement('div');
             imgContainer.style.cssText = 'max-width:95%; max-height:85vh; display:flex; justify-content:center; align-items:center; overflow:hidden;';
 
-            // Image
             const img = document.createElement('img');
             img.src = imageData;
             img.alt = 'Receipt Image';
 
-            // Download button
             const downloadBtn = document.createElement('button');
             downloadBtn.className = 'download-btn';
             downloadBtn.innerHTML = '⬇️ Download Image';
@@ -1215,12 +1213,10 @@
                 document.body.removeChild(link);
             };
 
-            // Hint
             const hint = document.createElement('div');
             hint.className = 'hint';
             hint.textContent = 'Click ✕ or press ESC to close';
 
-            // Build overlay
             imgContainer.appendChild(img);
             overlay.appendChild(closeBtn);
             overlay.appendChild(imgContainer);
@@ -1228,14 +1224,12 @@
             overlay.appendChild(hint);
             document.body.appendChild(overlay);
 
-            // Close on click (anywhere on overlay except buttons)
             overlay.addEventListener('click', function(e) {
                 if (e.target === overlay || e.target === hint) {
                     overlay.remove();
                 }
             });
 
-            // Don't close when clicking on the image or download button
             img.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
@@ -1247,7 +1241,6 @@
                 overlay.remove();
             });
 
-            // Close on ESC key
             const escHandler = function(e) {
                 if (e.key === 'Escape' && document.body.contains(overlay)) {
                     overlay.remove();
@@ -1399,6 +1392,11 @@
                         else if (i.status === 'approved' || i.status === 'APPROVED' || i.status === 'active' || i.status === 'ACTIVE') statusBadge = '<span class="badge badge-success">✅ Active</span>';
                         else if (i.status === 'rejected' || i.status === 'REJECTED') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
                         else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        // FIXED: Ensure referral link uses correct domain
+                        let referralLink = i.referral_link || 'Not generated';
+                        if (referralLink && referralLink !== 'Not generated') {
+                            referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
+                        }
                         return `<tr>
                             <td><strong>${i.user_email || 'Unknown'}</strong></td>
                             <td>₦${(i.amount || 5000).toLocaleString()}</td>
@@ -1409,7 +1407,7 @@
                                     '<span class="no-receipt">No receipt</span>'
                                 }
                             </td>
-                            <td>${i.referral_link || 'Not generated'}</td>
+                            <td>${referralLink}</td>
                             <td>${statusBadge}</td>
                             <td>${i.date ? new Date(i.date).toLocaleDateString() : 'N/A'}</td>
                         </tr>`;
@@ -1502,7 +1500,8 @@
 
                 if (table === 'invest_members') {
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-                    const referralLink = 'https://cashvista.vercel.app/register.html?ref=' + uniqueId;
+                    // FIXED: Use APP_URL instead of hardcoded domain
+                    const referralLink = APP_URL + '/register.html?ref=' + uniqueId;
 
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                         method: 'PATCH',
@@ -1561,7 +1560,12 @@
             const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
             if (!users || users.length === 0) { alert('User not found.'); return; }
             const user = users[0];
-            alert(`👤 USER DETAILS\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email || 'N/A'}\nPhone: ${user.phone || 'N/A'}\nBalance: ₦${(user.balance || 0).toLocaleString()}\nInvest Member: ${user.is_invest_member ? 'Yes' : 'No'}\nReferral Link: ${user.referral_link || 'N/A'}\nBatch: ${user.batch || 'Not assigned'}\nStatus: ${user.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}`);
+            // FIXED: Ensure referral link uses correct domain
+            let referralLink = user.referral_link || 'N/A';
+            if (referralLink && referralLink !== 'N/A') {
+                referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
+            }
+            alert(`👤 USER DETAILS\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email || 'N/A'}\nPhone: ${user.phone || 'N/A'}\nBalance: ₦${(user.balance || 0).toLocaleString()}\nInvest Member: ${user.is_invest_member ? 'Yes' : 'No'}\nReferral Link: ${referralLink}\nBatch: ${user.batch || 'Not assigned'}\nStatus: ${user.is_active !== false ? 'Active' : 'Suspended'}\nJoined: ${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}`);
         }
 
         async function toggleUser(email) {
