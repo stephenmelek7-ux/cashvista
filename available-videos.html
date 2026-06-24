@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Available Videos - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+        .topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .topbar .user-info .greeting { color: #ddd; font-size: 14px; }
+        .topbar .user-info .greeting strong { color: #f5c842; font-weight: 700; }
+        .topbar .user-info .balance-badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #f5c842;
+        }
+        .topbar .user-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
+        .topbar .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .topbar .back-btn:hover { background: rgba(255,255,255,0.2); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 25px 20px; }
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .card h2 { font-size: 24px; font-weight: 700; color: #0d1b2a; margin-bottom: 6px; }
+        .card .subtitle { color: #888; font-size: 15px; margin-bottom: 20px; }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .video-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e8ecf0;
+            transition: 0.3s;
+        }
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border-color: #f5c842;
+        }
+        .video-card .video-thumb {
+            width: 100%;
+            height: 140px;
+            background: #0d1b2a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        .video-card h4 { color: #0d1b2a; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .video-card .meta { font-size: 13px; color: #888; margin-bottom: 4px; }
+        .video-card .reward { font-size: 18px; font-weight: 800; color: #f5c842; }
+        .video-card .btn-watch {
+            display: inline-block;
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        .video-card .btn-watch:hover { background: #e6b800; transform: scale(1.02); }
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 10px; }
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder { color: #f5c842; font-weight: 600; }
+        @media (max-width: 768px) {
+            .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
+            .topbar .user-info { justify-content: center; }
+            .video-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo"><span class="play-icon">▶</span>Cash<span>Vista</span></div>
+        <div class="user-info">
+            <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
+            <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
+            <a href="dashboard.html" class="back-btn">← Dashboard</a>
+            <button class="logout" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>📹 Available Videos</h2>
+            <p class="subtitle">Watch videos and earn ₦1 per second. Complete the full duration to earn the full reward!</p>
+            <div id="videoList">
+                <div class="empty-state"><div class="icon">🔄</div><p>Loading videos...</p></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        const userData = JSON.parse(localStorage.getItem('cashvista_user') || 'null');
+        if (!userData) {
+            window.location.href = 'login.html';
+        }
+        document.getElementById('userName').textContent = userData.name || 'User';
+        document.getElementById('userBalance').textContent = '₦' + (userData.balance || 0).toLocaleString();
+
+        function getDurationDisplay(seconds) {
+            if (!seconds || seconds <= 0) return 'N/A';
+            if (seconds >= 3600) {
+                const hours = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                return hours + 'h ' + mins + 'm';
+            } else if (seconds >= 60) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return mins + 'm ' + secs + 's';
+            } else {
+                return seconds + 's';
+            }
+        }
+
+        async function fetchAvailableVideos() {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved&order=date.desc', {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Error fetching videos:', e);
+                return [];
+            }
+        }
+
+        async function fetchUserWatchedVideos() {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/task_completions?user_email=eq.' + encodeURIComponent(userData.email), {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                const data = await response.json();
+                return data.map(item => item.campaign_id);
+            } catch (e) {
+                return [];
+            }
+        }
+
+        async function loadVideos() {
+            const videoList = document.getElementById('videoList');
+            
+            const videos = await fetchAvailableVideos();
+            const watchedIds = await fetchUserWatchedVideos();
+
+            const availableVideos = videos.filter(v => !watchedIds.includes(v.id));
+
+            if (videos.length === 0) {
+                videoList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🎬</div>
+                        <p>No videos available at the moment. Check back later!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (availableVideos.length === 0) {
+                videoList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">✅</div>
+                        <p>You've watched all available videos! Check back later for more.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            videoList.innerHTML = `
+                <div class="video-grid">
+                    ${availableVideos.map(video => `
+                        <div class="video-card">
+                            <div class="video-thumb">📹</div>
+                            <h4>${video.title || 'Untitled Video'}</h4>
+                            <div class="meta">⏱️ ${getDurationDisplay(video.duration || 300)}</div>
+                            <div class="meta">👥 ${video.viewers || 0} viewers</div>
+                            <div class="reward">💰 ₦${(video.duration || 300).toLocaleString()}</div>
+                            <a href="watch.html?id=${video.id}" class="btn-watch" target="_blank">▶️ Watch & Earn</a>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('userEmail');
+                localStorage.removeItem('cashvista_user');
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadVideos);
+    </script>
+</body>
+</html>
