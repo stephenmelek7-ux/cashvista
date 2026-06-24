@@ -509,7 +509,7 @@
                 <h3>Your Referral Link</h3>
                 <div class="sub">Share and earn 55% commission</div>
                 <div class="referral-link-box">
-                    <span class="link-text" id="referralLinkDisplay">https://cashvista.vercel.app/register.html?ref=guest</span>
+                    <span class="link-text" id="referralLinkDisplay">Loading...</span>
                     <button class="copy-btn-sm" onclick="copyReferralLink()">📋 Copy</button>
                 </div>
                 <div style="font-size:12px; color:#888; margin-top:6px;">
@@ -633,6 +633,10 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        // =============================================
+        // FIXED: APP URL - Using vercel.app not .com
+        // =============================================
+        const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
         // GET LOGGED-IN USER FROM SUPABASE
@@ -674,6 +678,22 @@
         }
 
         // =============================================
+        // FIXED: Get referral link with correct domain
+        // =============================================
+        function getReferralLink(user) {
+            let link = user.referral_link || '';
+            if (link) {
+                // FIXED: Replace .com with .vercel.app
+                link = link.replace('cashvista.com', 'cashvista.vercel.app');
+            } else {
+                // Generate a new link if not exists
+                const code = user.referral_code || 'REF_' + Date.now() + '_' + (user.email || '').split('@')[0];
+                link = APP_URL + '/register.html?ref=' + code;
+            }
+            return link;
+        }
+
+        // =============================================
         // LOAD DASHBOARD
         // =============================================
         async function loadDashboard() {
@@ -687,11 +707,12 @@
             document.getElementById('userBalance').textContent = '₦' + (user.balance || 0).toLocaleString();
             document.getElementById('walletBalance').textContent = '₦' + (user.balance || 0).toLocaleString();
 
-            document.getElementById('statReferrals').textContent = user.referrals || 0;
-            document.getElementById('statEarnings').textContent = '₦' + (user.total_earned || 0).toLocaleString();
+            document.getElementById('statReferrals').textContent = user.direct_count || 0;
+            document.getElementById('statEarnings').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
             document.getElementById('statTasks').textContent = '12';
 
-            const refLink = user.referral_link || 'https://cashvista.vercel.app/register.html?ref=' + (user.username || user.email.split('@')[0]);
+            // FIXED: Use the getReferralLink function
+            const refLink = getReferralLink(user);
             document.getElementById('referralLinkDisplay').textContent = refLink;
             document.getElementById('directCount').textContent = user.direct_count || 0;
             document.getElementById('downlineCount').textContent = user.downline_count || 0;
