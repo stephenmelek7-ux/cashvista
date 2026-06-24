@@ -525,8 +525,8 @@
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Type</th><th>User</th><th>Details</th><th>Amount</th><th>Receipt</th><th>Date</th><th>Action</th></tr></thead>
-                        <tbody id="pendingTableBody"><tr><td colspan="7" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr></tbody>
+                        <thead><tr><th>Type</th><th>User</th><th>Title</th><th>Duration</th><th>Amount</th><th>Receipt</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody id="pendingTableBody"><tr><td colspan="8" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -540,8 +540,8 @@
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Title</th><th>User</th><th>Amount</th><th>Viewers</th><th>Video Link</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody id="campaignTableBody"><tr><td colspan="7" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr></tbody>
+                        <thead><tr><th>Title</th><th>User</th><th>Duration</th><th>Amount</th><th>Viewers</th><th>Video Link</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="campaignTableBody"><tr><td colspan="8" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -742,6 +742,25 @@
         }
 
         // =============================================
+        // FORMAT DURATION FOR DISPLAY
+        // =============================================
+        function formatDurationDisplay(seconds) {
+            if (!seconds || seconds <= 0) return 'N/A';
+            if (seconds >= 3600) {
+                const hours = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                return hours + 'h ' + mins + 'm ' + secs + 's';
+            } else if (seconds >= 60) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return mins + 'm ' + secs + 's';
+            } else {
+                return seconds + 's';
+            }
+        }
+
+        // =============================================
         // SWITCH TABS
         // =============================================
         function switchTab(tabName) {
@@ -895,7 +914,6 @@
                 const videosWatched = tasks ? tasks.length : 0;
 
                 const isInvestMember = user.is_invest_member || false;
-                // FIXED: Ensure referral link uses correct domain
                 let referralLink = user.referral_link || 'Not generated yet';
                 if (referralLink && referralLink !== 'Not generated yet') {
                     referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
@@ -955,7 +973,7 @@
                             <div class="value small">
                                 ${activeCampaigns.length > 0 ? activeCampaigns.map(c => `
                                     <div style="margin:4px 0;">
-                                        📹 ${c.title} - 
+                                        📹 ${c.title} - Duration: ${formatDurationDisplay(c.duration)} - 
                                         <a href="${c.video_link}" target="_blank" class="video-link-sm">🔗 Watch Video</a>
                                     </div>
                                 `).join('') : 'No advertised videos yet'}
@@ -1017,7 +1035,6 @@
                 message += `   Videos Watched: ${videosWatched}\n`;
                 message += `   Watch Earnings: ₦${totalWatchEarnings.toLocaleString()}\n`;
                 message += `   Advertised Videos: ${campaigns ? campaigns.length : 0}\n`;
-                // FIXED: Ensure referral link uses correct domain
                 let referralLink = user.referral_link || 'Not generated';
                 if (referralLink && referralLink !== 'Not generated') {
                     referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
@@ -1043,7 +1060,7 @@
                     campaigns.filter(c => c.status === 'approved' || c.status === 'APPROVED' || c.status === 'live' || c.status === 'LIVE').forEach(c => {
                         const option = document.createElement('option');
                         option.value = c.id;
-                        option.textContent = c.title + ' (₦' + (c.amount || 0).toLocaleString() + ')';
+                        option.textContent = c.title + ' (₦' + (c.amount || 0).toLocaleString() + ', ' + formatDurationDisplay(c.duration) + ')';
                         campaignSelect.appendChild(option);
                     });
                 }
@@ -1143,7 +1160,7 @@
         }
 
         // =============================================
-        // FIXED: VIEW RECEIPT - Converts data URL to Blob URL (NO MORE DATA URL ERROR)
+        // VIEW RECEIPT
         // =============================================
         function viewReceipt(imageData) {
             if (!isValidReceipt(imageData)) {
@@ -1177,7 +1194,7 @@
         }
 
         // =============================================
-        // SHOW IMAGE IN MODAL (FALLBACK WHEN POPUP IS BLOCKED)
+        // SHOW IMAGE IN MODAL
         // =============================================
         function showImageModal(imageData) {
             const existingViewer = document.getElementById('receiptViewerOverlay');
@@ -1262,7 +1279,7 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD
+        // RENDER DASHBOARD - UPDATED WITH DURATION
         // =============================================
         async function renderDashboard() {
             try {
@@ -1312,34 +1329,35 @@
                 document.getElementById('withdrawalCountBadge').textContent = withdrawals ? withdrawals.length : 0;
                 document.getElementById('batchCountBadge').textContent = batches ? batches.length : 0;
 
-                // --- PENDING TABLE ---
+                // --- PENDING TABLE - WITH DURATION ---
                 const pendingBody = document.getElementById('pendingTableBody');
                 const pendingItems = [];
 
                 if (campaigns) {
                     campaigns.filter(c => c.status === 'pending' || c.status === 'PENDING').forEach(c => {
-                        pendingItems.push({ type: '📹 Campaign', id: c.id, user: c.user_email || 'Unknown', title: c.title || 'Video', amount: '₦' + (c.amount || 0).toLocaleString(), receipt: c.receipt_url || null, date: c.date ? new Date(c.date).toLocaleDateString() : 'N/A', data: c, table: 'campaigns' });
+                        pendingItems.push({ type: '📹 Campaign', id: c.id, user: c.user_email || 'Unknown', title: c.title || 'Video', duration: c.duration || 0, amount: '₦' + (c.amount || 0).toLocaleString(), receipt: c.receipt_url || null, date: c.date ? new Date(c.date).toLocaleDateString() : 'N/A', data: c, table: 'campaigns' });
                     });
                 }
                 if (investMembers) {
                     investMembers.filter(i => i.status === 'pending' || i.status === 'PENDING').forEach(i => {
-                        pendingItems.push({ type: '📈 Invest', id: i.id, user: i.user_email || 'Unknown', title: 'Invest & Grow', amount: '₦' + (i.amount || 5000).toLocaleString(), receipt: i.receipt_url || null, date: i.date ? new Date(i.date).toLocaleDateString() : 'N/A', data: i, table: 'invest_members' });
+                        pendingItems.push({ type: '📈 Invest', id: i.id, user: i.user_email || 'Unknown', title: 'Invest & Grow', duration: 0, amount: '₦' + (i.amount || 5000).toLocaleString(), receipt: i.receipt_url || null, date: i.date ? new Date(i.date).toLocaleDateString() : 'N/A', data: i, table: 'invest_members' });
                     });
                 }
                 if (withdrawals) {
                     withdrawals.filter(w => w.status === 'pending' || w.status === 'PENDING').forEach(w => {
-                        pendingItems.push({ type: '💰 Withdraw', id: w.id, user: w.user_email || 'Unknown', title: 'Withdrawal', amount: '₦' + (w.amount || 0).toLocaleString(), receipt: null, date: w.date ? new Date(w.date).toLocaleDateString() : 'N/A', data: w, table: 'withdrawals' });
+                        pendingItems.push({ type: '💰 Withdraw', id: w.id, user: w.user_email || 'Unknown', title: 'Withdrawal', duration: 0, amount: '₦' + (w.amount || 0).toLocaleString(), receipt: null, date: w.date ? new Date(w.date).toLocaleDateString() : 'N/A', data: w, table: 'withdrawals' });
                     });
                 }
 
                 if (pendingItems.length === 0) {
-                    pendingBody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
+                    pendingBody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
                 } else {
                     pendingBody.innerHTML = pendingItems.map(item => `
                         <tr>
                             <td><span class="badge badge-warning">${item.type}</span></td>
                             <td><strong>${item.user}</strong></td>
                             <td>${item.title}</td>
+                            <td>${item.duration > 0 ? formatDurationDisplay(item.duration) : 'N/A'}</td>
                             <td>${item.amount}</td>
                             <td>
                                 ${isValidReceipt(item.receipt) ? 
@@ -1358,10 +1376,10 @@
                     `).join('');
                 }
 
-                // --- CAMPAIGNS TABLE ---
+                // --- CAMPAIGNS TABLE - WITH DURATION ---
                 const campaignBody = document.getElementById('campaignTableBody');
                 if (!campaigns || campaigns.length === 0) {
-                    campaignBody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr>`;
+                    campaignBody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr>`;
                 } else {
                     campaignBody.innerHTML = campaigns.map(c => {
                         let statusBadge = '';
@@ -1372,6 +1390,7 @@
                         return `<tr>
                             <td><strong>${c.title}</strong></td>
                             <td>${c.user_email || 'Unknown'}</td>
+                            <td>${formatDurationDisplay(c.duration)}</td>
                             <td>₦${(c.amount || 0).toLocaleString()}</td>
                             <td>${c.viewers || 0}</td>
                             <td><a href="${c.video_link}" target="_blank" class="video-link">🔗 Watch</a></td>
@@ -1392,7 +1411,6 @@
                         else if (i.status === 'approved' || i.status === 'APPROVED' || i.status === 'active' || i.status === 'ACTIVE') statusBadge = '<span class="badge badge-success">✅ Active</span>';
                         else if (i.status === 'rejected' || i.status === 'REJECTED') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
                         else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
-                        // FIXED: Ensure referral link uses correct domain
                         let referralLink = i.referral_link || 'Not generated';
                         if (referralLink && referralLink !== 'Not generated') {
                             referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
@@ -1486,7 +1504,7 @@
         }
 
         // =============================================
-        // APPROVE / REJECT
+        // APPROVE / REJECT - FIXED WITH DURATION
         // =============================================
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
@@ -1500,7 +1518,6 @@
 
                 if (table === 'invest_members') {
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
-                    // FIXED: Use APP_URL instead of hardcoded domain
                     const referralLink = APP_URL + '/register.html?ref=' + uniqueId;
 
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
@@ -1528,7 +1545,10 @@
 
                     alert(`✅ ${userEmail} approved! Referral link generated: ${referralLink}`);
                 } else if (table === 'campaigns') {
-                    alert(`✅ Campaign approved! You can now assign it to batches.`);
+                    // Get the campaign to get duration
+                    const campaign = await fetchSupabase('campaigns', '?id=eq.' + id);
+                    const duration = campaign && campaign.length > 0 ? campaign[0].duration : 'N/A';
+                    alert(`✅ Campaign approved! Duration: ${formatDurationDisplay(duration)}. You can now assign it to batches.`);
                 } else if (table === 'withdrawals') {
                     alert(`✅ Withdrawal approved!`);
                 }
@@ -1560,7 +1580,6 @@
             const users = await fetchSupabase('users', '?email=eq.' + encodeURIComponent(email));
             if (!users || users.length === 0) { alert('User not found.'); return; }
             const user = users[0];
-            // FIXED: Ensure referral link uses correct domain
             let referralLink = user.referral_link || 'N/A';
             if (referralLink && referralLink !== 'N/A') {
                 referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
