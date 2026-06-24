@@ -219,6 +219,19 @@
             font-family: 'Inter', sans-serif;
         }
         .btn-back:hover { background: #ccc; }
+        .no-video-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .no-video-msg .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        .no-video-msg h3 {
+            color: #0d1b2a;
+            margin-bottom: 10px;
+        }
         @media (max-width: 500px) {
             .watch-container { padding: 20px 15px; }
             .video-wrapper iframe { height: 200px; }
@@ -235,34 +248,47 @@
         <div id="errorMsg" class="error-msg"></div>
         <div id="successMsg" class="success-msg"></div>
 
-        <div class="video-info">
-            <h3 id="videoTitle">Loading video...</h3>
-            <p>⏱️ Duration: <span id="videoDuration">0</span></p>
-            <p>💰 Reward: <span class="reward" id="videoReward">₦0</span></p>
-        </div>
-
-        <div class="video-wrapper">
-            <iframe id="videoFrame" src="" allowfullscreen></iframe>
-        </div>
-
-        <div class="timer-section">
-            <div class="timer-display" id="timerDisplay">00:00</div>
-            <div class="earnings-display">💰 <span id="currentEarnings">₦0</span></div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+        <!-- ===== VIDEO CONTENT ===== -->
+        <div id="videoContent">
+            <div class="video-info">
+                <h3 id="videoTitle">Loading video...</h3>
+                <p>⏱️ Duration: <span id="videoDuration">0</span></p>
+                <p>💰 Reward: <span class="reward" id="videoReward">₦0</span></p>
             </div>
-            <div class="status-text" id="statusText">⏳ Loading...</div>
+
+            <div class="video-wrapper">
+                <iframe id="videoFrame" src="" allowfullscreen></iframe>
+            </div>
+
+            <div class="timer-section">
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="earnings-display">💰 <span id="currentEarnings">₦0</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="status-text" id="statusText">⏳ Loading...</div>
+            </div>
+
+            <button class="btn-stop" id="stopBtn" onclick="stopWatching()">⏹️ Stop & Claim Earnings</button>
+
+            <div class="summary-box" id="summaryBox">
+                <div class="row"><span class="label">⏱️ Time Watched</span><span class="value" id="summaryTime">0s</span></div>
+                <div class="row"><span class="label">💰 Earnings</span><span class="value gold" id="summaryEarnings">₦0</span></div>
+                <div class="row"><span class="label">📊 Status</span><span class="value" id="summaryStatus">-</span></div>
+            </div>
         </div>
 
-        <button class="btn-stop" id="stopBtn" onclick="stopWatching()">⏹️ Stop & Claim Earnings</button>
-
-        <div class="summary-box" id="summaryBox">
-            <div class="row"><span class="label">⏱️ Time Watched</span><span class="value" id="summaryTime">0s</span></div>
-            <div class="row"><span class="label">💰 Earnings</span><span class="value gold" id="summaryEarnings">₦0</span></div>
-            <div class="row"><span class="label">📊 Status</span><span class="value" id="summaryStatus">-</span></div>
+        <!-- ===== NO VIDEO MESSAGE ===== -->
+        <div id="noVideoMessage" style="display:none;">
+            <div class="no-video-msg">
+                <div class="icon">🎬</div>
+                <h3>No Video Selected</h3>
+                <p>Please select a video from the dashboard to start watching and earning.</p>
+                <a href="dashboard.html" class="btn-back" style="margin-top:20px;">← Go to Dashboard</a>
+            </div>
         </div>
 
-        <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+        <a href="dashboard.html" class="btn-back" id="backToDashboard">← Back to Dashboard</a>
     </div>
 
     <script>
@@ -286,14 +312,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const campaignId = urlParams.get('id');
 
-        if (!campaignId) {
-            document.getElementById('errorMsg').textContent = '❌ No video selected.';
-            document.getElementById('errorMsg').style.display = 'block';
-            document.getElementById('statusText').textContent = '❌ Error: No video selected';
-        }
-
         // =============================================
-        // VIDEO DATA - Will be loaded from database
+        // VIDEO DATA
         // =============================================
         let videoData = {
             id: null,
@@ -332,6 +352,8 @@
         const videoTitle = document.getElementById('videoTitle');
         const videoDuration = document.getElementById('videoDuration');
         const videoReward = document.getElementById('videoReward');
+        const videoContent = document.getElementById('videoContent');
+        const noVideoMessage = document.getElementById('noVideoMessage');
 
         // =============================================
         // FORMAT TIME (seconds to HH:MM:SS or MM:SS)
@@ -354,6 +376,7 @@
         // GET DURATION DISPLAY TEXT
         // =============================================
         function getDurationDisplay(seconds) {
+            if (!seconds || seconds <= 0) return 'N/A';
             if (seconds >= 3600) {
                 const hours = Math.floor(seconds / 3600);
                 const mins = Math.floor((seconds % 3600) / 60);
@@ -374,12 +397,10 @@
             timerDisplay.textContent = formatTime(timeRemaining);
             currentEarnings.textContent = '₦' + totalEarned.toLocaleString();
 
-            // Update progress bar
             const totalDuration = videoData.duration || 1;
             const progress = ((totalDuration - timeRemaining) / totalDuration) * 100;
             progressFill.style.width = Math.min(progress, 100) + '%';
 
-            // Change color based on state
             if (isCompleted) {
                 timerDisplay.className = 'timer-display completed';
                 progressFill.className = 'progress-fill completed';
@@ -396,6 +417,15 @@
         // FETCH VIDEO DATA FROM SUPABASE
         // =============================================
         async function fetchVideoData() {
+            // ===== FIXED: Check if campaign ID exists =====
+            if (!campaignId) {
+                videoContent.style.display = 'none';
+                noVideoMessage.style.display = 'block';
+                document.getElementById('backToDashboard').style.display = 'none';
+                statusText.textContent = '❌ No video selected';
+                return false;
+            }
+
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/campaigns?id=eq.' + campaignId, {
                     method: 'GET',
@@ -423,13 +453,13 @@
                 }
 
                 // ===== SET VIDEO DATA =====
-                const durationInSeconds = campaign.duration || 300; // Default 5 minutes if not set
-                
+                const durationInSeconds = campaign.duration || 300;
+
                 videoData = {
                     id: campaign.id,
                     title: campaign.title || 'Untitled Video',
                     duration: durationInSeconds,
-                    reward: durationInSeconds, // ₦1 per second
+                    reward: durationInSeconds,
                     videoUrl: campaign.video_link || '',
                     instructions: campaign.description || 'Watch the video to earn rewards.'
                 };
@@ -461,8 +491,7 @@
 
             } catch (error) {
                 console.error('Error fetching video:', error);
-                document.getElementById('errorMsg').textContent = '❌ ' + error.message;
-                document.getElementById('errorMsg').style.display = 'block';
+                showError('❌ ' + error.message);
                 statusText.textContent = '❌ Error: ' + error.message;
                 stopBtn.disabled = true;
                 return false;
@@ -485,40 +514,30 @@
             statusText.textContent = '⏳ Watching... Timer will stop automatically';
 
             timerInterval = setInterval(function() {
-                // Decrease time remaining by 1 second
                 timeRemaining = timeRemaining - 1;
-
-                // Calculate earnings (₦1 per second watched)
                 totalEarned = Math.max(0, (videoData.duration - timeRemaining));
-
-                // Update display
                 updateDisplay();
 
-                // ===== CHECK IF TIME IS UP =====
                 if (timeRemaining <= 0) {
                     timeRemaining = 0;
-                    totalEarned = videoData.duration; // Full reward
+                    totalEarned = videoData.duration;
                     updateDisplay();
-
-                    // ===== AUTO-COMPLETE WHEN TIMER REACHES 0 =====
                     completeWatching();
                     return;
                 }
 
-                // Update earnings in real-time
                 currentEarnings.textContent = '₦' + totalEarned.toLocaleString();
 
             }, 1000);
         }
 
         // =============================================
-        // COMPLETE WATCHING - Called when timer reaches 0
+        // COMPLETE WATCHING
         // =============================================
         async function completeWatching() {
             if (isCompleted) return;
             if (hasClaimed) return;
 
-            // Stop the timer
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
@@ -527,9 +546,8 @@
             isRunning = false;
             isCompleted = true;
             timeRemaining = 0;
-            totalEarned = videoData.duration; // Full reward
+            totalEarned = videoData.duration;
 
-            // Update display
             updateDisplay();
             timerDisplay.className = 'timer-display completed';
             progressFill.className = 'progress-fill completed';
@@ -539,24 +557,18 @@
             stopBtn.disabled = true;
             stopBtn.className = 'btn-completed';
 
-            // Show summary
             summaryBox.style.display = 'block';
             summaryTime.textContent = videoData.duration + 's (Full Duration)';
             summaryEarnings.textContent = '₦' + totalEarned.toLocaleString();
             summaryStatus.textContent = '✅ Completed & Credited';
 
-            // Show success message
             showSuccess('✅ Video completed! ₦' + totalEarned.toLocaleString() + ' credited to your wallet.');
-
-            // ===== CREDIT USER'S WALLET =====
             await creditUserEarnings(totalEarned);
-
-            // Mark as claimed
             hasClaimed = true;
         }
 
         // =============================================
-        // STOP & CLAIM EARNINGS (Manual stop)
+        // STOP & CLAIM EARNINGS
         // =============================================
         async function stopWatching() {
             if (isCompleted) return;
@@ -566,7 +578,6 @@
                 return;
             }
 
-            // Stop the timer
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
@@ -575,34 +586,27 @@
             isRunning = false;
             isCompleted = true;
 
-            // Calculate final earnings (time watched so far)
             const secondsWatched = videoData.duration - timeRemaining;
             totalEarned = Math.max(0, secondsWatched);
 
-            // Update display
             updateDisplay();
             statusText.textContent = '⏹️ Stopped. Earnings credited.';
             stopBtn.textContent = '✅ Claimed';
             stopBtn.disabled = true;
             stopBtn.className = 'btn-completed';
 
-            // Show summary
             summaryBox.style.display = 'block';
             summaryTime.textContent = secondsWatched + 's';
             summaryEarnings.textContent = '₦' + totalEarned.toLocaleString();
             summaryStatus.textContent = '✅ Claimed';
 
-            // Show success message
             showSuccess('✅ ₦' + totalEarned.toLocaleString() + ' credited to your wallet!');
-
-            // ===== CREDIT USER'S WALLET =====
             await creditUserEarnings(totalEarned);
-
             hasClaimed = true;
         }
 
         // =============================================
-        // CREDIT USER EARNINGS TO WALLET
+        // CREDIT USER EARNINGS
         // =============================================
         async function creditUserEarnings(amount) {
             if (amount <= 0) {
@@ -611,7 +615,6 @@
             }
 
             try {
-                // 1. Update user's balance in Supabase
                 const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
                     method: 'PATCH',
                     headers: {
@@ -629,7 +632,6 @@
                     throw new Error('Failed to update balance');
                 }
 
-                // 2. Record the transaction
                 await fetch(SUPABASE_URL + '/rest/v1/wallet_transactions', {
                     method: 'POST',
                     headers: {
@@ -647,7 +649,6 @@
                     })
                 });
 
-                // 3. Record task completion
                 await fetch(SUPABASE_URL + '/rest/v1/task_completions', {
                     method: 'POST',
                     headers: {
@@ -665,7 +666,6 @@
                     })
                 });
 
-                // 4. Update local user data
                 userData.balance = (userData.balance || 0) + amount;
                 userData.total_earned = (userData.total_earned || 0) + amount;
                 localStorage.setItem('cashvista_user', JSON.stringify(userData));
@@ -694,30 +694,12 @@
         }
 
         // =============================================
-        // PREVENT PAGE REFRESH DURING WATCHING
+        // PREVENT PAGE REFRESH
         // =============================================
         window.addEventListener('beforeunload', function(e) {
             if (isRunning && !isCompleted) {
                 e.preventDefault();
                 e.returnValue = 'You are currently watching a video. Are you sure you want to leave?';
-            }
-        });
-
-        // =============================================
-        // RECOVER FROM PAGE REFRESH
-        // =============================================
-        window.addEventListener('load', function() {
-            if (!isCompleted && !hasClaimed && videoData.duration > 0) {
-                if (timeRemaining > 0 && timeRemaining <= videoData.duration) {
-                    // Resume from where we left off
-                    startTimer();
-                } else {
-                    // Reset if something went wrong
-                    timeRemaining = videoData.duration;
-                    totalEarned = 0;
-                    updateDisplay();
-                    startTimer();
-                }
             }
         });
 
