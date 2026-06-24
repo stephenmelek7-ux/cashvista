@@ -167,6 +167,57 @@
             margin-top: 4px;
         }
 
+        /* ===== DURATION GROUP - NEW ===== */
+        .duration-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .duration-group input {
+            flex: 2;
+            min-width: 100px;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .duration-group input:focus {
+            border-color: #f5c842;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .duration-group select {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fafbfc;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .duration-group select:focus {
+            border-color: #f5c842;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1);
+        }
+        .duration-preview {
+            font-size: 13px;
+            color: #f5c842;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .duration-preview .highlight {
+            background: #fef7e0;
+            padding: 2px 10px;
+            border-radius: 4px;
+        }
+
         .bank-details {
             background: #e8f5e9;
             padding: 20px 25px;
@@ -208,13 +259,6 @@
         .btn-gold:hover {
             background: #e6b800;
             transform: scale(1.02);
-        }
-        .btn-green {
-            background: #2e7d32;
-            color: #fff;
-        }
-        .btn-green:hover {
-            background: #1b5e20;
         }
         .btn-block {
             width: 100%;
@@ -315,6 +359,15 @@
             .bank-details .number {
                 font-size: 18px;
             }
+            .duration-group {
+                flex-direction: column;
+            }
+            .duration-group input,
+            .duration-group select {
+                width: 100% !important;
+                flex: none !important;
+                min-width: unset !important;
+            }
         }
     </style>
 </head>
@@ -359,6 +412,23 @@
                     <textarea id="videoDescription" placeholder="Describe your video content briefly..."></textarea>
                 </div>
 
+                <!-- ===== DURATION FIELD - NEW ===== -->
+                <div class="form-group">
+                    <label>Video Duration *</label>
+                    <div class="duration-group">
+                        <input type="number" id="durationInput" placeholder="Enter number" min="0.1" step="0.1" required />
+                        <select id="durationUnit">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes" selected>Minutes</option>
+                            <option value="hours">Hours</option>
+                        </select>
+                    </div>
+                    <div class="hint">💡 Enter the length of your video. Users will watch and earn ₦1 per second.</div>
+                    <div class="duration-preview">
+                        ⏱️ Duration: <span id="previewText" class="highlight">5 minutes (300 seconds)</span>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Amount You Want to Pay (₦) *</label>
                     <input type="number" id="amountPay" placeholder="e.g., 10000" required />
@@ -392,15 +462,6 @@
                     </p>
                 </div>
 
-                <div id="paystackSection" style="display:none;">
-                    <p style="font-size:12px; color:#e65100; margin-top:4px;">
-                        💳 Pay with your card via Paystack.
-                    </p>
-                    <button type="button" class="btn btn-gold btn-block" id="paystackBtn" onclick="payWithPaystack()" disabled>
-                        💳 Pay Now with Paystack (Coming Soon)
-                    </button>
-                </div>
-
                 <div id="bankUploadSection">
                     <div class="form-group">
                         <label>Upload Payment Slip/Receipt</label>
@@ -428,6 +489,7 @@
                     <thead>
                         <tr>
                             <th>Title</th>
+                            <th>Duration</th>
                             <th>Amount</th>
                             <th>Viewers</th>
                             <th>Status</th>
@@ -435,7 +497,7 @@
                     </thead>
                     <tbody id="campaignHistory">
                         <tr>
-                            <td colspan="4" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td>
+                            <td colspan="5" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -520,6 +582,43 @@
         }
 
         // =============================================
+        // DURATION PREVIEW - NEW
+        // =============================================
+        function updateDurationPreview() {
+            const number = parseFloat(document.getElementById('durationInput').value) || 0;
+            const unit = document.getElementById('durationUnit').value;
+            
+            let seconds = 0;
+            let displayText = '';
+            
+            if (unit === 'seconds') {
+                seconds = number;
+                displayText = number + ' seconds (' + seconds + ' seconds)';
+            } else if (unit === 'minutes') {
+                seconds = number * 60;
+                displayText = number + ' minutes (' + seconds + ' seconds)';
+            } else if (unit === 'hours') {
+                seconds = number * 3600;
+                displayText = number + ' hours (' + seconds + ' seconds)';
+            }
+            
+            document.getElementById('previewText').textContent = displayText;
+        }
+
+        // =============================================
+        // GET DURATION IN SECONDS - NEW
+        // =============================================
+        function getDurationInSeconds() {
+            const number = parseFloat(document.getElementById('durationInput').value) || 0;
+            const unit = document.getElementById('durationUnit').value;
+            
+            if (unit === 'seconds') return number;
+            if (unit === 'minutes') return number * 60;
+            if (unit === 'hours') return number * 3600;
+            return 0;
+        }
+
+        // =============================================
         // LOAD CAMPAIGN HISTORY
         // =============================================
         async function loadCampaignHistory() {
@@ -531,7 +630,7 @@
 
                 if (!data || data.length === 0) {
                     tbody.innerHTML =
-                        `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td></tr>`;
+                        `<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">No campaigns yet.</td></tr>`;
                     return;
                 }
 
@@ -548,9 +647,22 @@
                         statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
                     }
 
+                    // Format duration display
+                    let durationDisplay = c.duration + ' seconds';
+                    if (c.duration >= 3600) {
+                        const hours = Math.floor(c.duration / 3600);
+                        const mins = Math.floor((c.duration % 3600) / 60);
+                        durationDisplay = hours + 'h ' + mins + 'm';
+                    } else if (c.duration >= 60) {
+                        const mins = Math.floor(c.duration / 60);
+                        const secs = c.duration % 60;
+                        durationDisplay = mins + 'm ' + secs + 's';
+                    }
+
                     return `
                             <tr>
                                 <td style="padding:10px;"><strong>${c.title}</strong></td>
+                                <td style="padding:10px;">${durationDisplay}</td>
                                 <td style="padding:10px;">₦${Number(c.amount).toLocaleString()}</td>
                                 <td style="padding:10px;">${c.viewers}</td>
                                 <td style="padding:10px;">${statusBadge}</td>
@@ -573,6 +685,13 @@
             document.getElementById('userName').textContent = currentUser.name || 'User';
             document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
 
+            // Set initial duration preview
+            updateDurationPreview();
+
+            // Add event listeners for duration preview
+            document.getElementById('durationInput').addEventListener('input', updateDurationPreview);
+            document.getElementById('durationUnit').addEventListener('change', updateDurationPreview);
+
             await loadCampaignHistory();
         });
 
@@ -581,26 +700,16 @@
         // =============================================
         document.getElementById('paymentMethod').addEventListener('change', function() {
             const bankDetails = document.getElementById('bankTransferDetails');
-            const paystackSection = document.getElementById('paystackSection');
             const bankUploadSection = document.getElementById('bankUploadSection');
 
             if (this.value === 'bank') {
                 bankDetails.style.display = 'block';
-                paystackSection.style.display = 'none';
                 bankUploadSection.style.display = 'block';
-            } else if (this.value === 'paystack') {
-                bankDetails.style.display = 'none';
-                paystackSection.style.display = 'block';
-                bankUploadSection.style.display = 'none';
             }
         });
 
-        function payWithPaystack() {
-            showNotification('🔐 Paystack is coming soon. Please use Bank Transfer for now.', 'info');
-        }
-
         // =============================================
-        // SUBMIT CAMPAIGN - FIXED
+        // SUBMIT CAMPAIGN - FIXED WITH DURATION
         // =============================================
         document.getElementById('advertiseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -613,6 +722,11 @@
             const reason = document.getElementById('reasonPayment').value.trim();
             const method = document.getElementById('paymentMethod').value;
 
+            // ===== GET DURATION IN SECONDS =====
+            const durationInSeconds = getDurationInSeconds();
+            const durationNumber = parseFloat(document.getElementById('durationInput').value) || 0;
+            const durationUnit = document.getElementById('durationUnit').value;
+
             // --- VALIDATION ---
             if (!title) {
                 showNotification('❌ Please enter a video title.', 'error');
@@ -620,6 +734,10 @@
             }
             if (!link) {
                 showNotification('❌ Please enter a video link.', 'error');
+                return;
+            }
+            if (!durationNumber || durationNumber <= 0) {
+                showNotification('❌ Please enter a valid video duration.', 'error');
                 return;
             }
             if (!amount || isNaN(amount) || Number(amount) <= 0) {
@@ -650,12 +768,14 @@
             showNotification('⏳ Submitting your campaign...', 'info');
 
             try {
-                // --- INSERT CAMPAIGN INTO SUPABASE ---
+                // ===== CREATE CAMPAIGN DATA WITH DURATION =====
                 const campaignData = {
                     user_email: currentUser.email,
                     title: title,
                     video_link: link,
                     description: description || '',
+                    duration: durationInSeconds, // Stored in seconds
+                    duration_display: durationNumber + ' ' + durationUnit,
                     amount: Number(amount),
                     viewers: Number(viewers),
                     reason: reason || '',
@@ -663,7 +783,6 @@
                     date: new Date().toISOString()
                 };
 
-                // If receipt is uploaded, we would store it. For now, just submit.
                 const success = await insertSupabase('campaigns', campaignData);
 
                 if (!success) {
@@ -674,7 +793,8 @@
                 // --- ADD ACTIVITY LOG ---
                 await insertSupabase('activity', {
                     user_name: currentUser.name,
-                    action: 'Submitted campaign: ' + title + ' (₦' + Number(amount).toLocaleString() + ')',
+                    action: 'Submitted campaign: ' + title + ' (₦' + Number(amount).toLocaleString() + ', Duration: ' +
+                        durationNumber + ' ' + durationUnit + ')',
                     amount: Number(amount),
                     date: new Date().toISOString()
                 });
@@ -686,11 +806,15 @@
                 document.getElementById('videoTitle').value = '';
                 document.getElementById('videoLink').value = '';
                 document.getElementById('videoDescription').value = '';
+                document.getElementById('durationInput').value = '';
                 document.getElementById('amountPay').value = '';
                 document.getElementById('viewerCount').value = '';
                 document.getElementById('reasonPayment').value = '';
                 document.getElementById('paymentSlip').value = '';
                 document.getElementById('transactionRef').value = '';
+
+                // Reset preview
+                updateDurationPreview();
 
                 // --- REFRESH CAMPAIGN HISTORY ---
                 await loadCampaignHistory();
@@ -722,37 +846,6 @@
                 sessionStorage.removeItem('userEmail');
                 window.location.href = 'login.html';
             }
-        }
-
-        // =============================================
-        // ADMIN FUNCTIONS (Called from Admin Dashboard)
-        // =============================================
-        async function adminApproveCampaign(campaignId) {
-            await fetch(SUPABASE_URL + '/rest/v1/campaigns?id=eq.' + campaignId, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({ status: 'approved' })
-            });
-            alert('✅ Campaign approved and published!');
-            loadCampaignHistory();
-        }
-
-        async function adminRejectCampaign(campaignId) {
-            await fetch(SUPABASE_URL + '/rest/v1/campaigns?id=eq.' + campaignId, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                },
-                body: JSON.stringify({ status: 'rejected' })
-            });
-            alert('❌ Campaign rejected.');
-            loadCampaignHistory();
         }
     </script>
 </body>
