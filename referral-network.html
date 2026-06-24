@@ -249,6 +249,35 @@
             font-weight: 600;
         }
 
+        .referral-link-box {
+            background: #fef7e0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #555;
+            margin: 15px 0;
+            border-left: 3px solid #f5c842;
+            word-break: break-all;
+        }
+        .referral-link-box strong { color: #0d1b2a; }
+        .referral-link-box .link {
+            color: #f5c842;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .copy-btn {
+            background: #0d1b2a;
+            color: #fff;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-left: 8px;
+        }
+        .copy-btn:hover { background: #1a3a5c; }
+
         @media (max-width: 768px) {
             .topbar {
                 flex-direction: column;
@@ -291,6 +320,13 @@
         <div class="card">
             <h2>🌐 Your Referral Network</h2>
             <p class="subtitle">View everyone you've invited and your downline structure.</p>
+
+            <!-- FIXED: Show referral link -->
+            <div id="referralLinkBox" class="referral-link-box">
+                <strong>🔗 Your Referral Link:</strong><br />
+                <span id="referralLinkDisplay" class="link">Loading...</span>
+                <button class="copy-btn" onclick="copyReferralLink()">📋 Copy</button>
+            </div>
 
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-box">
@@ -359,6 +395,10 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        // =============================================
+        // FIXED: APP URL - Using vercel.app not .com
+        // =============================================
+        const APP_URL = 'https://cashvista.vercel.app';
 
         let currentUser = null;
         let referralData = {
@@ -403,27 +443,61 @@
             }
         }
 
+        // =============================================
+        // FIXED: Get user's referral link with correct domain
+        // =============================================
+        function getReferralLink() {
+            if (!currentUser) return '';
+            
+            let link = currentUser.referral_link || '';
+            if (link) {
+                // FIXED: Replace .com with .vercel.app
+                link = link.replace('cashvista.com', 'cashvista.vercel.app');
+            } else {
+                // Generate a new link if not exists
+                const code = currentUser.referral_code || 'REF_' + Date.now() + '_' + (currentUser.email || '').split('@')[0];
+                link = APP_URL + '/register.html?ref=' + code;
+            }
+            return link;
+        }
+
+        // =============================================
+        // COPY REFERRAL LINK
+        // =============================================
+        function copyReferralLink() {
+            const link = document.getElementById('referralLinkDisplay').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+            }).catch(() => {
+                alert('Copy: ' + link);
+            });
+        }
+
+        // =============================================
+        // FIXED: Load Referral Network - Fixed logic
+        // =============================================
         async function loadReferralNetwork() {
             try {
                 const allUsers = await fetchSupabase('users', '');
 
-                // Find direct referrals (users who have this user's referral_code as their referred_by)
+                // FIXED: Direct referrals = users who have this user's email as their referred_by
                 const directRefs = allUsers.filter(u => 
-                    u.referral_code === currentUser.referral_code || 
                     u.referred_by === currentUser.email
                 );
 
-                // Find downline (users referred by direct referrals)
+                // FIXED: Downline = users referred by direct referrals
                 const directEmails = directRefs.map(u => u.email);
                 const downlineRefs = allUsers.filter(u => 
-                    directEmails.includes(u.referred_by) || 
-                    directEmails.includes(u.referral_code)
+                    u.referred_by && directEmails.includes(u.referred_by)
                 );
 
+                // Calculate earnings from direct referrals who are invest members
                 let totalEarnings = 0;
                 for (const ref of directRefs) {
                     if (ref.is_invest_member) {
-                        totalEarnings += 2750;
+                        totalEarnings += 2750; // 55% of 5000
                     }
                 }
 
@@ -435,6 +509,10 @@
                 document.getElementById('statDownline').textContent = downlineRefs.length;
                 document.getElementById('statEarnings').textContent = '₦' + totalEarnings.toLocaleString();
                 document.getElementById('statTotal').textContent = directRefs.length + downlineRefs.length;
+
+                // Display referral link
+                const link = getReferralLink();
+                document.getElementById('referralLinkDisplay').textContent = link;
 
                 renderTree(currentUser, directRefs, downlineRefs);
                 renderReferralList(directRefs, downlineRefs);
