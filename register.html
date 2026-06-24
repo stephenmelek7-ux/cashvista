@@ -10,158 +10,176 @@
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
         }
         .register-container {
             background: #fff;
             padding: 40px 35px;
-            border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 420px;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+            max-width: 450px;
+            width: 95%;
         }
         .register-container .logo {
-            text-align: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 800;
-            color: #0d1b2a;
+            color: #f5c842;
+            text-align: center;
+            margin-bottom: 5px;
         }
-        .register-container .logo span { color: #f5c842; }
-        .register-container .logo .play-icon { color: #f5c842; }
+        .register-container .logo span { color: #0d1b2a; }
         .register-container .subtitle {
             text-align: center;
             color: #888;
             font-size: 14px;
             margin-bottom: 25px;
         }
-        .register-container label {
+        .register-container .subtitle a {
+            color: #f5c842;
+            text-decoration: none;
             font-weight: 600;
-            color: #333;
-            display: block;
-            margin-top: 12px;
-            font-size: 14px;
         }
-        .register-container input {
+        .register-container .subtitle a:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #0d1b2a;
+            margin-bottom: 5px;
+        }
+        .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 16px;
             border: 2px solid #e8ecf0;
             border-radius: 12px;
             font-size: 15px;
-            margin-top: 5px;
             transition: 0.3s;
-            background: #fafbfc;
+            font-family: 'Inter', sans-serif;
         }
-        .register-container input:focus {
+        .form-group input:focus {
             border-color: #f5c842;
             outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(245,200,66,0.1);
+            box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.15);
         }
-        .register-container .btn {
+        .btn-register {
+            width: 100%;
             background: #f5c842;
             color: #0d1b2a;
             border: none;
             padding: 14px;
-            border-radius: 50px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 17px;
-            width: 100%;
-            margin-top: 20px;
+            font-size: 16px;
             cursor: pointer;
             transition: 0.3s;
+            font-family: 'Inter', sans-serif;
         }
-        .register-container .btn:hover { background: #e6b800; }
-        .register-container .links {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            color: #555;
+        .btn-register:hover { background: #e6b800; transform: scale(1.02); }
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-        .register-container .links a {
-            color: #0d1b2a;
-            font-weight: 600;
-            text-decoration: none;
-        }
-        .register-container .links a:hover { color: #f5c842; }
-        .footer-credit {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #aaa;
-        }
-        .footer-credit .founder { color: #f5c842; }
-        .notification {
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            display: none;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        .notification.error {
+        .error-msg {
             background: #fce4ec;
             color: #c62828;
-            display: block;
-            border-left: 4px solid #c62828;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
         }
-        .notification.success {
+        .success-msg {
             background: #e8f5e9;
             color: #2e7d32;
-            display: block;
-            border-left: 4px solid #2e7d32;
-        }
-        .notification.info {
-            background: #e3f2fd;
-            color: #0d47a1;
-            display: block;
-            border-left: 4px solid #0d47a1;
-        }
-        .referral-badge {
-            background: #fef7e0;
-            border: 1px solid #f5c842;
-            padding: 8px 15px;
+            padding: 10px 14px;
             border-radius: 10px;
+            font-size: 13px;
             margin-bottom: 15px;
+            display: none;
+        }
+        .referral-info {
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 15px;
+            border-left: 3px solid #f5c842;
+        }
+        .referral-info strong { color: #0d1b2a; }
+        .password-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .terms {
+            font-size: 12px;
+            color: #888;
             text-align: center;
-            font-size: 14px;
-            color: #e65100;
+            margin-top: 15px;
         }
-        @media (max-width: 480px) {
-            .register-container { padding: 25px 20px; margin: 10px; }
+        .terms a { color: #f5c842; text-decoration: none; }
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #0d1b2a;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-text { display: inline-flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
+
     <div class="register-container">
-        <div class="logo">
-            <span class="play-icon">▶</span>Cash<span>Vista</span>
-        </div>
+        <div class="logo">▶Cash<span>Vista</span></div>
         <p class="subtitle">Create your free account</p>
-        <div id="referralInfo" class="referral-badge" style="display:none;">
-            🔗 You were referred by someone! When you invest ₦5,000, they earn 55% commission.
+
+        <div id="errorMsg" class="error-msg"></div>
+        <div id="successMsg" class="success-msg"></div>
+
+        <div id="referralInfo" class="referral-info" style="display:none;">
+            🔗 Referred by: <strong id="refName">Someone</strong>
         </div>
-        <div id="notification" class="notification"></div>
+
         <form id="registerForm">
-            <label>Full Name</label>
-            <input type="text" id="fullName" placeholder="Your full name" required />
-            <label>Email Address</label>
-            <input type="email" id="email" placeholder="you@example.com" required />
-            <label>Phone Number</label>
-            <input type="tel" id="phone" placeholder="08012345678" required />
-            <label>Username (Optional)</label>
-            <input type="text" id="username" placeholder="Choose a unique username" />
-            <label>Password</label>
-            <input type="password" id="password" placeholder="Min 6 characters" required />
-            <input type="hidden" id="referralCode" value="" />
-            <button type="submit" class="btn">Create Account</button>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required />
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required />
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" placeholder="e.g. 08012345678" required />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Min 6 characters" required minlength="6" />
+                <div class="password-hint">Password must be at least 6 characters</div>
+            </div>
+            <button type="submit" class="btn-register" id="registerBtn">
+                <span class="btn-text">Create Account</span>
+            </button>
         </form>
-        <p class="links">Already have an account? <a href="login.html">Login</a></p>
-        <div class="footer-credit">
-            <p class="founder">Designed by Stephen Melek Elisha</p>
-        </div>
+
+        <p class="terms">
+            By registering, you agree to our <a href="#">Terms of Service</a> &amp; <a href="#">Privacy Policy</a>
+        </p>
+        <p class="terms" style="margin-top:8px;">
+            Already have an account? <a href="login.html">Login here</a>
+        </p>
     </div>
 
     <script>
@@ -170,59 +188,51 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        // =============================================
+        // FIXED: APP URL - Using vercel.app not .com
+        // =============================================
+        const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
-        // CAPTURE REFERRAL CODE FROM URL
+        // GET REFERRAL CODE FROM URL
         // =============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref');
-
-            if (refCode) {
-                document.getElementById('referralCode').value = refCode;
-                document.getElementById('referralInfo').style.display = 'block';
-                document.getElementById('referralInfo').innerHTML = 
-                    '🔗 You were referred by someone! When you invest ₦5,000, they earn 55% commission.';
-            }
-        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralCode = urlParams.get('ref');
 
         // =============================================
-        // HELPER FUNCTIONS
+        // FETCH REFERRAL INFO
         // =============================================
-        async function fetchSupabase(table, email) {
+        async function fetchReferralInfo(code) {
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?email=eq.' + encodeURIComponent(email), {
-                    method: 'GET',
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?referral_code=eq.' + code, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_KEY
                     }
                 });
-                if (!response.ok) return [];
-                return await response.json();
+                if (!response.ok) return null;
+                const data = await response.json();
+                return data && data.length > 0 ? data[0] : null;
             } catch (e) {
-                console.error('Fetch error:', e);
-                return [];
+                console.error('Error fetching referral:', e);
+                return null;
             }
         }
 
-        async function insertSupabase(table, data) {
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify(data)
-                });
-                return response.ok;
-            } catch (e) {
-                console.error('Insert error:', e);
-                return false;
-            }
+        // =============================================
+        // CHECK REFERRAL ON LOAD
+        // =============================================
+        if (referralCode) {
+            document.getElementById('referralInfo').style.display = 'block';
+            document.getElementById('refName').textContent = 'Loading...';
+            
+            fetchReferralInfo(referralCode).then(refUser => {
+                if (refUser) {
+                    document.getElementById('refName').textContent = refUser.name || refUser.email || 'Someone';
+                } else {
+                    document.getElementById('referralInfo').style.display = 'none';
+                }
+            });
         }
 
         // =============================================
@@ -230,98 +240,133 @@
         // =============================================
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            const registerBtn = document.getElementById('registerBtn');
+            const btnText = registerBtn.querySelector('.btn-text');
 
+            // Reset messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            // Get values
             const name = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const referralCode = document.getElementById('referralCode').value.trim();
-            const notification = document.getElementById('notification');
+            const password = document.getElementById('password').value;
 
-            if (!name) {
-                notification.className = 'notification error';
-                notification.textContent = '❌ Please enter your full name.';
+            // Validate
+            if (!name || !email || !phone || !password) {
+                errorMsg.textContent = '❌ Please fill in all fields.';
+                errorMsg.style.display = 'block';
                 return;
             }
-            if (!email || !email.includes('@')) {
-                notification.className = 'notification error';
-                notification.textContent = '❌ Please enter a valid email.';
-                return;
-            }
+
             if (password.length < 6) {
-                notification.className = 'notification error';
-                notification.textContent = '❌ Password must be at least 6 characters.';
+                errorMsg.textContent = '❌ Password must be at least 6 characters.';
+                errorMsg.style.display = 'block';
                 return;
             }
+
+            // Show loading
+            registerBtn.disabled = true;
+            btnText.innerHTML = '<span class="loader"></span> Creating...';
 
             try {
-                notification.className = 'notification info';
-                notification.textContent = '⏳ Creating your account...';
-
-                const existing = await fetchSupabase('users', email);
-                if (existing && existing.length > 0) {
-                    notification.className = 'notification error';
-                    notification.textContent = '❌ This email is already registered. Please login.';
+                // Check if email already exists
+                const checkResponse = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                const existingUsers = await checkResponse.json();
+                
+                if (existingUsers && existingUsers.length > 0) {
+                    errorMsg.textContent = '❌ This email is already registered. Please login instead.';
+                    errorMsg.style.display = 'block';
+                    registerBtn.disabled = false;
+                    btnText.innerHTML = 'Create Account';
                     return;
                 }
 
-                // Save user with referral code
+                // Generate referral code
+                const uniqueId = 'REF_' + Date.now() + '_' + email.split('@')[0];
+                // FIXED: Use APP_URL (cashvista.vercel.app) not cashvista.com
+                const referralLink = APP_URL + '/register.html?ref=' + uniqueId;
+
+                // Prepare user data
                 const userData = {
                     name: name,
                     email: email,
-                    phone: phone || '',
-                    username: username || '',
+                    phone: phone,
                     password: password,
                     balance: 0,
-                    total_earned: 0,
-                    referrals: 0,
                     is_invest_member: false,
+                    referral_code: uniqueId,
+                    referral_link: referralLink,
+                    referred_by: referralCode || null,
                     is_active: true,
                     joined_date: new Date().toISOString()
                 };
 
-                // If referral code exists, save it
-                if (referralCode) {
-                    userData.referred_by = referralCode;
-                }
-
-                const success = await insertSupabase('users', userData);
-
-                if (!success) {
-                    notification.className = 'notification error';
-                    notification.textContent = '❌ Error creating account. Please try again.';
-                    return;
-                }
-
-                sessionStorage.setItem('userEmail', email);
-
-                notification.className = 'notification success';
-                notification.textContent = '✅ Account created! Redirecting...';
-
-                await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                // Insert user
+                const insertResponse = await fetch(SUPABASE_URL + '/rest/v1/users', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Prefer': 'return=minimal'
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
                     },
-                    body: JSON.stringify({
-                        user_name: name,
-                        action: referralCode ? 'Registered with referral: ' + referralCode : 'Registered',
-                        amount: 0,
-                        date: new Date().toISOString()
-                    })
+                    body: JSON.stringify(userData)
                 });
+
+                if (!insertResponse.ok) {
+                    const errorData = await insertResponse.text();
+                    console.error('Insert error:', errorData);
+                    throw new Error('Registration failed. Please try again.');
+                }
+
+                // Success - store user session
+                const user = { ...userData };
+                delete user.password;
+                localStorage.setItem('cashvista_user', JSON.stringify(user));
+
+                // Update referrer's direct count if referred
+                if (referralCode) {
+                    try {
+                        const refUser = await fetchReferralInfo(referralCode);
+                        if (refUser) {
+                            const newCount = (refUser.direct_count || 0) + 1;
+                            await fetch(SUPABASE_URL + '/rest/v1/users?referral_code=eq.' + referralCode, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'apikey': SUPABASE_KEY,
+                                    'Authorization': 'Bearer ' + SUPABASE_KEY
+                                },
+                                body: JSON.stringify({ direct_count: newCount })
+                            });
+                        }
+                    } catch (e) {
+                        console.log('Could not update referrer count:', e);
+                    }
+                }
+
+                successMsg.innerHTML = '✅ Account created successfully! Redirecting to dashboard...';
+                successMsg.style.display = 'block';
 
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1500);
 
             } catch (error) {
-                notification.className = 'notification error';
-                notification.textContent = '❌ ' + error.message;
+                console.error('Registration error:', error);
+                errorMsg.textContent = '❌ ' + error.message;
+                errorMsg.style.display = 'block';
+                registerBtn.disabled = false;
+                btnText.innerHTML = 'Create Account';
             }
         });
     </script>
