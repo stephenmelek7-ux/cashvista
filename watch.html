@@ -219,6 +219,11 @@
             font-family: 'Inter', sans-serif;
         }
         .btn-back:hover { background: #ccc; }
+        .btn-gold {
+            background: #f5c842;
+            color: #0d1b2a;
+        }
+        .btn-gold:hover { background: #e6b800; }
         .no-video-msg {
             text-align: center;
             padding: 40px 20px;
@@ -232,10 +237,20 @@
             color: #0d1b2a;
             margin-bottom: 10px;
         }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-group .btn-back {
+            flex: 1;
+            min-width: 120px;
+        }
         @media (max-width: 500px) {
             .watch-container { padding: 20px 15px; }
             .video-wrapper iframe { height: 200px; }
             .timer-section .timer-display { font-size: 36px; }
+            .btn-group .btn-back { min-width: 100px; font-size: 12px; }
         }
     </style>
 </head>
@@ -249,7 +264,7 @@
         <div id="successMsg" class="success-msg"></div>
 
         <!-- ===== VIDEO CONTENT ===== -->
-        <div id="videoContent">
+        <div id="videoContent" style="display:none;">
             <div class="video-info">
                 <h3 id="videoTitle">Loading video...</h3>
                 <p>⏱️ Duration: <span id="videoDuration">0</span></p>
@@ -278,17 +293,20 @@
             </div>
         </div>
 
-        <!-- ===== NO VIDEO MESSAGE ===== -->
-        <div id="noVideoMessage" style="display:none;">
+        <!-- ===== NO VIDEO / ERROR MESSAGE ===== -->
+        <div id="noVideoMessage">
             <div class="no-video-msg">
                 <div class="icon">🎬</div>
-                <h3>No Video Selected</h3>
-                <p>Please select a video from the dashboard to start watching and earning.</p>
-                <a href="dashboard.html" class="btn-back" style="margin-top:20px;">← Go to Dashboard</a>
+                <h3 id="errorTitle">No Video Selected</h3>
+                <p id="errorDescription">Please select a video from the available videos page to start watching and earning.</p>
+                <div class="btn-group" style="margin-top:20px;">
+                    <a href="dashboard.html" class="btn-back">← Dashboard</a>
+                    <a href="available-videos.html" class="btn-back btn-gold">📹 Browse Videos</a>
+                </div>
             </div>
         </div>
 
-        <a href="dashboard.html" class="btn-back" id="backToDashboard">← Back to Dashboard</a>
+        <a href="dashboard.html" class="btn-back" id="backToDashboard" style="display:none;">← Back to Dashboard</a>
     </div>
 
     <script>
@@ -354,9 +372,12 @@
         const videoReward = document.getElementById('videoReward');
         const videoContent = document.getElementById('videoContent');
         const noVideoMessage = document.getElementById('noVideoMessage');
+        const backToDashboard = document.getElementById('backToDashboard');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorDescription = document.getElementById('errorDescription');
 
         // =============================================
-        // FORMAT TIME (seconds to HH:MM:SS or MM:SS)
+        // FORMAT TIME
         // =============================================
         function formatTime(seconds) {
             if (seconds < 0) seconds = 0;
@@ -372,9 +393,6 @@
             }
         }
 
-        // =============================================
-        // GET DURATION DISPLAY TEXT
-        // =============================================
         function getDurationDisplay(seconds) {
             if (!seconds || seconds <= 0) return 'N/A';
             if (seconds >= 3600) {
@@ -390,9 +408,6 @@
             }
         }
 
-        // =============================================
-        // UPDATE DISPLAY
-        // =============================================
         function updateDisplay() {
             timerDisplay.textContent = formatTime(timeRemaining);
             currentEarnings.textContent = '₦' + totalEarned.toLocaleString();
@@ -414,14 +429,16 @@
         }
 
         // =============================================
-        // FETCH VIDEO DATA FROM SUPABASE
+        // FETCH VIDEO DATA
         // =============================================
         async function fetchVideoData() {
-            // ===== FIXED: Check if campaign ID exists =====
+            // ===== CHECK IF CAMPAIGN ID EXISTS =====
             if (!campaignId) {
                 videoContent.style.display = 'none';
                 noVideoMessage.style.display = 'block';
-                document.getElementById('backToDashboard').style.display = 'none';
+                backToDashboard.style.display = 'none';
+                errorTitle.textContent = '🎬 No Video Selected';
+                errorDescription.textContent = 'Please go to the dashboard and click on a video to start watching and earning.';
                 statusText.textContent = '❌ No video selected';
                 return false;
             }
@@ -447,12 +464,10 @@
 
                 const campaign = data[0];
 
-                // Check if campaign is approved/live
                 if (campaign.status !== 'approved' && campaign.status !== 'live' && campaign.status !== 'LIVE') {
                     throw new Error('This video is not available yet. Please check back later.');
                 }
 
-                // ===== SET VIDEO DATA =====
                 const durationInSeconds = campaign.duration || 300;
 
                 videoData = {
@@ -464,12 +479,16 @@
                     instructions: campaign.description || 'Watch the video to earn rewards.'
                 };
 
-                // Update UI with video info
+                // Show video content
+                videoContent.style.display = 'block';
+                noVideoMessage.style.display = 'none';
+                backToDashboard.style.display = 'none';
+
+                // Update UI
                 videoTitle.textContent = videoData.title;
                 videoDuration.textContent = getDurationDisplay(videoData.duration);
                 videoReward.textContent = '₦' + videoData.duration.toLocaleString();
 
-                // Set video URL
                 if (videoData.videoUrl) {
                     videoFrame.src = videoData.videoUrl;
                 } else {
@@ -482,7 +501,6 @@
                 updateDisplay();
                 statusText.textContent = '▶️ Video loaded. Starting in 2 seconds...';
 
-                // Start timer after 2 seconds
                 setTimeout(function() {
                     startTimer();
                 }, 2000);
@@ -491,6 +509,14 @@
 
             } catch (error) {
                 console.error('Error fetching video:', error);
+                
+                // Show error message in the no-video section
+                videoContent.style.display = 'none';
+                noVideoMessage.style.display = 'block';
+                backToDashboard.style.display = 'none';
+                errorTitle.textContent = '❌ ' + error.message;
+                errorDescription.textContent = 'Please try again later or select another video.';
+                
                 showError('❌ ' + error.message);
                 statusText.textContent = '❌ Error: ' + error.message;
                 stopBtn.disabled = true;
@@ -499,7 +525,7 @@
         }
 
         // =============================================
-        // START TIMER - COUNTS DOWN TO ZERO
+        // START TIMER
         // =============================================
         function startTimer() {
             if (isRunning) return;
@@ -568,7 +594,7 @@
         }
 
         // =============================================
-        // STOP & CLAIM EARNINGS
+        // STOP & CLAIM
         // =============================================
         async function stopWatching() {
             if (isCompleted) return;
@@ -606,7 +632,7 @@
         }
 
         // =============================================
-        // CREDIT USER EARNINGS
+        // CREDIT EARNINGS
         // =============================================
         async function creditUserEarnings(amount) {
             if (amount <= 0) {
@@ -679,7 +705,7 @@
         }
 
         // =============================================
-        // SHOW MESSAGES
+        // MESSAGES
         // =============================================
         function showError(msg) {
             errorMsg.textContent = msg;
@@ -704,13 +730,14 @@
         });
 
         // =============================================
-        // INITIALIZE PAGE
+        // INITIALIZE
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             fetchVideoData();
         });
 
         console.log('🎬 Watch & Earn page loaded successfully!');
+        console.log('📝 Campaign ID:', campaignId || 'Not provided');
     </script>
 </body>
 </html>
