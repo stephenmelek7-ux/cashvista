@@ -492,15 +492,16 @@
                 <button class="btn btn-blue" onclick="window.location.href='advertise.html'">📢 Start Campaign</button>
             </div>
 
-            <!-- Watch & Earn Card -->
+            <!-- ===== WATCH & EARN CARD - FIXED ===== -->
             <div class="card card-gradient-4">
                 <div class="card-icon">🎬</div>
                 <h3>Watch & Earn</h3>
                 <div class="sub">Complete video tasks and earn rewards</div>
                 <div style="margin:8px 0;">
-                    <span class="badge-mini green">📺 <span id="taskCount">12</span> Tasks Available</span>
+                    <span class="badge-mini green">📺 <span id="taskCount">0</span> Tasks Available</span>
                 </div>
-                <button class="btn btn-purple" onclick="window.location.href='watch.html'">▶️ Watch Videos</button>
+                <!-- ===== FIXED: Changed from watch.html to available-videos.html ===== -->
+                <button class="btn btn-purple" onclick="window.location.href='available-videos.html'">▶️ Watch Videos</button>
             </div>
 
             <!-- Referral Link Card -->
@@ -694,6 +695,39 @@
         }
 
         // =============================================
+        // FETCH AVAILABLE VIDEO COUNT
+        // =============================================
+        async function getAvailableVideoCount() {
+            try {
+                // Get user's watched videos
+                const watchedResponse = await fetch(SUPABASE_URL + '/rest/v1/task_completions?user_email=eq.' + encodeURIComponent(sessionStorage.getItem('userEmail')), {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                const watchedData = await watchedResponse.json();
+                const watchedIds = watchedData.map(item => item.campaign_id);
+
+                // Get all approved videos
+                const videosResponse = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved', {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                const videos = await videosResponse.json();
+
+                // Count videos not watched
+                const available = videos.filter(v => !watchedIds.includes(v.id));
+                return available.length;
+            } catch (e) {
+                console.error('Error getting video count:', e);
+                return 0;
+            }
+        }
+
+        // =============================================
         // LOAD DASHBOARD
         // =============================================
         async function loadDashboard() {
@@ -709,7 +743,11 @@
 
             document.getElementById('statReferrals').textContent = user.direct_count || 0;
             document.getElementById('statEarnings').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
-            document.getElementById('statTasks').textContent = '12';
+
+            // Get available video count
+            const taskCount = await getAvailableVideoCount();
+            document.getElementById('statTasks').textContent = taskCount;
+            document.getElementById('taskCount').textContent = taskCount;
 
             // FIXED: Use the getReferralLink function
             const refLink = getReferralLink(user);
