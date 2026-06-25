@@ -671,9 +671,6 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        // =============================================
-        // FIXED: APP URL - Using vercel.app not .com
-        // =============================================
         const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
@@ -761,6 +758,27 @@
         }
 
         // =============================================
+        // ✅ FIXED: VALIDATE RECEIPT URL
+        // =============================================
+        function isValidReceipt(url) {
+            if (!url) return false;
+            if (url === 'pending' || url === '' || url === null || url === 'null') return false;
+            if (url.startsWith('data:image/')) return true;
+            if (url.includes('supabase.co/storage/v1/object/')) return true;
+            return false;
+        }
+
+        // =============================================
+        // ✅ FIXED: GET RECEIPT DISPLAY URL
+        // =============================================
+        function getReceiptDisplayUrl(url) {
+            if (!url) return null;
+            if (url.startsWith('data:image/')) return url;
+            if (url.includes('supabase.co/storage/v1/object/')) return url;
+            return null;
+        }
+
+        // =============================================
         // SWITCH TABS
         // =============================================
         function switchTab(tabName) {
@@ -845,7 +863,7 @@
                     return;
                 }
 
-                const campaigns = await fetchSupabase('campaigns', '?status=approved&order=date.desc&limit=1');
+                const campaigns = await fetchSupabase('campaigns', '?status=eq.approved&order=created_at.desc&limit=1');
                 if (!campaigns || campaigns.length === 0) {
                     alert('No approved campaign available to assign.');
                     return;
@@ -1057,7 +1075,10 @@
             if (campaignSelect) {
                 campaignSelect.innerHTML = '<option value="">-- Select Campaign --</option>';
                 if (campaigns) {
-                    campaigns.filter(c => c.status === 'approved' || c.status === 'APPROVED' || c.status === 'live' || c.status === 'LIVE').forEach(c => {
+                    campaigns.filter(c => {
+                        const status = (c.status || '').toLowerCase();
+                        return status === 'approved' || status === 'live';
+                    }).forEach(c => {
                         const option = document.createElement('option');
                         option.value = c.id;
                         option.textContent = c.title + ' (₦' + (c.amount || 0).toLocaleString() + ', ' + formatDurationDisplay(c.duration) + ')';
@@ -1146,18 +1167,6 @@
                 alert('❌ Error: ' + error.message);
             }
         });
-
-        // =============================================
-        // CHECK IF RECEIPT IS VALID
-        // =============================================
-        function isValidReceipt(url) {
-            return url && 
-                   url !== 'pending' && 
-                   url !== '' && 
-                   url !== null && 
-                   url !== 'null' &&
-                   url.startsWith('data:image/');
-        }
 
         // =============================================
         // VIEW RECEIPT
@@ -1279,17 +1288,18 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD - UPDATED WITH DURATION
+        // ✅ FIXED: RENDER DASHBOARD
         // =============================================
         async function renderDashboard() {
             try {
                 console.log('🔄 Loading admin dashboard...');
 
+                // ✅ FIXED: Use 'created_at' instead of 'date'
                 const users = await fetchSupabase('users', '?order=joined_date.desc');
-                const campaigns = await fetchSupabase('campaigns', '?order=date.desc');
-                const investMembers = await fetchSupabase('invest_members', '?order=date.desc');
-                const withdrawals = await fetchSupabase('withdrawals', '?order=date.desc');
-                const activity = await fetchSupabase('activity', '?order=date.desc&limit=20');
+                const campaigns = await fetchSupabase('campaigns', '?order=created_at.desc');
+                const investMembers = await fetchSupabase('invest_members', '?order=created_at.desc');
+                const withdrawals = await fetchSupabase('withdrawals', '?order=created_at.desc');
+                const activity = await fetchSupabase('activity', '?order=created_at.desc&limit=20');
                 const batches = await fetchSupabase('batches', '?order=created_at.asc');
 
                 console.log('Users:', users?.length || 0);
@@ -1301,9 +1311,23 @@
 
                 const totalUsers = users ? users.length : 0;
                 const totalInvest = investMembers ? investMembers.length : 0;
-                const pendingCampaigns = campaigns ? campaigns.filter(c => c.status === 'pending' || c.status === 'PENDING').length : 0;
-                const pendingInvest = investMembers ? investMembers.filter(i => i.status === 'pending' || i.status === 'PENDING').length : 0;
-                const pendingWithdrawals = withdrawals ? withdrawals.filter(w => w.status === 'pending' || w.status === 'PENDING').length : 0;
+                
+                // ✅ FIXED: Case-insensitive status check
+                const pendingCampaigns = campaigns ? campaigns.filter(c => {
+                    const status = (c.status || '').toLowerCase();
+                    return status === 'pending';
+                }).length : 0;
+                
+                const pendingInvest = investMembers ? investMembers.filter(i => {
+                    const status = (i.status || '').toLowerCase();
+                    return status === 'pending';
+                }).length : 0;
+                
+                const pendingWithdrawals = withdrawals ? withdrawals.filter(w => {
+                    const status = (w.status || '').toLowerCase();
+                    return status === 'pending';
+                }).length : 0;
+                
                 const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
 
                 let totalWallet = 0;
@@ -1329,63 +1353,109 @@
                 document.getElementById('withdrawalCountBadge').textContent = withdrawals ? withdrawals.length : 0;
                 document.getElementById('batchCountBadge').textContent = batches ? batches.length : 0;
 
-                // --- PENDING TABLE - WITH DURATION ---
+                // --- PENDING TABLE ---
                 const pendingBody = document.getElementById('pendingTableBody');
                 const pendingItems = [];
 
                 if (campaigns) {
-                    campaigns.filter(c => c.status === 'pending' || c.status === 'PENDING').forEach(c => {
-                        pendingItems.push({ type: '📹 Campaign', id: c.id, user: c.user_email || 'Unknown', title: c.title || 'Video', duration: c.duration || 0, amount: '₦' + (c.amount || 0).toLocaleString(), receipt: c.receipt_url || null, date: c.date ? new Date(c.date).toLocaleDateString() : 'N/A', data: c, table: 'campaigns' });
+                    campaigns.filter(c => {
+                        const status = (c.status || '').toLowerCase();
+                        return status === 'pending';
+                    }).forEach(c => {
+                        pendingItems.push({ 
+                            type: '📹 Campaign', 
+                            id: c.id, 
+                            user: c.user_email || 'Unknown', 
+                            title: c.title || 'Video', 
+                            duration: c.duration || 0, 
+                            amount: '₦' + (c.amount || 0).toLocaleString(), 
+                            receipt: c.payment_slip_url || null, 
+                            date: c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A', 
+                            data: c, 
+                            table: 'campaigns' 
+                        });
                     });
                 }
                 if (investMembers) {
-                    investMembers.filter(i => i.status === 'pending' || i.status === 'PENDING').forEach(i => {
-                        pendingItems.push({ type: '📈 Invest', id: i.id, user: i.user_email || 'Unknown', title: 'Invest & Grow', duration: 0, amount: '₦' + (i.amount || 5000).toLocaleString(), receipt: i.receipt_url || null, date: i.date ? new Date(i.date).toLocaleDateString() : 'N/A', data: i, table: 'invest_members' });
+                    investMembers.filter(i => {
+                        const status = (i.status || '').toLowerCase();
+                        return status === 'pending';
+                    }).forEach(i => {
+                        pendingItems.push({ 
+                            type: '📈 Invest', 
+                            id: i.id, 
+                            user: i.user_email || 'Unknown', 
+                            title: 'Invest & Grow', 
+                            duration: 0, 
+                            amount: '₦' + (i.amount || 5000).toLocaleString(), 
+                            receipt: i.receipt_url || null, 
+                            date: i.created_at ? new Date(i.created_at).toLocaleDateString() : 'N/A', 
+                            data: i, 
+                            table: 'invest_members' 
+                        });
                     });
                 }
                 if (withdrawals) {
-                    withdrawals.filter(w => w.status === 'pending' || w.status === 'PENDING').forEach(w => {
-                        pendingItems.push({ type: '💰 Withdraw', id: w.id, user: w.user_email || 'Unknown', title: 'Withdrawal', duration: 0, amount: '₦' + (w.amount || 0).toLocaleString(), receipt: null, date: w.date ? new Date(w.date).toLocaleDateString() : 'N/A', data: w, table: 'withdrawals' });
+                    withdrawals.filter(w => {
+                        const status = (w.status || '').toLowerCase();
+                        return status === 'pending';
+                    }).forEach(w => {
+                        pendingItems.push({ 
+                            type: '💰 Withdraw', 
+                            id: w.id, 
+                            user: w.user_email || 'Unknown', 
+                            title: 'Withdrawal', 
+                            duration: 0, 
+                            amount: '₦' + (w.amount || 0).toLocaleString(), 
+                            receipt: null, 
+                            date: w.created_at ? new Date(w.created_at).toLocaleDateString() : 'N/A', 
+                            data: w, 
+                            table: 'withdrawals' 
+                        });
                     });
                 }
 
                 if (pendingItems.length === 0) {
                     pendingBody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr>`;
                 } else {
-                    pendingBody.innerHTML = pendingItems.map(item => `
-                        <tr>
-                            <td><span class="badge badge-warning">${item.type}</span></td>
-                            <td><strong>${item.user}</strong></td>
-                            <td>${item.title}</td>
-                            <td>${item.duration > 0 ? formatDurationDisplay(item.duration) : 'N/A'}</td>
-                            <td>${item.amount}</td>
-                            <td>
-                                ${isValidReceipt(item.receipt) ? 
-                                    `<img src="${item.receipt}" class="receipt-img" onclick="viewReceipt('${item.receipt}')" title="Click to view receipt" />` 
-                                    : 
-                                    '<span class="no-receipt">No receipt</span>'
-                                }
-                            </td>
-                            <td>${item.date}</td>
-                            <td>
-                                <button class="btn-sm btn-approve" onclick="approveItem('${item.table}', '${item.id}', '${item.user}')">✅ Approve</button>
-                                <button class="btn-sm btn-reject" onclick="rejectItem('${item.table}', '${item.id}', '${item.user}')">❌ Reject</button>
-                                ${item.type === '📹 Campaign' ? `<button class="btn-sm btn-link" onclick="viewVideo('${item.data.video_link}')">🔗 Watch</button>` : ''}
-                            </td>
-                        </tr>
-                    `).join('');
+                    pendingBody.innerHTML = pendingItems.map(item => {
+                        const receiptUrl = getReceiptDisplayUrl(item.receipt);
+                        return `
+                            <tr>
+                                <td><span class="badge badge-warning">${item.type}</span></td>
+                                <td><strong>${item.user}</strong></td>
+                                <td>${item.title}</td>
+                                <td>${item.duration > 0 ? formatDurationDisplay(item.duration) : 'N/A'}</td>
+                                <td>${item.amount}</td>
+                                <td>
+                                    ${receiptUrl ? 
+                                        `<img src="${receiptUrl}" class="receipt-img" onclick="viewReceipt('${receiptUrl}')" title="Click to view receipt" />` 
+                                        : 
+                                        '<span class="no-receipt">No receipt</span>'
+                                    }
+                                </td>
+                                <td>${item.date}</td>
+                                <td>
+                                    <button class="btn-sm btn-approve" onclick="approveItem('${item.table}', '${item.id}', '${item.user}')">✅ Approve</button>
+                                    <button class="btn-sm btn-reject" onclick="rejectItem('${item.table}', '${item.id}', '${item.user}')">❌ Reject</button>
+                                    ${item.type === '📹 Campaign' ? `<button class="btn-sm btn-link" onclick="viewVideo('${item.data.video_link}')">🔗 Watch</button>` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
                 }
 
-                // --- CAMPAIGNS TABLE - WITH DURATION ---
+                // --- CAMPAIGNS TABLE ---
                 const campaignBody = document.getElementById('campaignTableBody');
                 if (!campaigns || campaigns.length === 0) {
                     campaignBody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr>`;
                 } else {
                     campaignBody.innerHTML = campaigns.map(c => {
                         let statusBadge = '';
-                        if (c.status === 'pending' || c.status === 'PENDING') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
-                        else if (c.status === 'approved' || c.status === 'APPROVED' || c.status === 'live' || c.status === 'LIVE') statusBadge = '<span class="badge badge-success">✅ Live</span>';
-                        else if (c.status === 'rejected' || c.status === 'REJECTED') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                        const status = (c.status || '').toLowerCase();
+                        if (status === 'pending') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        else if (status === 'approved' || status === 'live') statusBadge = '<span class="badge badge-success">✅ Live</span>';
+                        else if (status === 'rejected') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
                         else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
                         return `<tr>
                             <td><strong>${c.title}</strong></td>
@@ -1395,7 +1465,7 @@
                             <td>${c.viewers || 0}</td>
                             <td><a href="${c.video_link}" target="_blank" class="video-link">🔗 Watch</a></td>
                             <td>${statusBadge}</td>
-                            <td>${c.date ? new Date(c.date).toLocaleDateString() : 'N/A'}</td>
+                            <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A'}</td>
                         </tr>`;
                     }).join('');
                 }
@@ -1407,27 +1477,29 @@
                 } else {
                     investBody.innerHTML = investMembers.map(i => {
                         let statusBadge = '';
-                        if (i.status === 'pending' || i.status === 'PENDING') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
-                        else if (i.status === 'approved' || i.status === 'APPROVED' || i.status === 'active' || i.status === 'ACTIVE') statusBadge = '<span class="badge badge-success">✅ Active</span>';
-                        else if (i.status === 'rejected' || i.status === 'REJECTED') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                        const status = (i.status || '').toLowerCase();
+                        if (status === 'pending') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        else if (status === 'approved' || status === 'active') statusBadge = '<span class="badge badge-success">✅ Active</span>';
+                        else if (status === 'rejected') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
                         else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
                         let referralLink = i.referral_link || 'Not generated';
                         if (referralLink && referralLink !== 'Not generated') {
                             referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
                         }
+                        const receiptUrl = getReceiptDisplayUrl(i.receipt_url);
                         return `<tr>
                             <td><strong>${i.user_email || 'Unknown'}</strong></td>
                             <td>₦${(i.amount || 5000).toLocaleString()}</td>
                             <td>
-                                ${isValidReceipt(i.receipt_url) ? 
-                                    `<img src="${i.receipt_url}" class="receipt-img" onclick="viewReceipt('${i.receipt_url}')" title="View receipt" />` 
+                                ${receiptUrl ? 
+                                    `<img src="${receiptUrl}" class="receipt-img" onclick="viewReceipt('${receiptUrl}')" title="View receipt" />` 
                                     : 
                                     '<span class="no-receipt">No receipt</span>'
                                 }
                             </td>
                             <td>${referralLink}</td>
                             <td>${statusBadge}</td>
-                            <td>${i.date ? new Date(i.date).toLocaleDateString() : 'N/A'}</td>
+                            <td>${i.created_at ? new Date(i.created_at).toLocaleDateString() : 'N/A'}</td>
                         </tr>`;
                     }).join('');
                 }
@@ -1439,9 +1511,10 @@
                 } else {
                     withdrawalBody.innerHTML = withdrawals.map(w => {
                         let statusBadge = '';
-                        if (w.status === 'pending' || w.status === 'PENDING') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
-                        else if (w.status === 'approved' || w.status === 'APPROVED') statusBadge = '<span class="badge badge-success">✅ Approved</span>';
-                        else if (w.status === 'rejected' || w.status === 'REJECTED') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
+                        const status = (w.status || '').toLowerCase();
+                        if (status === 'pending') statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
+                        else if (status === 'approved') statusBadge = '<span class="badge badge-success">✅ Approved</span>';
+                        else if (status === 'rejected') statusBadge = '<span class="badge badge-danger">❌ Rejected</span>';
                         else statusBadge = '<span class="badge badge-warning">⏳ Pending</span>';
                         return `<tr>
                             <td><strong>${w.user_email || 'Unknown'}</strong></td>
@@ -1449,7 +1522,7 @@
                             <td>${w.bank_name || 'N/A'}</td>
                             <td>${w.account_number || 'N/A'}</td>
                             <td>${statusBadge}</td>
-                            <td>${w.date ? new Date(w.date).toLocaleDateString() : 'N/A'}</td>
+                            <td>${w.created_at ? new Date(w.created_at).toLocaleDateString() : 'N/A'}</td>
                         </tr>`;
                     }).join('');
                 }
@@ -1489,7 +1562,7 @@
                             <td><strong>${a.user_name || 'Unknown'}</strong></td>
                             <td>${a.action || 'N/A'}</td>
                             <td>${a.amount ? '₦' + a.amount.toLocaleString() : '₦0'}</td>
-                            <td>${a.date ? new Date(a.date).toLocaleString() : 'N/A'}</td>
+                            <td>${a.created_at ? new Date(a.created_at).toLocaleString() : 'N/A'}</td>
                         </tr>
                     `).join('');
                 }
@@ -1504,7 +1577,7 @@
         }
 
         // =============================================
-        // APPROVE / REJECT - FIXED WITH DURATION
+        // APPROVE / REJECT
         // =============================================
         async function approveItem(table, id, userEmail) {
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
@@ -1545,10 +1618,7 @@
 
                     alert(`✅ ${userEmail} approved! Referral link generated: ${referralLink}`);
                 } else if (table === 'campaigns') {
-                    // Get the campaign to get duration
-                    const campaign = await fetchSupabase('campaigns', '?id=eq.' + id);
-                    const duration = campaign && campaign.length > 0 ? campaign[0].duration : 'N/A';
-                    alert(`✅ Campaign approved! Duration: ${formatDurationDisplay(duration)}. You can now assign it to batches.`);
+                    alert(`✅ Campaign approved! You can now assign it to batches.`);
                 } else if (table === 'withdrawals') {
                     alert(`✅ Withdrawal approved!`);
                 }
