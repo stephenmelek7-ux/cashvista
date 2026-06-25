@@ -6,18 +6,8 @@
     <title>Dashboard - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background: #f0f4f8;
-            color: #1a1a2e;
-        }
-
-        /* ===== TOP BAR ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a1a2e; }
         .topbar {
             background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
             color: #fff;
@@ -31,32 +21,17 @@
             top: 0;
             z-index: 100;
         }
-        .topbar .logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: #f5c842;
-        }
-        .topbar .logo span {
-            color: #fff;
-        }
-        .topbar .logo .play-icon {
-            color: #f5c842;
-            margin-right: 5px;
-        }
+        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
         .topbar .user-info {
             display: flex;
             align-items: center;
             gap: 18px;
             flex-wrap: wrap;
         }
-        .topbar .user-info .greeting {
-            color: #ddd;
-            font-size: 14px;
-        }
-        .topbar .user-info .greeting strong {
-            color: #f5c842;
-            font-weight: 700;
-        }
+        .topbar .user-info .greeting { color: #ddd; font-size: 14px; }
+        .topbar .user-info .greeting strong { color: #f5c842; font-weight: 700; }
         .topbar .user-info .balance-badge {
             background: rgba(245, 200, 66, 0.15);
             border: 1px solid #f5c842;
@@ -77,19 +52,8 @@
             font-size: 13px;
             transition: 0.3s;
         }
-        .topbar .user-info .logout:hover {
-            background: #e74c3c;
-            color: #fff;
-        }
-
-        /* ===== CONTAINER ===== */
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 25px 20px;
-        }
-
-        /* ===== WELCOME BANNER ===== */
+        .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 25px 20px; }
         .welcome-banner {
             background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 100%);
             color: #fff;
@@ -102,47 +66,19 @@
             flex-wrap: wrap;
             box-shadow: 0 8px 30px rgba(13, 27, 42, 0.2);
         }
-        .welcome-banner h1 {
-            font-size: 28px;
-            font-weight: 800;
-        }
-        .welcome-banner h1 span {
-            color: #f5c842;
-        }
-        .welcome-banner p {
-            color: #aac;
-            font-size: 15px;
-            margin-top: 4px;
-        }
-        .welcome-banner .stats-mini {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
-        .welcome-banner .stats-mini .stat-item {
-            text-align: center;
-        }
-        .welcome-banner .stats-mini .stat-item .num {
-            font-size: 22px;
-            font-weight: 800;
-            color: #f5c842;
-        }
-        .welcome-banner .stats-mini .stat-item .label {
-            font-size: 12px;
-            color: #aac;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===== DASHBOARD GRID ===== */
+        .welcome-banner h1 { font-size: 28px; font-weight: 800; }
+        .welcome-banner h1 span { color: #f5c842; }
+        .welcome-banner p { color: #aac; font-size: 15px; margin-top: 4px; }
+        .welcome-banner .stats-mini { display: flex; gap: 25px; flex-wrap: wrap; }
+        .welcome-banner .stats-mini .stat-item { text-align: center; }
+        .welcome-banner .stats-mini .stat-item .num { font-size: 22px; font-weight: 800; color: #f5c842; }
+        .welcome-banner .stats-mini .stat-item .label { font-size: 12px; color: #aac; text-transform: uppercase; letter-spacing: 0.5px; }
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
-
-        /* ===== CARDS ===== */
         .card {
             background: #fff;
             border-radius: 20px;
@@ -151,31 +87,11 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 0, 0, 0.03);
         }
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
-        }
-        .card .card-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-        .card h3 {
-            color: #0d1b2a;
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .card .value {
-            font-size: 32px;
-            font-weight: 800;
-            color: #f5c842;
-            margin: 4px 0 2px;
-        }
-        .card .sub {
-            color: #888;
-            font-size: 13px;
-            font-weight: 400;
-        }
+        .card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1); }
+        .card .card-icon { font-size: 32px; margin-bottom: 8px; }
+        .card h3 { color: #0d1b2a; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+        .card .value { font-size: 32px; font-weight: 800; color: #f5c842; margin: 4px 0 2px; }
+        .card .sub { color: #888; font-size: 13px; font-weight: 400; }
         .card .btn {
             display: inline-block;
             padding: 10px 24px;
@@ -190,52 +106,18 @@
             margin-top: 12px;
             width: 100%;
         }
-        .card .btn-gold {
-            background: #f5c842;
-            color: #0d1b2a;
-        }
-        .card .btn-gold:hover {
-            background: #e6b800;
-            transform: scale(1.02);
-        }
-        .card .btn-green {
-            background: #2e7d32;
-            color: #fff;
-        }
-        .card .btn-green:hover {
-            background: #1b5e20;
-        }
-        .card .btn-blue {
-            background: #1976d2;
-            color: #fff;
-        }
-        .card .btn-blue:hover {
-            background: #1565c0;
-        }
-        .card .btn-outline {
-            background: transparent;
-            color: #0d1b2a;
-            border: 2px solid #0d1b2a;
-        }
-        .card .btn-outline:hover {
-            background: #0d1b2a;
-            color: #fff;
-        }
-        .card .btn-purple {
-            background: #7b1fa2;
-            color: #fff;
-        }
-        .card .btn-purple:hover {
-            background: #6a1b9a;
-        }
-        .card .btn-teal {
-            background: #00897b;
-            color: #fff;
-        }
-        .card .btn-teal:hover {
-            background: #00796b;
-        }
-
+        .card .btn-gold { background: #f5c842; color: #0d1b2a; }
+        .card .btn-gold:hover { background: #e6b800; transform: scale(1.02); }
+        .card .btn-green { background: #2e7d32; color: #fff; }
+        .card .btn-green:hover { background: #1b5e20; }
+        .card .btn-blue { background: #1976d2; color: #fff; }
+        .card .btn-blue:hover { background: #1565c0; }
+        .card .btn-outline { background: transparent; color: #0d1b2a; border: 2px solid #0d1b2a; }
+        .card .btn-outline:hover { background: #0d1b2a; color: #fff; }
+        .card .btn-purple { background: #7b1fa2; color: #fff; }
+        .card .btn-purple:hover { background: #6a1b9a; }
+        .card .btn-teal { background: #00897b; color: #fff; }
+        .card .btn-teal:hover { background: #00796b; }
         .card .referral-link-box {
             background: #f8fafc;
             padding: 12px 16px;
@@ -250,11 +132,7 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .card .referral-link-box .link-text {
-            color: #0d1b2a;
-            font-weight: 500;
-            font-size: 12px;
-        }
+        .card .referral-link-box .link-text { color: #0d1b2a; font-weight: 500; font-size: 12px; }
         .card .referral-link-box .copy-btn-sm {
             background: #0d1b2a;
             color: #fff;
@@ -266,10 +144,7 @@
             font-weight: 600;
             transition: 0.3s;
         }
-        .card .referral-link-box .copy-btn-sm:hover {
-            background: #1b3a5c;
-        }
-
+        .card .referral-link-box .copy-btn-sm:hover { background: #1b3a5c; }
         .card .badge-mini {
             display: inline-block;
             padding: 3px 12px;
@@ -277,35 +152,14 @@
             font-size: 11px;
             font-weight: 600;
         }
-        .badge-mini.gold {
-            background: #f5c842;
-            color: #0d1b2a;
-        }
-        .badge-mini.green {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .card-gradient-1 {
-            background: linear-gradient(135deg, #fff 60%, #fef7e0);
-        }
-        .card-gradient-2 {
-            background: linear-gradient(135deg, #fff 60%, #e8f5e9);
-        }
-        .card-gradient-3 {
-            background: linear-gradient(135deg, #fff 60%, #e3f2fd);
-        }
-        .card-gradient-4 {
-            background: linear-gradient(135deg, #fff 60%, #fce4ec);
-        }
-        .card-gradient-5 {
-            background: linear-gradient(135deg, #fff 60%, #f3e5f5);
-        }
-        .card-gradient-6 {
-            background: linear-gradient(135deg, #fff 60%, #e0f7fa);
-        }
-
-        /* ===== TRANSACTION TABLE ===== */
+        .badge-mini.gold { background: #f5c842; color: #0d1b2a; }
+        .badge-mini.green { background: #e8f5e9; color: #2e7d32; }
+        .card-gradient-1 { background: linear-gradient(135deg, #fff 60%, #fef7e0); }
+        .card-gradient-2 { background: linear-gradient(135deg, #fff 60%, #e8f5e9); }
+        .card-gradient-3 { background: linear-gradient(135deg, #fff 60%, #e3f2fd); }
+        .card-gradient-4 { background: linear-gradient(135deg, #fff 60%, #fce4ec); }
+        .card-gradient-5 { background: linear-gradient(135deg, #fff 60%, #f3e5f5); }
+        .card-gradient-6 { background: linear-gradient(135deg, #fff 60%, #e0f7fa); }
         .table-section {
             background: #fff;
             border-radius: 20px;
@@ -320,16 +174,8 @@
             flex-wrap: wrap;
             margin-bottom: 18px;
         }
-        .table-section .header h3 {
-            color: #0d1b2a;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .table-section table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
+        .table-section .header h3 { color: #0d1b2a; font-size: 20px; font-weight: 700; }
+        .table-section table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .table-section th {
             background: #0d1b2a;
             color: #fff;
@@ -340,34 +186,17 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-        .table-section td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
-        }
-        .table-section tr:hover td {
-            background: #f8fafc;
-        }
+        .table-section td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; color: #333; }
+        .table-section tr:hover td { background: #f8fafc; }
         .table-section .status-badge {
             padding: 4px 14px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
-        .status-badge.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        .status-badge.warning {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        .status-badge.danger {
-            background: #fce4ec;
-            color: #c62828;
-        }
-
-        /* ===== FOOTER ===== */
+        .status-badge.success { background: #e8f5e9; color: #2e7d32; }
+        .status-badge.warning { background: #fff3e0; color: #e65100; }
+        .status-badge.danger { background: #fce4ec; color: #c62828; }
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -376,60 +205,45 @@
             margin-top: 30px;
             border-radius: 20px 20px 0 0;
         }
-        .footer .founder {
-            color: #f5c842;
+        .footer .founder { color: #f5c842; font-weight: 600; }
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0d1b2a;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 12px;
             font-weight: 600;
+            z-index: 99999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            animation: slideUp 0.3s ease;
         }
-
-        /* ===== RESPONSIVE ===== */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
         @media (max-width: 768px) {
-            .topbar {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-                padding: 15px;
-            }
-            .topbar .user-info {
-                justify-content: center;
-            }
-            .welcome-banner {
-                flex-direction: column;
-                text-align: center;
-                padding: 25px 20px;
-            }
-            .welcome-banner .stats-mini {
-                justify-content: center;
-                margin-top: 12px;
-            }
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            .table-section {
-                padding: 18px;
-                overflow-x: auto;
-            }
-            .table-section table {
-                font-size: 12px;
-            }
-            .table-section th,
-            .table-section td {
-                padding: 8px 10px;
-            }
+            .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
+            .topbar .user-info { justify-content: center; }
+            .welcome-banner { flex-direction: column; text-align: center; padding: 25px 20px; }
+            .welcome-banner .stats-mini { justify-content: center; margin-top: 12px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .table-section { padding: 18px; overflow-x: auto; }
+            .table-section table { font-size: 12px; }
+            .table-section th, .table-section td { padding: 8px 10px; }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== TOP BAR ===== -->
     <div class="topbar">
-        <div class="logo">
-            <span class="play-icon">▶</span>Cash<span>Vista</span>
-        </div>
+        <div class="logo"><span class="play-icon">▶</span>Cash<span>Vista</span></div>
         <div class="user-info">
             <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
             <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
@@ -438,33 +252,19 @@
     </div>
 
     <div class="container">
-
-        <!-- ===== WELCOME BANNER ===== -->
         <div class="welcome-banner">
             <div>
                 <h1>Welcome back, <span id="bannerName">User</span>!</h1>
                 <p>📊 Here's what's happening with your CashVista account today.</p>
             </div>
             <div class="stats-mini">
-                <div class="stat-item">
-                    <div class="num" id="statReferrals">0</div>
-                    <div class="label">Referrals</div>
-                </div>
-                <div class="stat-item">
-                    <div class="num" id="statEarnings">₦0</div>
-                    <div class="label">Total Earned</div>
-                </div>
-                <div class="stat-item">
-                    <div class="num" id="statTasks">0</div>
-                    <div class="label">Tasks Available</div>
-                </div>
+                <div class="stat-item"><div class="num" id="statReferrals">0</div><div class="label">Referrals</div></div>
+                <div class="stat-item"><div class="num" id="statEarnings">₦0</div><div class="label">Total Earned</div></div>
+                <div class="stat-item"><div class="num" id="statTasks">0</div><div class="label">Tasks Available</div></div>
             </div>
         </div>
 
-        <!-- ===== DASHBOARD GRID ===== -->
         <div class="dashboard-grid">
-
-            <!-- Wallet Card -->
             <div class="card card-gradient-1">
                 <div class="card-icon">💰</div>
                 <h3>Wallet Balance</h3>
@@ -473,18 +273,14 @@
                 <button class="btn btn-green" onclick="window.location.href='withdraw.html'">💸 Withdraw Funds</button>
             </div>
 
-            <!-- Invest & Grow Card -->
             <div class="card card-gradient-2">
                 <div class="card-icon">📈</div>
                 <h3>Invest & Grow</h3>
                 <div class="sub">Pay ₦5,000 to unlock your referral link</div>
-                <div style="margin:8px 0;">
-                    <span class="badge-mini gold" id="investStatus">⚠️ Not Active</span>
-                </div>
+                <div style="margin:8px 0;"><span class="badge-mini gold" id="investStatus">⚠️ Not Active</span></div>
                 <button class="btn btn-gold" onclick="window.location.href='invest.html'">🚀 Go to Invest & Grow</button>
             </div>
 
-            <!-- Advertise Card -->
             <div class="card card-gradient-3">
                 <div class="card-icon">📹</div>
                 <h3>Advertise Video</h3>
@@ -492,19 +288,14 @@
                 <button class="btn btn-blue" onclick="window.location.href='advertise.html'">📢 Start Campaign</button>
             </div>
 
-            <!-- ===== WATCH & EARN CARD - FIXED ===== -->
             <div class="card card-gradient-4">
                 <div class="card-icon">🎬</div>
                 <h3>Watch & Earn</h3>
                 <div class="sub">Complete video tasks and earn rewards</div>
-                <div style="margin:8px 0;">
-                    <span class="badge-mini green">📺 <span id="taskCount">0</span> Tasks Available</span>
-                </div>
-                <!-- ===== FIXED: Changed from watch.html to available-videos.html ===== -->
-                <button class="btn btn-purple" onclick="window.location.href='available-videos.html'">▶️ Watch Videos</button>
+                <div style="margin:8px 0;"><span class="badge-mini green">📺 <span id="taskCount">0</span> Tasks Available</span></div>
+                <button class="btn btn-purple" onclick="window.location.href='watch.html'">▶️ Watch Videos</button>
             </div>
 
-            <!-- Referral Link Card -->
             <div class="card card-gradient-5">
                 <div class="card-icon">🔗</div>
                 <h3>Your Referral Link</h3>
@@ -513,13 +304,10 @@
                     <span class="link-text" id="referralLinkDisplay">Loading...</span>
                     <button class="copy-btn-sm" onclick="copyReferralLink()">📋 Copy</button>
                 </div>
-                <div style="font-size:12px; color:#888; margin-top:6px;">
-                    Direct: 55% | Downline: up to 0.5%
-                </div>
+                <div style="font-size:12px; color:#888; margin-top:6px;">Direct: 55% | Downline: up to 0.5%</div>
                 <button class="btn btn-outline" onclick="window.location.href='invest.html'" style="margin-top:8px;">🔍 View Details</button>
             </div>
 
-            <!-- Referral Network Card -->
             <div class="card card-gradient-6">
                 <div class="card-icon">🌐</div>
                 <h3>Referral Network</h3>
@@ -531,317 +319,155 @@
                 </div>
                 <button class="btn btn-teal" onclick="window.location.href='referral-network.html'">👥 View Network</button>
             </div>
-
         </div>
 
-        <!-- ===== TRANSACTION HISTORY ===== -->
         <div class="table-section">
             <div class="header">
                 <h3>📊 Recent Transactions</h3>
-                <a href="#">View All →</a>
+                <a href="#" onclick="showToast('📊 All transactions coming soon!')">View All →</a>
             </div>
             <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
                 <tbody id="transactionHistory">
-                    <tr>
-                        <td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet. Start earning today!</td>
-                    </tr>
+                    <tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet. Start earning today!</td></tr>
                 </tbody>
             </table>
         </div>
-
     </div>
 
-    <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <p>&copy; 2026 CashVista. All rights reserved.</p>
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
-    <!-- ============================================= -->
-    <!-- INSTALL APP PROMPT                           -->
-    <!-- ============================================= -->
     <script>
-        let deferredPrompt;
-
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredPrompt = e;
-
-            // Create install button
-            const installBtn = document.createElement('button');
-            installBtn.textContent = '📲 Install App';
-            installBtn.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: #f5c842;
-                color: #0d1b2a;
-                border: none;
-                padding: 14px 35px;
-                border-radius: 50px;
-                font-weight: 700;
-                font-size: 16px;
-                cursor: pointer;
-                z-index: 9999;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                display: none;
-                font-family: 'Inter', 'Segoe UI', sans-serif;
-            `;
-            installBtn.id = 'installBtn';
-            document.body.appendChild(installBtn);
-
-            // Show install button
-            installBtn.style.display = 'block';
-
-            installBtn.addEventListener('click', function() {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then(function(choiceResult) {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('✅ User accepted the install prompt');
-                        } else {
-                            console.log('❌ User dismissed the install prompt');
-                        }
-                        deferredPrompt = null;
-                        installBtn.style.display = 'none';
-                    });
-                }
-            });
-        });
-
-        // Hide install button if already installed
-        window.addEventListener('appinstalled', function() {
-            const installBtn = document.getElementById('installBtn');
-            if (installBtn) {
-                installBtn.style.display = 'none';
-            }
-            console.log('📲 App installed successfully!');
-        });
-    </script>
-
-    <script>
-        // =============================================
-        // SUPABASE CONFIGURATION
-        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        // =============================================
-        // FIXED: APP URL - Using vercel.app not .com
-        // =============================================
         const APP_URL = 'https://cashvista.vercel.app';
+        let currentUser = null;
 
-        // =============================================
-        // GET LOGGED-IN USER FROM SUPABASE
-        // =============================================
         async function getLoggedInUser() {
             const userEmail = sessionStorage.getItem('userEmail');
-
-            if (!userEmail) {
-                window.location.href = 'login.html';
-                return null;
-            }
-
+            if (!userEmail) { window.location.href = 'login.html'; return null; }
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                     method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                 });
-
-                if (!response.ok) {
-                    window.location.href = 'login.html';
-                    return null;
-                }
-
+                if (!response.ok) { window.location.href = 'login.html'; return null; }
                 const users = await response.json();
-
-                if (!users || users.length === 0) {
-                    window.location.href = 'login.html';
-                    return null;
-                }
-
+                if (!users || users.length === 0) { window.location.href = 'login.html'; return null; }
                 return users[0];
-            } catch (e) {
-                window.location.href = 'login.html';
-                return null;
-            }
+            } catch (e) { window.location.href = 'login.html'; return null; }
         }
 
-        // =============================================
-        // FIXED: Get referral link with correct domain
-        // =============================================
         function getReferralLink(user) {
-            let link = user.referral_link || '';
-            if (link) {
-                // FIXED: Replace .com with .vercel.app
-                link = link.replace('cashvista.com', 'cashvista.vercel.app');
-            } else {
-                // Generate a new link if not exists
-                const code = user.referral_code || 'REF_' + Date.now() + '_' + (user.email || '').split('@')[0];
-                link = APP_URL + '/register.html?ref=' + code;
+            if (user.referral_link && user.referral_link !== 'Not generated yet') {
+                return user.referral_link.replace('cashvista.com', 'cashvista.vercel.app');
             }
-            return link;
+            const code = user.referral_code || 'REF_' + Date.now() + '_' + (user.email || '').split('@')[0];
+            return APP_URL + '/register.html?ref=' + code;
         }
 
-        // =============================================
-        // FETCH AVAILABLE VIDEO COUNT
-        // =============================================
-        async function getAvailableVideoCount() {
+        async function getAvailableVideoCount(userEmail) {
             try {
-                // Get user's watched videos
-                const watchedResponse = await fetch(SUPABASE_URL + '/rest/v1/task_completions?user_email=eq.' + encodeURIComponent(sessionStorage.getItem('userEmail')), {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
-                const watchedData = await watchedResponse.json();
-                const watchedIds = watchedData.map(item => item.campaign_id);
-
-                // Get all approved videos
                 const videosResponse = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved', {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                 });
+                if (!videosResponse.ok) return 0;
                 const videos = await videosResponse.json();
+                if (!videos || videos.length === 0) return 0;
 
-                // Count videos not watched
-                const available = videos.filter(v => !watchedIds.includes(v.id));
-                return available.length;
-            } catch (e) {
-                console.error('Error getting video count:', e);
-                return 0;
-            }
-        }
-
-        // =============================================
-        // LOAD DASHBOARD
-        // =============================================
-        async function loadDashboard() {
-            const user = await getLoggedInUser();
-            if (!user) return;
-
-            const userName = user.name || 'User';
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('bannerName').textContent = userName;
-
-            document.getElementById('userBalance').textContent = '₦' + (user.balance || 0).toLocaleString();
-            document.getElementById('walletBalance').textContent = '₦' + (user.balance || 0).toLocaleString();
-
-            document.getElementById('statReferrals').textContent = user.direct_count || 0;
-            document.getElementById('statEarnings').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
-
-            // Get available video count
-            const taskCount = await getAvailableVideoCount();
-            document.getElementById('statTasks').textContent = taskCount;
-            document.getElementById('taskCount').textContent = taskCount;
-
-            // FIXED: Use the getReferralLink function
-            const refLink = getReferralLink(user);
-            document.getElementById('referralLinkDisplay').textContent = refLink;
-            document.getElementById('directCount').textContent = user.direct_count || 0;
-            document.getElementById('downlineCount').textContent = user.downline_count || 0;
-            document.getElementById('referralEarned').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
-
-            const investStatus = document.getElementById('investStatus');
-            if (user.is_invest_member) {
-                investStatus.textContent = '✅ Active';
-                investStatus.className = 'badge-mini green';
-            } else {
-                investStatus.textContent = '⚠️ Not Active';
-                investStatus.className = 'badge-mini gold';
-            }
-
-            // Load transaction history
-            await loadTransactions(user.email);
-        }
-
-        // =============================================
-        // LOAD TRANSACTIONS FROM SUPABASE
-        // =============================================
-        async function loadTransactions(email) {
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/wallet_transactions?user_email=eq.' + encodeURIComponent(email) + '&order=created_at.desc&limit=10', {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
+                const watchedResponse = await fetch(SUPABASE_URL + '/rest/v1/task_completions?user_email=eq.' + encodeURIComponent(userEmail) + '&status=eq.completed', {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                 });
-
-                const tbody = document.getElementById('transactionHistory');
-
-                if (!response.ok) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" style="text-align:center; color:#999; padding:25px;">
-                                No transactions yet. Start earning today!
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                const data = await response.json();
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" style="text-align:center; color:#999; padding:25px;">
-                                No transactions yet. Start earning today!
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                tbody.innerHTML = data.map(t => {
-                    const statusClass = t.status === 'completed' ? 'success' : 'warning';
-                    const amountColor = t.amount > 0 ? '#2e7d32' : '#c62828';
-                    const sign = t.amount > 0 ? '+' : '';
-                    return `
-                        <tr>
-                            <td>${new Date(t.created_at).toLocaleDateString()}</td>
-                            <td>${t.description || t.type || 'Transaction'}</td>
-                            <td style="font-weight:600; color:${amountColor};">${sign}₦${Math.abs(t.amount).toLocaleString()}</td>
-                            <td><span class="status-badge ${statusClass}">${t.status || 'Completed'}</span></td>
-                        </tr>
-                    `;
-                }).join('');
-
-            } catch (e) {
-                console.error('Error loading transactions:', e);
-            }
+                const watchedData = watchedResponse.ok ? await watchedResponse.json() : [];
+                const watchedIds = watchedData.map(item => item.campaign_id);
+                return videos.filter(v => !watchedIds.includes(v.id)).length;
+            } catch (e) { console.error('Error getting video count:', e); return 0; }
         }
 
-        // =============================================
-        // COPY REFERRAL LINK
-        // =============================================
+        async function loadTransactions(email) {
+            const tbody = document.getElementById('transactionHistory');
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/activity?user_email=eq.' + encodeURIComponent(email) + '&order=date.desc&limit=10', {
+                    method: 'GET',
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                if (!response.ok) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet.</td></tr>`;
+                    return;
+                }
+                const data = await response.json();
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = data.map(t => {
+                    const statusClass = (t.status || 'completed').toLowerCase() === 'completed' || (t.status || '').toLowerCase() === 'approved' ? 'success' : 'warning';
+                    const amount = t.amount || 0;
+                    const sign = amount > 0 ? '+' : '';
+                    return `<tr>
+                        <td>${new Date(t.date || t.created_at || Date.now()).toLocaleDateString()}</td>
+                        <td>${t.action || t.description || t.type || 'Transaction'}</td>
+                        <td style="font-weight:600; color:${amount > 0 ? '#2e7d32' : '#c62828'};">${sign}₦${Math.abs(amount).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${t.status || 'Completed'}</span></td>
+                    </tr>`;
+                }).join('');
+            } catch (e) { console.error('Error loading transactions:', e); }
+        }
+
+        async function loadDashboard() {
+            try {
+                const user = await getLoggedInUser();
+                if (!user) return;
+                currentUser = user;
+                const userName = user.name || 'User';
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('bannerName').textContent = userName;
+                const balance = user.balance || 0;
+                document.getElementById('userBalance').textContent = '₦' + balance.toLocaleString();
+                document.getElementById('walletBalance').textContent = '₦' + balance.toLocaleString();
+                document.getElementById('statReferrals').textContent = user.direct_count || 0;
+                document.getElementById('statEarnings').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
+                const taskCount = await getAvailableVideoCount(user.email);
+                document.getElementById('statTasks').textContent = taskCount;
+                document.getElementById('taskCount').textContent = taskCount;
+                const refLink = getReferralLink(user);
+                document.getElementById('referralLinkDisplay').textContent = refLink;
+                document.getElementById('directCount').textContent = user.direct_count || 0;
+                document.getElementById('downlineCount').textContent = user.downline_count || 0;
+                document.getElementById('referralEarned').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
+                const investStatus = document.getElementById('investStatus');
+                if (user.is_invest_member) {
+                    investStatus.textContent = '✅ Active';
+                    investStatus.className = 'badge-mini green';
+                } else {
+                    investStatus.textContent = '⚠️ Not Active';
+                    investStatus.className = 'badge-mini gold';
+                }
+                await loadTransactions(user.email);
+            } catch (error) { console.error('Error loading dashboard:', error); }
+        }
+
         function copyReferralLink() {
             const link = document.getElementById('referralLinkDisplay').textContent;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('✅ Referral link copied to clipboard!');
-            }).catch(() => {
-                prompt('Copy this link manually:', link);
-            });
+            if (link && link !== 'Loading...') {
+                navigator.clipboard.writeText(link).then(() => showToast('✅ Referral link copied!'))
+                    .catch(() => { const input = document.createElement('input'); input.value = link; document.body.appendChild(input); input.select(); document.execCommand('copy'); document.body.removeChild(input); showToast('✅ Referral link copied!'); });
+            }
         }
 
-        // =============================================
-        // LOGOUT
-        // =============================================
+        function showToast(message) {
+            const existing = document.querySelector('.toast-notification');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; setTimeout(() => toast.remove(), 500); }, 3000);
+        }
+
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
@@ -850,11 +476,7 @@
             }
         }
 
-        // =============================================
-        // LOAD ON PAGE LOAD
-        // =============================================
         document.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
-
 </body>
 </html>
