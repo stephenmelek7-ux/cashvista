@@ -309,28 +309,6 @@
         .video-list-item .btn-select:hover {
             background: #e6b800;
         }
-        .login-prompt {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        .login-prompt .icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-        .login-prompt h3 {
-            color: #0d1b2a;
-            margin-bottom: 10px;
-        }
-        .login-prompt .btn-login {
-            display: inline-block;
-            padding: 12px 40px;
-            background: #f5c842;
-            color: #0d1b2a;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 700;
-            margin-top: 10px;
-        }
         @media (max-width: 500px) {
             .watch-container { padding: 20px 15px; }
             .video-wrapper iframe { height: 200px; }
@@ -391,7 +369,9 @@
 
         <!-- ===== VIDEO LIST ===== -->
         <div id="videoListSection">
-            <div id="videoListContainer" style="text-align:center; padding:20px; color:#888;">Loading videos...</div>
+            <div id="videoListContainer">
+                <div style="text-align:center; padding:20px; color:#888;">Loading videos...</div>
+            </div>
         </div>
 
         <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
@@ -404,89 +384,27 @@
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
-        console.log('🚀 Watch & Earn page loaded');
-
         // =============================================
-        // GET USER DATA - TRY MULTIPLE WAYS
+        // GET USER
         // =============================================
-        let userData = null;
-        let userEmail = null;
-
-        // Method 1: localStorage
-        try {
-            const stored = localStorage.getItem('cashvista_user');
-            if (stored) {
-                userData = JSON.parse(stored);
-                userEmail = userData.email;
-                console.log('✅ User found in localStorage:', userEmail);
-            }
-        } catch (e) {
-            console.log('❌ Error reading localStorage:', e);
-        }
-
-        // Method 2: sessionStorage
+        let userData = JSON.parse(localStorage.getItem('cashvista_user') || 'null');
+        
         if (!userData) {
-            try {
-                const email = sessionStorage.getItem('userEmail');
-                if (email) {
-                    userEmail = email;
-                    console.log('📧 Found email in sessionStorage:', userEmail);
-                }
-            } catch (e) {
-                console.log('❌ Error reading sessionStorage:', e);
-            }
-        }
-
-        // Method 3: URL parameter
-        if (!userData && !userEmail) {
-            const params = new URLSearchParams(window.location.search);
-            const emailParam = params.get('email');
-            if (emailParam) {
-                userEmail = emailParam;
-                console.log('📧 Found email in URL:', userEmail);
-            }
-        }
-
-        console.log('📝 Final user email:', userEmail || 'Not found');
-        console.log('👤 Final user data:', userData ? 'Found' : 'Not found');
-
-        // =============================================
-        // FETCH USER FROM SUPABASE IF ONLY EMAIL AVAILABLE
-        // =============================================
-        async function fetchUserFromSupabase() {
-            if (userData) return userData;
-            if (!userEmail) return null;
-
-            try {
-                console.log('🔄 Fetching user from Supabase:', userEmail);
-                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
-                if (!response.ok) {
-                    console.log('⚠️ Failed to fetch user:', response.status);
-                    return null;
-                }
-                const users = await response.json();
-                if (users && users.length > 0) {
-                    userData = users[0];
-                    localStorage.setItem('cashvista_user', JSON.stringify(userData));
-                    console.log('✅ User fetched from Supabase:', userData.email);
-                    return userData;
-                }
-                return null;
-            } catch (e) {
-                console.log('❌ Error fetching user:', e.message);
-                return null;
-            }
+            // Show login message
+            document.getElementById('videoListContainer').innerHTML = `
+                <div class="no-video-msg">
+                    <div class="icon">🔐</div>
+                    <h3>Please Login</h3>
+                    <p>You need to be logged in to watch videos.</p>
+                    <a href="login.html" style="display:inline-block; margin-top:15px; padding:10px 30px; background:#f5c842; color:#0d1b2a; border-radius:30px; text-decoration:none; font-weight:700;">🔑 Login</a>
+                </div>
+            `;
         }
 
         // =============================================
         // STATE
         // =============================================
-        let videoData = {};
+        let videoData = { id: null, title: '', duration: 0, videoUrl: '' };
         let timerInterval = null;
         let timeRemaining = 0;
         let totalEarned = 0;
@@ -496,7 +414,7 @@
         let availableVideos = [];
 
         // =============================================
-        // DOM REFS
+        // DOM ELEMENTS
         // =============================================
         const timerDisplay = document.getElementById('timerDisplay');
         const currentEarnings = document.getElementById('currentEarnings');
@@ -551,14 +469,12 @@
             errorMsg.textContent = msg;
             errorMsg.style.display = 'block';
             setTimeout(() => { errorMsg.style.display = 'none'; }, 5000);
-            console.log('❌ Error:', msg);
         }
 
         function showSuccess(msg) {
             successMsg.textContent = msg;
             successMsg.style.display = 'block';
             setTimeout(() => { successMsg.style.display = 'none'; }, 5000);
-            console.log('✅ Success:', msg);
         }
 
         // =============================================
@@ -590,7 +506,6 @@
         // LOAD VIDEO
         // =============================================
         function loadVideo(campaign) {
-            console.log('📺 Loading video:', campaign.title);
             videoData = {
                 id: campaign.id,
                 title: campaign.title || 'Untitled Video',
@@ -602,13 +517,7 @@
             videoDuration.textContent = getDurationDisplay(videoData.duration);
             videoReward.textContent = '₦' + videoData.duration;
 
-            if (videoData.videoUrl) {
-                displayVideo(videoData.videoUrl);
-                console.log('✅ Video URL set:', videoData.videoUrl);
-            } else {
-                showError('No video link available.');
-                return;
-            }
+            if (videoData.videoUrl) displayVideo(videoData.videoUrl);
 
             timeRemaining = videoData.duration;
             totalEarned = 0;
@@ -625,7 +534,7 @@
         }
 
         // =============================================
-        // START TIMER - COUNTS DOWN
+        // START TIMER
         // =============================================
         function startTimer() {
             if (isRunning || isCompleted || timeRemaining <= 0) {
@@ -633,7 +542,6 @@
                 return;
             }
 
-            console.log('▶️ Timer started, duration:', timeRemaining);
             isRunning = true;
             statusText.textContent = '⏳ Watching... Timer will stop automatically';
 
@@ -646,7 +554,6 @@
                     timeRemaining = 0;
                     totalEarned = videoData.duration;
                     updateDisplay();
-                    console.log('⏹️ Timer reached 0!');
                     completeWatching();
                 }
                 currentEarnings.textContent = '₦' + totalEarned;
@@ -654,7 +561,7 @@
         }
 
         // =============================================
-        // COMPLETE WATCHING - AUTO CREDIT
+        // COMPLETE WATCHING
         // =============================================
         async function completeWatching() {
             if (isCompleted || hasClaimed) return;
@@ -690,7 +597,7 @@
         }
 
         // =============================================
-        // STOP WATCHING - MANUAL
+        // STOP WATCHING
         // =============================================
         async function stopWatching() {
             if (isCompleted || hasClaimed || !isRunning) {
@@ -731,41 +638,27 @@
         // CREDIT EARNINGS
         // =============================================
         async function creditUserEarnings(amount) {
-            if (!userData || amount <= 0) {
-                console.log('⚠️ Cannot credit: No user or amount 0');
-                return;
-            }
+            if (!userData || amount <= 0) return;
             try {
-                console.log('💰 Crediting ₦' + amount + ' to', userData.email);
                 await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
                     method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
+                    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
                     body: JSON.stringify({ balance: (userData.balance || 0) + amount })
                 });
                 userData.balance = (userData.balance || 0) + amount;
                 localStorage.setItem('cashvista_user', JSON.stringify(userData));
-                console.log('✅ Credited successfully');
-            } catch (e) {
-                console.error('❌ Credit error:', e);
-            }
+            } catch (e) { console.error('Credit error:', e); }
         }
 
         // =============================================
         // SELECT VIDEO
         // =============================================
         function selectVideo(videoId) {
-            console.log('🎯 Selected video ID:', videoId);
             const video = availableVideos.find(v => v.id === videoId);
             if (video) {
                 videoListSection.style.display = 'none';
                 videoPlayerSection.style.display = 'block';
                 loadVideo(video);
-            } else {
-                showError('Video not found');
             }
         }
 
@@ -773,50 +666,20 @@
         // LOAD VIDEO LIST
         // =============================================
         async function loadVideoList() {
-            console.log('📋 Loading video list...');
-
-            // If no user data, show login prompt
-            if (!userData) {
-                console.log('⚠️ No user data, showing login prompt');
-                videoListContainer.innerHTML = `
-                    <div class="login-prompt">
-                        <div class="icon">🔐</div>
-                        <h3>Please Login</h3>
-                        <p>You need to be logged in to watch videos and earn.</p>
-                        <a href="login.html" class="btn-login">🔑 Login</a>
-                        <br>
-                        <a href="register.html" style="display:inline-block; margin-top:10px; color:#f5c842; text-decoration:underline;">Create Account</a>
-                    </div>
-                `;
-                return;
-            }
-
-            videoListContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Loading videos...</div>';
-
+            if (!userData) return;
             try {
-                console.log('🔄 Fetching approved videos...');
                 const res = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved&order=date.desc', {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                 });
-
-                if (!res.ok) {
-                    console.log('⚠️ Failed to fetch videos:', res.status);
-                    throw new Error('Failed to fetch videos');
-                }
-
                 const videos = await res.json();
                 availableVideos = videos || [];
-                console.log('✅ Found', videos.length, 'approved videos');
 
                 if (videos.length === 0) {
                     videoListContainer.innerHTML = `
                         <div class="no-video-msg">
                             <div class="icon">🎬</div>
                             <h3>No Videos Available</h3>
-                            <p>There are no approved videos at the moment. Check back later!</p>
+                            <p>Check back later for new videos.</p>
                         </div>
                     `;
                     return;
@@ -827,7 +690,7 @@
                     html += `
                         <div class="video-list-item" onclick="selectVideo(${v.id})">
                             <div class="info">
-                                <h4>${v.title || 'Untitled Video'}</h4>
+                                <h4>${v.title || 'Untitled'}</h4>
                                 <div class="meta">⏱️ ${getDurationDisplay(v.duration || 300)}</div>
                                 <div class="reward-sm">💰 ₦${(v.duration || 300)}</div>
                             </div>
@@ -837,49 +700,17 @@
                 });
                 html += '</div>';
                 videoListContainer.innerHTML = html;
-                console.log('✅ Video list rendered');
-
             } catch (e) {
-                console.error('❌ Error loading videos:', e);
-                videoListContainer.innerHTML = `
-                    <div class="no-video-msg">
-                        <div class="icon">❌</div>
-                        <h3>Error Loading Videos</h3>
-                        <p>${e.message || 'Please try again.'}</p>
-                        <button onclick="loadVideoList()" style="margin-top:15px; padding:10px 30px; background:#f5c842; border:none; border-radius:30px; font-weight:700; cursor:pointer;">🔄 Retry</button>
-                    </div>
-                `;
+                videoListContainer.innerHTML = `<div class="no-video-msg"><div class="icon">❌</div><h3>Error Loading</h3><p>Please try again.</p></div>`;
             }
         }
 
         // =============================================
-        // INIT - RUN THIS WHEN PAGE LOADS
+        // INIT
         // =============================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 DOM loaded, initializing...');
-
-            // Try to get user from Supabase if we have email
-            if (!userData && userEmail) {
-                console.log('🔄 Fetching user from Supabase...');
-                await fetchUserFromSupabase();
-            }
-
-            // Load videos
-            await loadVideoList();
-            console.log('✅ Initialization complete');
+        document.addEventListener('DOMContentLoaded', () => {
+            if (userData) loadVideoList();
         });
-
-        // Also run immediately in case DOM already loaded
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            console.log('🚀 Page already loaded, initializing...');
-            (async function() {
-                if (!userData && userEmail) {
-                    await fetchUserFromSupabase();
-                }
-                await loadVideoList();
-                console.log('✅ Initialization complete');
-            })();
-        }
     </script>
 </body>
 </html>
