@@ -23,6 +23,32 @@
         .topbar .back-btn:hover { background: rgba(255,255,255,0.2); }
         .content { padding: 25px 25px 30px; }
         .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 20px; }
+        .refresh-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e8ecf0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .refresh-bar .status { font-size: 13px; color: #888; }
+        .refresh-bar .status .count { font-weight: 700; color: #f5c842; }
+        .refresh-bar .btn-refresh {
+            background: #0d1b2a;
+            color: #fff;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .refresh-bar .btn-refresh:hover { background: #1a3a5c; }
         .video-list-item { background: #f8fafc; padding: 18px 20px; border-radius: 12px; border: 1px solid #e8ecf0; transition: 0.3s; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
         .video-list-item:hover { border-color: #f5c842; background: #fef7e0; transform: translateY(-2px); }
         .video-list-item .info { flex: 1; }
@@ -31,6 +57,7 @@
         .video-list-item .info .reward-text { font-weight: 800; color: #f5c842; font-size: 16px; margin-top: 4px; }
         .video-list-item .watch-btn { background: #f5c842; color: #0d1b2a; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; }
         .video-list-item .watch-btn:hover { background: #e6b800; transform: scale(1.05); }
+        .video-list-item .watch-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .video-list-item .platform-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-top: 4px; }
         .platform-badge.youtube { background: #ffebee; color: #c62828; }
         .platform-badge.facebook { background: #e3f2fd; color: #0d47a1; }
@@ -50,12 +77,43 @@
         .timer-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
         .timer-modal.active { display: flex; }
         .timer-modal .modal-content { background: #fff; padding: 30px; border-radius: 24px; max-width: 450px; width: 100%; text-align: center; }
+        .timer-modal .modal-content h3 { color: #0d1b2a; margin-bottom: 5px; font-size: 20px; }
+        .timer-modal .modal-content .video-title { color: #f5c842; font-weight: 700; font-size: 16px; margin-bottom: 15px; }
         .timer-modal .modal-content .timer-display { font-size: 64px; font-weight: 800; font-family: 'Courier New', monospace; padding: 10px; }
-        .timer-modal .modal-content .btn-stop { width: 100%; background: #e74c3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .timer-modal .modal-content .timer-display.warning { color: #c62828; animation: blink 0.5s infinite; }
+        .timer-modal .modal-content .timer-display.completed { color: #2e7d32; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .timer-modal .modal-content .earnings { font-size: 22px; font-weight: 700; color: #f5c842; margin: 5px 0 10px; }
+        .timer-modal .modal-content .progress-bar { width: 100%; height: 8px; background: #e8ecf0; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .timer-modal .modal-content .progress-bar .progress-fill { height: 100%; background: #f5c842; border-radius: 4px; transition: width 1s linear; width: 0%; }
+        .timer-modal .modal-content .progress-bar .progress-fill.completed { background: #2e7d32; }
+        .timer-modal .modal-content .status-text { font-size: 14px; color: #888; margin: 8px 0; }
+        .timer-modal .modal-content .btn-stop { width: 100%; background: #e74c3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .timer-modal .modal-content .btn-stop:hover { background: #c62828; }
-        .timer-modal .modal-content .btn-completed { width: 100%; background: #2e7d32; color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .timer-modal .modal-content .btn-stop:disabled { opacity: 0.6; cursor: not-allowed; }
+        .timer-modal .modal-content .btn-completed { width: 100%; background: #2e7d32; color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .timer-modal .modal-content .btn-completed:hover { background: #1b5e20; }
-        @media (max-width: 500px) { body { padding: 10px; } .topbar { flex-direction: column; text-align: center; } .topbar .user-info { justify-content: center; } }
+        .timer-modal .modal-content .btn-completed:disabled { opacity: 0.6; cursor: not-allowed; }
+        .timer-modal .modal-content .summary-box { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #e8ecf0; display: none; }
+        .timer-modal .modal-content .summary-box .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+        .timer-modal .modal-content .summary-box .row .label { color: #888; }
+        .timer-modal .modal-content .summary-box .row .value { font-weight: 700; color: #0d1b2a; }
+        .timer-modal .modal-content .summary-box .row .value.gold { color: #f5c842; }
+        .auto-refresh-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2e7d32;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        @media (max-width: 500px) { body { padding: 10px; } .topbar { flex-direction: column; text-align: center; } .topbar .user-info { justify-content: center; } .timer-modal .modal-content { padding: 20px; } .timer-modal .modal-content .timer-display { font-size: 48px; } .refresh-bar { flex-direction: column; text-align: center; } }
     </style>
 </head>
 <body>
@@ -73,6 +131,17 @@
 
     <div class="content">
         <p class="subtitle">🎬 Click a video to watch, then come back to claim your earnings!</p>
+        
+        <!-- Refresh Bar -->
+        <div class="refresh-bar">
+            <div class="status">
+                <span class="auto-refresh-indicator"></span>
+                <span id="videoCountStatus">📺 <span class="count" id="videoCount">0</span> videos available</span>
+                <span style="color:#aaa; font-size:11px; margin-left:8px;" id="lastUpdated">Auto-refreshing...</span>
+            </div>
+            <button class="btn-refresh" onclick="loadVideoList()">🔄 Refresh Now</button>
+        </div>
+
         <div id="videoListContainer">
             <div style="text-align:center; padding:20px; color:#888;">Loading videos...</div>
         </div>
@@ -84,23 +153,24 @@
 <div class="timer-modal" id="timerModal">
     <div class="modal-content">
         <h3>▶️ Watching Video</h3>
-        <div id="modalVideoTitle" style="color:#f5c842; font-weight:700;">Video Title</div>
+        <div class="video-title" id="modalVideoTitle">Video Title</div>
         <div class="timer-display" id="modalTimerDisplay">00:00</div>
-        <div style="font-size:22px; font-weight:700; color:#f5c842;">💰 ₦<span id="modalEarnings">0</span></div>
-        <div style="width:100%; height:8px; background:#e8ecf0; border-radius:4px; margin:10px 0; overflow:hidden;">
-            <div id="modalProgressFill" style="height:100%; background:#f5c842; border-radius:4px; transition:width 1s linear; width:0%;"></div>
-        </div>
-        <div id="modalStatusText" style="font-size:14px; color:#888;">⏳ Watching...</div>
+        <div class="earnings">💰 ₦<span id="modalEarnings">0</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="modalProgressFill"></div></div>
+        <div class="status-text" id="modalStatusText">⏳ Watching...</div>
         <button class="btn-stop" id="modalStopBtn" onclick="stopWatching()">⏹️ Stop & Claim Earnings</button>
-        <button class="btn-completed" id="modalCloseBtn" onclick="closeTimerModal()" style="display:none;">✅ Done - Back to Videos</button>
-        <div id="modalSummaryBox" style="display:none; margin-top:15px; padding:15px; background:#f8fafc; border-radius:12px; border:1px solid #e8ecf0;">
-            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span style="color:#888;">⏱️ Time Watched</span><span id="modalSummaryTime" style="font-weight:700;">0s</span></div>
-            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span style="color:#888;">💰 Earnings</span><span id="modalSummaryEarnings" style="font-weight:700; color:#f5c842;">₦0</span></div>
+        <div class="summary-box" id="modalSummaryBox">
+            <div class="row"><span class="label">⏱️ Time Watched</span><span class="value" id="modalSummaryTime">0s</span></div>
+            <div class="row"><span class="label">💰 Earnings</span><span class="value gold" id="modalSummaryEarnings">₦0</span></div>
         </div>
+        <button class="btn-completed" id="modalCloseBtn" onclick="closeTimerModal()" style="display:none;">✅ Done - Back to Videos</button>
     </div>
 </div>
 
 <script>
+// =============================================
+// SUPABASE CONFIG
+// =============================================
 const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
 
@@ -113,55 +183,102 @@ let isRunning = false;
 let isCompleted = false;
 let hasClaimed = false;
 let availableVideos = [];
+let refreshInterval = null;
 
 // =============================================
-// GET USER FROM LOCALSTORAGE
+// ✅ GET USER FROM ALL STORAGE LOCATIONS
 // =============================================
 function getUser() {
-    const stored = localStorage.getItem('cashvista_user');
-    if (stored) {
-        try {
-            userData = JSON.parse(stored);
-            document.getElementById('userName').textContent = userData.name || 'User';
-            document.getElementById('userBalance').textContent = '₦' + (userData.balance || 0).toLocaleString();
-            return userData;
-        } catch (e) {}
+    // Try ALL possible storage locations
+    let userEmail = null;
+    let userName = null;
+
+    // 1. Try sessionStorage (where login.html stores data)
+    userEmail = sessionStorage.getItem('userEmail');
+    userName = sessionStorage.getItem('userName');
+
+    // 2. Try localStorage (fallback)
+    if (!userEmail) {
+        const stored = localStorage.getItem('cashvista_user');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                userEmail = parsed.email;
+                userName = parsed.name;
+                // Sync to sessionStorage
+                if (userEmail) sessionStorage.setItem('userEmail', userEmail);
+                if (userName) sessionStorage.setItem('userName', userName);
+            } catch (e) {}
+        }
     }
-    // Try sessionStorage
-    const email = sessionStorage.getItem('userEmail');
-    if (email) {
-        fetchUserFromSupabase(email);
+
+    // 3. Try localStorage email key (some older versions)
+    if (!userEmail) {
+        userEmail = localStorage.getItem('userEmail');
+        userName = localStorage.getItem('userName');
+        if (userEmail) {
+            sessionStorage.setItem('userEmail', userEmail);
+            if (userName) sessionStorage.setItem('userName', userName);
+        }
+    }
+
+    // If still no email, show login prompt
+    if (!userEmail) {
+        document.getElementById('videoListContainer').innerHTML = `
+            <div class="login-prompt">
+                <div class="icon">🔐</div>
+                <h3>Please Login</h3>
+                <p>You need to be logged in to watch videos.</p>
+                <a href="login.html" class="btn">🔑 Login</a>
+            </div>
+        `;
+        document.getElementById('videoCount').textContent = '0';
         return null;
     }
-    document.getElementById('videoListContainer').innerHTML = `
-        <div class="login-prompt">
-            <div class="icon">🔐</div>
-            <h3>Please Login</h3>
-            <p>You need to be logged in to watch videos.</p>
-            <a href="login.html" class="btn">🔑 Login</a>
-        </div>
-    `;
-    return null;
+
+    // Create user object
+    userData = {
+        email: userEmail,
+        name: userName || 'User',
+        balance: 0
+    };
+
+    document.getElementById('userName').textContent = userData.name;
+    document.getElementById('userBalance').textContent = '₦0.00';
+
+    // Try to fetch full user data from Supabase (non-blocking)
+    fetchUserFromSupabase(userEmail);
+
+    return userData;
 }
 
+// =============================================
+// FETCH USER FROM SUPABASE (non-blocking)
+// =============================================
 async function fetchUserFromSupabase(email) {
     try {
-        const res = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+        const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
         });
-        if (res.ok) {
-            const users = await res.json();
+
+        if (response.ok) {
+            const users = await response.json();
             if (users && users.length > 0) {
                 userData = users[0];
-                localStorage.setItem('cashvista_user', JSON.stringify(userData));
                 document.getElementById('userName').textContent = userData.name || 'User';
                 document.getElementById('userBalance').textContent = '₦' + (userData.balance || 0).toLocaleString();
+                // Refresh video list with full user data
                 loadVideoList();
             }
         }
-    } catch (e) { console.error('Error:', e); }
+    } catch (e) {
+        console.log('Using session data only');
+    }
 }
 
+// =============================================
+// HELPERS
+// =============================================
 function formatTime(seconds) {
     if (seconds < 0) seconds = 0;
     const mins = Math.floor(seconds / 60);
@@ -198,14 +315,28 @@ function updateModalDisplay() {
     document.getElementById('modalEarnings').textContent = totalEarned.toFixed(2);
     const progress = ((currentVideo.duration - timeRemaining) / currentVideo.duration) * 100;
     document.getElementById('modalProgressFill').style.width = Math.min(Math.max(progress, 0), 100) + '%';
+    if (isCompleted) {
+        document.getElementById('modalTimerDisplay').className = 'timer-display completed';
+        document.getElementById('modalProgressFill').className = 'progress-fill completed';
+    }
 }
 
+// =============================================
+// OPEN VIDEO
+// =============================================
 function openVideo(videoId) {
     const video = availableVideos.find(v => v.id === videoId);
     if (!video) { alert('Video not found.'); return; }
+    
     currentVideo = video;
-    if (video.video_link) window.open(video.video_link, '_blank');
-    else { alert('No video link.'); return; }
+    
+    if (video.video_link) {
+        window.open(video.video_link, '_blank');
+    } else {
+        alert('No video link available.');
+        return;
+    }
+    
     document.getElementById('modalVideoTitle').textContent = video.title || 'Untitled Video';
     timeRemaining = video.duration || 300;
     totalEarned = 0;
@@ -213,20 +344,28 @@ function openVideo(videoId) {
     isCompleted = false;
     hasClaimed = false;
     updateModalDisplay();
+    
     document.getElementById('modalStatusText').textContent = '▶️ Starting in 2 seconds...';
-    document.getElementById('modalStopBtn').style.display = 'block';
     document.getElementById('modalStopBtn').disabled = false;
     document.getElementById('modalStopBtn').className = 'btn-stop';
     document.getElementById('modalStopBtn').textContent = '⏹️ Stop & Claim Earnings';
     document.getElementById('modalSummaryBox').style.display = 'none';
     document.getElementById('modalCloseBtn').style.display = 'none';
     document.getElementById('timerModal').classList.add('active');
+    
     document.querySelectorAll('.watch-btn').forEach(btn => {
-        if (btn.dataset.videoId == videoId) { btn.disabled = true; btn.textContent = '⏳ Watching...'; }
+        if (btn.dataset.videoId == videoId) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Watching...';
+        }
     });
+    
     setTimeout(() => startTimer(), 2000);
 }
 
+// =============================================
+// START TIMER
+// =============================================
 function startTimer() {
     if (isRunning || isCompleted || timeRemaining <= 0) {
         if (timeRemaining <= 0) completeWatching();
@@ -234,59 +373,84 @@ function startTimer() {
     }
     isRunning = true;
     document.getElementById('modalStatusText').textContent = '⏳ Watching... Timer will stop automatically';
+    
     timerInterval = setInterval(() => {
         timeRemaining--;
         updateModalDisplay();
-        if (timeRemaining <= 0) { timeRemaining = 0; updateModalDisplay(); completeWatching(); }
+        if (timeRemaining <= 0) {
+            timeRemaining = 0;
+            updateModalDisplay();
+            completeWatching();
+        }
     }, 1000);
 }
 
+// =============================================
+// COMPLETE WATCHING
+// =============================================
 async function completeWatching() {
     if (isCompleted || hasClaimed) return;
     clearInterval(timerInterval);
     isRunning = false;
     isCompleted = true;
     timeRemaining = 0;
+    
     const secondsWatched = currentVideo.duration;
     totalEarned = secondsWatched * 1;
     updateModalDisplay();
+    
+    document.getElementById('modalTimerDisplay').className = 'timer-display completed';
+    document.getElementById('modalProgressFill').className = 'progress-fill completed';
     document.getElementById('modalStatusText').textContent = '✅ Completed! Earnings credited.';
     document.getElementById('modalStatusText').style.color = '#2e7d32';
     document.getElementById('modalStopBtn').textContent = '✅ Completed';
     document.getElementById('modalStopBtn').disabled = true;
     document.getElementById('modalStopBtn').className = 'btn-completed';
     document.getElementById('modalCloseBtn').style.display = 'block';
+    
     document.getElementById('modalSummaryBox').style.display = 'block';
     document.getElementById('modalSummaryTime').textContent = secondsWatched + 's';
     document.getElementById('modalSummaryEarnings').textContent = '₦' + totalEarned.toFixed(2);
+    
     await creditUserEarnings(totalEarned);
     hasClaimed = true;
 }
 
+// =============================================
+// STOP WATCHING
+// =============================================
 async function stopWatching() {
     if (isCompleted || hasClaimed || !isRunning) {
         if (!isRunning && !isCompleted) alert('Please start watching first.');
         return;
     }
+    
     clearInterval(timerInterval);
     isRunning = false;
     isCompleted = true;
+    
     const secondsWatched = currentVideo.duration - timeRemaining;
     totalEarned = secondsWatched * 1;
     updateModalDisplay();
+    
     document.getElementById('modalStatusText').textContent = '⏹️ Stopped. Earnings credited.';
     document.getElementById('modalStatusText').style.color = '#e74c3c';
     document.getElementById('modalStopBtn').textContent = '✅ Claimed';
     document.getElementById('modalStopBtn').disabled = true;
     document.getElementById('modalStopBtn').className = 'btn-completed';
     document.getElementById('modalCloseBtn').style.display = 'block';
+    
     document.getElementById('modalSummaryBox').style.display = 'block';
     document.getElementById('modalSummaryTime').textContent = secondsWatched + 's';
     document.getElementById('modalSummaryEarnings').textContent = '₦' + totalEarned.toFixed(2);
+    
     await creditUserEarnings(totalEarned);
     hasClaimed = true;
 }
 
+// =============================================
+// CLOSE TIMER MODAL
+// =============================================
 function closeTimerModal() {
     document.getElementById('timerModal').classList.remove('active');
     document.querySelectorAll('.watch-btn').forEach(btn => {
@@ -296,20 +460,35 @@ function closeTimerModal() {
     loadVideoList();
 }
 
+// =============================================
+// CREDIT EARNINGS
+// =============================================
 async function creditUserEarnings(amount) {
     if (!userData || amount <= 0) return;
+    
     try {
         await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
-            body: JSON.stringify({ balance: (parseFloat(userData.balance) || 0) + parseFloat(amount) })
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY
+            },
+            body: JSON.stringify({
+                balance: (parseFloat(userData.balance) || 0) + parseFloat(amount)
+            })
         });
+        
         userData.balance = (parseFloat(userData.balance) || 0) + parseFloat(amount);
         document.getElementById('userBalance').textContent = '₦' + userData.balance.toLocaleString();
-        localStorage.setItem('cashvista_user', JSON.stringify(userData));
+        
         await fetch(SUPABASE_URL + '/rest/v1/task_completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY
+            },
             body: JSON.stringify({
                 user_email: userData.email,
                 campaign_id: currentVideo.id,
@@ -319,33 +498,67 @@ async function creditUserEarnings(amount) {
                 completed_at: new Date().toISOString()
             })
         });
-    } catch (e) { console.error('Credit error:', e); }
+        
+    } catch (e) {
+        console.error('Credit error:', e);
+    }
 }
 
+// =============================================
+// ✅ LOAD VIDEO LIST - FETCHES APPROVED VIDEOS
+// =============================================
 async function loadVideoList() {
-    if (!userData) return;
+    if (!userData) {
+        // Try to get user again
+        const user = getUser();
+        if (!user) return;
+    }
+
     const container = document.getElementById('videoListContainer');
-    container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Loading videos...</div>';
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">🔄 Loading videos...</div>';
+    
     try {
-        const res = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved&order=created_at.desc', {
+        // Fetch approved campaigns
+        const response = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved&order=created_at.desc', {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
         });
-        if (!res.ok) throw new Error('Failed to load');
-        const videos = await res.json();
+        
+        if (!response.ok) throw new Error('Failed to load campaigns');
+        
+        const videos = await response.json();
+        
+        // Get user's watched videos
         const watchedRes = await fetch(SUPABASE_URL + '/rest/v1/task_completions?user_email=eq.' + encodeURIComponent(userData.email) + '&status=eq.completed', {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
         });
+        
         const watchedData = watchedRes.ok ? await watchedRes.json() : [];
         const watchedIds = watchedData.map(item => item.campaign_id);
+        
+        // Filter out watched videos
         availableVideos = videos.filter(v => !watchedIds.includes(v.id));
+        
+        // Update count
+        document.getElementById('videoCount').textContent = availableVideos.length;
+        document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+        
         if (availableVideos.length === 0) {
-            container.innerHTML = `<div class="no-video-msg"><div class="icon">✅</div><h3>All Caught Up!</h3><p>You've watched all available videos. Check back later for more.</p><a href="dashboard.html" class="btn">← Back to Dashboard</a></div>`;
+            container.innerHTML = `
+                <div class="no-video-msg">
+                    <div class="icon">✅</div>
+                    <h3>All Caught Up!</h3>
+                    <p>You've watched all available videos. Check back later for more.</p>
+                    <a href="dashboard.html" class="btn">← Back to Dashboard</a>
+                </div>
+            `;
             return;
         }
+        
         let html = '';
         availableVideos.forEach(v => {
             const reward = (v.duration || 300);
             const platform = getPlatform(v.video_link);
+            
             html += `
                 <div class="video-list-item">
                     <div class="info">
@@ -359,27 +572,60 @@ async function loadVideoList() {
             `;
         });
         container.innerHTML = html;
+        
     } catch (error) {
-        console.error('Error:', error);
-        container.innerHTML = `<div class="no-video-msg"><div class="icon">❌</div><h3>Error Loading</h3><p>Please refresh and try again.</p></div>`;
+        console.error('Error loading videos:', error);
+        container.innerHTML = `
+            <div class="no-video-msg">
+                <div class="icon">❌</div>
+                <h3>Error Loading Videos</h3>
+                <p>Please refresh and try again.</p>
+                <button onclick="loadVideoList()" class="btn" style="background:#f5c842; border:none; cursor:pointer;">🔄 Retry</button>
+            </div>
+        `;
     }
 }
 
+// =============================================
+// LOGOUT
+// =============================================
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
         sessionStorage.removeItem('userEmail');
+        sessionStorage.removeItem('userName');
         localStorage.removeItem('cashvista_user');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userName');
         window.location.href = 'login.html';
     }
 }
 
+// =============================================
+// ✅ INIT - SETUP PAGE AND AUTO-REFRESH
+// =============================================
 document.addEventListener('DOMContentLoaded', function() {
     const user = getUser();
-    if (user) loadVideoList();
+    if (user) {
+        loadVideoList();
+        
+        // Auto-refresh every 30 seconds to show new approved videos
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(function() {
+            loadVideoList();
+        }, 30000); // 30 seconds
+    }
 });
 
+// Close modal when clicking outside
 document.getElementById('timerModal').addEventListener('click', function(e) {
-    if (e.target === this && isCompleted) closeTimerModal();
+    if (e.target === this && isCompleted) {
+        closeTimerModal();
+    }
+});
+
+// Clean up interval when page unloads
+window.addEventListener('beforeunload', function() {
+    if (refreshInterval) clearInterval(refreshInterval);
 });
 </script>
 </body>
