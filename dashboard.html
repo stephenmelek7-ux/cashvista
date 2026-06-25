@@ -341,34 +341,91 @@
     </footer>
 
     <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
         const APP_URL = 'https://cashvista.vercel.app';
+
         let currentUser = null;
 
+        // =============================================
+        // GET LOGGED-IN USER
+        // =============================================
         async function getLoggedInUser() {
-            const userEmail = sessionStorage.getItem('userEmail');
-            if (!userEmail) { window.location.href = 'login.html'; return null; }
+            // Check sessionStorage first
+            let userEmail = sessionStorage.getItem('userEmail');
+            
+            // If not in sessionStorage, check localStorage
+            if (!userEmail) {
+                const stored = localStorage.getItem('cashvista_user');
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        userEmail = parsed.email;
+                        if (userEmail) {
+                            sessionStorage.setItem('userEmail', userEmail);
+                            if (parsed.name) sessionStorage.setItem('userName', parsed.name);
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return null;
+            }
+
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                     method: 'GET',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
                 });
-                if (!response.ok) { window.location.href = 'login.html'; return null; }
+
+                if (!response.ok) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+
                 const users = await response.json();
-                if (!users || users.length === 0) { window.location.href = 'login.html'; return null; }
-                return users[0];
-            } catch (e) { window.location.href = 'login.html'; return null; }
+
+                if (!users || users.length === 0) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+
+                const user = users[0];
+                // Update localStorage with fresh data
+                localStorage.setItem('cashvista_user', JSON.stringify(user));
+                sessionStorage.setItem('userEmail', user.email);
+                if (user.name) sessionStorage.setItem('userName', user.name);
+
+                return user;
+            } catch (e) {
+                console.error('Error fetching user:', e);
+                window.location.href = 'login.html';
+                return null;
+            }
         }
 
+        // =============================================
+        // GET REFERRAL LINK
+        // =============================================
         function getReferralLink(user) {
-            if (user.referral_link && user.referral_link !== 'Not generated yet') {
+            if (user.referral_link && user.referral_link !== 'Not generated yet' && user.referral_link !== 'Not generated') {
                 return user.referral_link.replace('cashvista.com', 'cashvista.vercel.app');
             }
             const code = user.referral_code || 'REF_' + Date.now() + '_' + (user.email || '').split('@')[0];
             return APP_URL + '/register.html?ref=' + code;
         }
 
+        // =============================================
+        // GET AVAILABLE VIDEO COUNT
+        // =============================================
         async function getAvailableVideoCount(userEmail) {
             try {
                 const videosResponse = await fetch(SUPABASE_URL + '/rest/v1/campaigns?status=eq.approved', {
@@ -384,60 +441,118 @@
                 const watchedData = watchedResponse.ok ? await watchedResponse.json() : [];
                 const watchedIds = watchedData.map(item => item.campaign_id);
                 return videos.filter(v => !watchedIds.includes(v.id)).length;
-            } catch (e) { console.error('Error getting video count:', e); return 0; }
+            } catch (e) {
+                console.error('Error getting video count:', e);
+                return 0;
+            }
         }
 
+        // =============================================
+        // ✅ FIXED: LOAD TRANSACTIONS
+        // =============================================
         async function loadTransactions(email) {
             const tbody = document.getElementById('transactionHistory');
+
             try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/activity?user_email=eq.' + encodeURIComponent(email) + '&order=date.desc&limit=10', {
+                // ✅ FIXED: Use 'created_at' instead of 'date'
+                const response = await fetch(SUPABASE_URL + '/rest/v1/activity?user_email=eq.' + encodeURIComponent(email) + '&order=created_at.desc&limit=10', {
                     method: 'GET',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
                 });
+
+                // If activity table fails, try wallet_transactions
                 if (!response.ok) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet.</td></tr>`;
+                    const fallbackResponse = await fetch(SUPABASE_URL + '/rest/v1/wallet_transactions?user_email=eq.' + encodeURIComponent(email) + '&order=created_at.desc&limit=10', {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        }
+                    });
+
+                    if (!fallbackResponse.ok) {
+                        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet. Start earning today!</td></tr>`;
+                        return;
+                    }
+
+                    const data = await fallbackResponse.json();
+                    renderTransactions(tbody, data);
                     return;
                 }
+
                 const data = await response.json();
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet.</td></tr>`;
-                    return;
-                }
-                tbody.innerHTML = data.map(t => {
-                    const statusClass = (t.status || 'completed').toLowerCase() === 'completed' || (t.status || '').toLowerCase() === 'approved' ? 'success' : 'warning';
-                    const amount = t.amount || 0;
-                    const sign = amount > 0 ? '+' : '';
-                    return `<tr>
-                        <td>${new Date(t.date || t.created_at || Date.now()).toLocaleDateString()}</td>
-                        <td>${t.action || t.description || t.type || 'Transaction'}</td>
-                        <td style="font-weight:600; color:${amount > 0 ? '#2e7d32' : '#c62828'};">${sign}₦${Math.abs(amount).toLocaleString()}</td>
-                        <td><span class="status-badge ${statusClass}">${t.status || 'Completed'}</span></td>
-                    </tr>`;
-                }).join('');
-            } catch (e) { console.error('Error loading transactions:', e); }
+                renderTransactions(tbody, data);
+
+            } catch (e) {
+                console.error('Error loading transactions:', e);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet. Start earning today!</td></tr>`;
+            }
         }
 
+        // =============================================
+        // RENDER TRANSACTIONS
+        // =============================================
+        function renderTransactions(tbody, data) {
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:25px;">No transactions yet. Start earning today!</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(t => {
+                // Handle multiple possible date column names
+                const dateField = t.created_at || t.date || t.timestamp || new Date().toISOString();
+                const description = t.action || t.description || t.type || 'Transaction';
+                const amount = t.amount || 0;
+                const status = t.status || 'completed';
+
+                const statusClass = status.toLowerCase() === 'completed' || status.toLowerCase() === 'approved' ? 'success' : 'warning';
+                const amountColor = amount > 0 ? '#2e7d32' : '#c62828';
+                const sign = amount > 0 ? '+' : '';
+
+                return `
+                    <tr>
+                        <td>${new Date(dateField).toLocaleDateString()}</td>
+                        <td>${description}</td>
+                        <td style="font-weight:600; color:${amountColor};">${sign}₦${Math.abs(amount).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // =============================================
+        // LOAD DASHBOARD
+        // =============================================
         async function loadDashboard() {
             try {
                 const user = await getLoggedInUser();
                 if (!user) return;
+
                 currentUser = user;
+
                 const userName = user.name || 'User';
                 document.getElementById('userName').textContent = userName;
                 document.getElementById('bannerName').textContent = userName;
+
                 const balance = user.balance || 0;
                 document.getElementById('userBalance').textContent = '₦' + balance.toLocaleString();
                 document.getElementById('walletBalance').textContent = '₦' + balance.toLocaleString();
+
                 document.getElementById('statReferrals').textContent = user.direct_count || 0;
                 document.getElementById('statEarnings').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
+
                 const taskCount = await getAvailableVideoCount(user.email);
                 document.getElementById('statTasks').textContent = taskCount;
                 document.getElementById('taskCount').textContent = taskCount;
+
                 const refLink = getReferralLink(user);
                 document.getElementById('referralLinkDisplay').textContent = refLink;
                 document.getElementById('directCount').textContent = user.direct_count || 0;
                 document.getElementById('downlineCount').textContent = user.downline_count || 0;
                 document.getElementById('referralEarned').textContent = '₦' + (user.referral_earned || 0).toLocaleString();
+
                 const investStatus = document.getElementById('investStatus');
                 if (user.is_invest_member) {
                     investStatus.textContent = '✅ Active';
@@ -446,36 +561,68 @@
                     investStatus.textContent = '⚠️ Not Active';
                     investStatus.className = 'badge-mini gold';
                 }
-                await loadTransactions(user.email);
-            } catch (error) { console.error('Error loading dashboard:', error); }
-        }
 
-        function copyReferralLink() {
-            const link = document.getElementById('referralLinkDisplay').textContent;
-            if (link && link !== 'Loading...') {
-                navigator.clipboard.writeText(link).then(() => showToast('✅ Referral link copied!'))
-                    .catch(() => { const input = document.createElement('input'); input.value = link; document.body.appendChild(input); input.select(); document.execCommand('copy'); document.body.removeChild(input); showToast('✅ Referral link copied!'); });
+                await loadTransactions(user.email);
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
             }
         }
 
+        // =============================================
+        // COPY REFERRAL LINK
+        // =============================================
+        function copyReferralLink() {
+            const link = document.getElementById('referralLinkDisplay').textContent;
+            if (link && link !== 'Loading...') {
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast('✅ Referral link copied to clipboard!');
+                }).catch(() => {
+                    const input = document.createElement('input');
+                    input.value = link;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    showToast('✅ Referral link copied!');
+                });
+            }
+        }
+
+        // =============================================
+        // TOAST NOTIFICATION
+        // =============================================
         function showToast(message) {
             const existing = document.querySelector('.toast-notification');
             if (existing) existing.remove();
+
             const toast = document.createElement('div');
             toast.className = 'toast-notification';
             toast.textContent = message;
             document.body.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; setTimeout(() => toast.remove(), 500); }, 3000);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
         }
 
+        // =============================================
+        // LOGOUT
+        // =============================================
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('userEmail');
                 sessionStorage.removeItem('userName');
+                localStorage.removeItem('cashvista_user');
                 window.location.href = 'login.html';
             }
         }
 
+        // =============================================
+        // LOAD ON PAGE LOAD
+        // =============================================
         document.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
 </body>
