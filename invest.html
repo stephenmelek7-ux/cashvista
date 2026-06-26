@@ -293,6 +293,52 @@
             color: #c62828;
         }
 
+        /* ===== NEW: INACTIVE STATUS MESSAGE ===== */
+        .inactive-message {
+            background: #fff3e0;
+            border-left: 4px solid #e65100;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .inactive-message .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+        .inactive-message h4 {
+            color: #e65100;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .inactive-message p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* ===== NEW: ACTIVE STATUS MESSAGE ===== */
+        .active-message {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .active-message .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+        .active-message h4 {
+            color: #2e7d32;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .active-message p {
+            color: #555;
+            font-size: 14px;
+        }
+
         @media (max-width: 500px) {
             .invest-container { padding: 25px 20px; }
             .social-buttons { justify-content: center; }
@@ -330,7 +376,25 @@
             <span id="investStatusBadge" class="status-badge pending">⏳ Pending</span>
         </div>
 
-        <!-- ===== REFERRAL LINK (Shows after approval) ===== -->
+        <!-- ============================================================ -->
+        <!-- ===== ✅ NEW: INACTIVE STATUS MESSAGE ===== -->
+        <!-- ============================================================ -->
+        <div id="inactiveMessage" class="inactive-message" style="display:none;">
+            <div class="icon">⚠️</div>
+            <h4>Your Invest & Grow Status is Inactive</h4>
+            <p>Please pay ₦5,000 to activate your referral link and start earning 55% commission on every referral.</p>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== ✅ NEW: ACTIVE STATUS MESSAGE ===== -->
+        <!-- ============================================================ -->
+        <div id="activeMessage" class="active-message" style="display:none;">
+            <div class="icon">✅</div>
+            <h4>Your Invest & Grow Status is ACTIVE!</h4>
+            <p>Share your referral link below and start earning 55% commission on every referral.</p>
+        </div>
+
+        <!-- ===== REFERRAL LINK (Shows when Active) ===== -->
         <div id="referralLinkBox" class="referral-link-box">
             <strong>🔗 Your Referral Link:</strong><br />
             <span id="referralLinkDisplay" class="link">Loading...</span>
@@ -338,7 +402,7 @@
             <button class="copy-btn" onclick="copyReferralLink()">📋 Copy Link</button>
         </div>
 
-        <!-- ===== SOCIAL SHARE BUTTONS ===== -->
+        <!-- ===== SOCIAL SHARE BUTTONS (Shows when Active) ===== -->
         <div id="socialShare" class="social-share">
             <p>📱 Share your referral link on social media:</p>
             <div class="social-buttons">
@@ -350,42 +414,47 @@
             </div>
         </div>
 
-        <!-- ===== I HAVE PAID BUTTON ===== -->
-        <button class="btn-paid" id="paidBtn" onclick="togglePaidSection()">
-            💰 I Have Paid
-        </button>
+        <!-- ============================================================ -->
+        <!-- ===== PAYMENT SECTION (Shows when Inactive) ===== -->
+        <!-- ============================================================ -->
+        <div id="paymentSection">
+            <!-- ===== I HAVE PAID BUTTON ===== -->
+            <button class="btn-paid" id="paidBtn" onclick="togglePaidSection()">
+                💰 I Have Paid
+            </button>
 
-        <!-- ===== PAYMENT FORM (Shows when "I Have Paid" is clicked) ===== -->
-        <div id="paidSection" class="paid-section">
-            <p style="font-size:13px; color:#888; margin-bottom:15px;">
-                📝 Please provide your payment details for verification.
-            </p>
+            <!-- ===== PAYMENT FORM (Shows when "I Have Paid" is clicked) ===== -->
+            <div id="paidSection" class="paid-section">
+                <p style="font-size:13px; color:#888; margin-bottom:15px;">
+                    📝 Please provide your payment details for verification.
+                </p>
 
-            <form id="investForm">
-                <div class="form-group">
-                    <label>Transaction Reference *</label>
-                    <input type="text" id="transactionRef" placeholder="e.g. UBA123456789" required />
-                </div>
+                <form id="investForm">
+                    <div class="form-group">
+                        <label>Transaction Reference *</label>
+                        <input type="text" id="transactionRef" placeholder="e.g. UBA123456789" required />
+                    </div>
 
-                <div class="form-group">
-                    <label>Upload Payment Receipt (JPG, PNG) *</label>
-                    <input type="file" id="receiptUpload" accept="image/jpeg,image/png" required />
-                    <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview" />
-                </div>
+                    <div class="form-group">
+                        <label>Upload Payment Receipt (JPG, PNG) *</label>
+                        <input type="file" id="receiptUpload" accept="image/jpeg,image/png" required />
+                        <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview" />
+                    </div>
 
-                <div class="form-group">
-                    <label>Reason for Payment</label>
-                    <textarea id="reasonPayment" placeholder="e.g. I want to unlock my referral link"></textarea>
-                </div>
+                    <div class="form-group">
+                        <label>Reason for Payment</label>
+                        <textarea id="reasonPayment" placeholder="e.g. I want to unlock my referral link"></textarea>
+                    </div>
 
-                <button type="submit" class="btn-submit" id="submitBtn">
-                    <span class="btn-text">📤 Submit for Approval</span>
-                </button>
-            </form>
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <span class="btn-text">📤 Submit for Approval</span>
+                    </button>
+                </form>
 
-            <p style="font-size:12px; color:#888; margin-top:10px; text-align:center;">
-                ⚠️ Your payment will be reviewed by admin. You will be notified once approved.
-            </p>
+                <p style="font-size:12px; color:#888; margin-top:10px; text-align:center;">
+                    ⚠️ Your payment will be reviewed by admin. You will be notified once approved.
+                </p>
+            </div>
         </div>
 
         <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
@@ -451,6 +520,7 @@
         // =============================================
         let investStatus = null;
         let referralLink = '';
+        let isInvestMember = false;
 
         // =============================================
         // DOM REFS
@@ -465,12 +535,92 @@
         const socialShare = document.getElementById('socialShare');
         const paidSection = document.getElementById('paidSection');
         const paidBtn = document.getElementById('paidBtn');
+        const paymentSection = document.getElementById('paymentSection');
+        const inactiveMessage = document.getElementById('inactiveMessage');
+        const activeMessage = document.getElementById('activeMessage');
 
         // =============================================
-        // CHECK INVESTMENT STATUS
+        // ✅ NEW: UPDATE UI BASED ON INVEST MEMBER STATUS
+        // =============================================
+        function updateUIForInvestStatus() {
+            // Check if user is a valid invest member
+            // This checks both is_invest_member from users table AND status from invest_members table
+            const isActive = isInvestMember && investStatus === 'approved';
+
+            if (isActive) {
+                // ===== ACTIVE USER =====
+                // Show active message
+                activeMessage.style.display = 'block';
+                inactiveMessage.style.display = 'none';
+                
+                // Show referral link and social share
+                referralLinkBox.style.display = 'block';
+                socialShare.style.display = 'block';
+                
+                // Hide payment section
+                paymentSection.style.display = 'none';
+                
+                // Show status badge
+                investStatusBox.style.display = 'block';
+                investStatusBadge.textContent = '✅ Active';
+                investStatusBadge.className = 'status-badge approved';
+                
+                // Hide paid button
+                paidBtn.style.display = 'none';
+
+            } else if (investStatus === 'pending') {
+                // ===== PENDING USER =====
+                // Show pending message (they have paid but not approved)
+                activeMessage.style.display = 'none';
+                inactiveMessage.style.display = 'block';
+                inactiveMessage.querySelector('h4').textContent = '⏳ Your Payment is Pending Approval';
+                inactiveMessage.querySelector('p').textContent = 'Your payment is being reviewed by admin. You will be notified once approved.';
+                
+                // Hide referral link
+                referralLinkBox.style.display = 'none';
+                socialShare.style.display = 'none';
+                
+                // Show payment section (disabled)
+                paymentSection.style.display = 'block';
+                paidBtn.textContent = '⏳ Pending Approval';
+                paidBtn.disabled = true;
+                
+                // Show status badge
+                investStatusBox.style.display = 'block';
+                investStatusBadge.textContent = '⏳ Pending Approval';
+                investStatusBadge.className = 'status-badge pending';
+
+            } else {
+                // ===== INACTIVE USER (No payment or rejected) =====
+                // Show inactive message
+                activeMessage.style.display = 'none';
+                inactiveMessage.style.display = 'block';
+                inactiveMessage.querySelector('h4').textContent = '⚠️ Your Invest & Grow Status is Inactive';
+                inactiveMessage.querySelector('p').textContent = 'Please pay ₦5,000 to activate your referral link and start earning 55% commission on every referral.';
+                
+                // Hide referral link
+                referralLinkBox.style.display = 'none';
+                socialShare.style.display = 'none';
+                
+                // Show payment section (enabled)
+                paymentSection.style.display = 'block';
+                paidBtn.textContent = '💰 I Have Paid';
+                paidBtn.disabled = false;
+                
+                // Hide status badge
+                investStatusBox.style.display = 'none';
+            }
+        }
+
+        // =============================================
+        // CHECK INVESTMENT STATUS - UPDATED
         // =============================================
         async function checkInvestStatus() {
             try {
+                // First, check if user is an invest member from users table
+                isInvestMember = userData.is_invest_member || false;
+                console.log('📊 isInvestMember from users table:', isInvestMember);
+
                 const response = await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userData.email), {
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -482,30 +632,38 @@
                 if (data && data.length > 0) {
                     const invest = data[0];
                     investStatus = invest.status;
-
-                    investStatusBox.style.display = 'block';
-
-                    if (invest.status === 'approved') {
-                        investStatusBadge.textContent = '✅ Approved';
-                        investStatusBadge.className = 'status-badge approved';
-                        paidBtn.style.display = 'none';
-                        showReferralLink();
-                    } else if (invest.status === 'pending') {
-                        investStatusBadge.textContent = '⏳ Pending Approval';
-                        investStatusBadge.className = 'status-badge pending';
-                        paidBtn.textContent = '⏳ Pending Approval';
-                        paidBtn.disabled = true;
-                    } else if (invest.status === 'rejected') {
-                        investStatusBadge.textContent = '❌ Rejected';
-                        investStatusBadge.className = 'status-badge rejected';
-                        paidBtn.textContent = '💰 Try Again';
-                        paidBtn.disabled = false;
+                    console.log('📊 invest_members status:', investStatus);
+                    
+                    // If invest_members status is approved, make sure user is marked as invest member
+                    if (investStatus === 'approved' && !isInvestMember) {
+                        isInvestMember = true;
+                        // Update user data
+                        await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_KEY
+                            },
+                            body: JSON.stringify({ is_invest_member: true })
+                        });
+                        userData.is_invest_member = true;
+                        localStorage.setItem('cashvista_user', JSON.stringify(userData));
                     }
                 } else {
-                    investStatusBox.style.display = 'none';
-                    paidBtn.textContent = '💰 I Have Paid';
-                    paidBtn.disabled = false;
+                    // No invest_members record
+                    investStatus = null;
+                    console.log('📊 No invest_members record found');
                 }
+
+                // Update UI based on status
+                updateUIForInvestStatus();
+
+                // Show referral link if active
+                if (isInvestMember && investStatus === 'approved') {
+                    showReferralLink();
+                }
+
             } catch (e) {
                 console.error('Error checking invest status:', e);
             }
@@ -649,7 +807,6 @@
                     reader.readAsDataURL(receiptFile);
                 });
 
-                // ===== FIXED: Include all fields that the table expects =====
                 const investData = {
                     user_email: userData.email,
                     amount: 5000,
@@ -658,8 +815,8 @@
                     reason: reason || '',
                     status: 'pending',
                     date: new Date().toISOString(),
-                    referral_link: null,  // Will be set when approved
-                    created_at: new Date().toISOString()  // Auto timestamp
+                    referral_link: null,
+                    created_at: new Date().toISOString()
                 };
 
                 console.log('📤 Submitting invest data:', investData);
@@ -681,7 +838,6 @@
                     throw new Error('❌ Error submitting payment. Please try again.');
                 }
 
-                // Add activity log
                 try {
                     await fetch(SUPABASE_URL + '/rest/v1/activity', {
                         method: 'POST',
@@ -704,7 +860,6 @@
                 successMsg.innerHTML = '✅ Payment submitted successfully! Awaiting admin approval. You will be notified once approved.';
                 successMsg.style.display = 'block';
 
-                // Reset form
                 document.getElementById('transactionRef').value = '';
                 document.getElementById('receiptUpload').value = '';
                 document.getElementById('receiptPreview').style.display = 'none';
@@ -713,13 +868,8 @@
                 submitBtn.disabled = false;
                 submitBtn.querySelector('.btn-text').innerHTML = '📤 Submit for Approval';
 
-                // Update status
-                investStatusBox.style.display = 'block';
-                investStatusBadge.textContent = '⏳ Pending Approval';
-                investStatusBadge.className = 'status-badge pending';
-                paidBtn.textContent = '⏳ Pending Approval';
-                paidBtn.disabled = true;
-                paidSection.classList.remove('show');
+                // Re-check status to update UI
+                await checkInvestStatus();
 
             } catch (error) {
                 console.error('❌ Submission error:', error);
@@ -731,59 +881,11 @@
         });
 
         // =============================================
-        // LOAD REFERRAL LINK (For existing approved users)
-        // =============================================
-        async function loadReferralLink() {
-            try {
-                if (userData.referral_link) {
-                    const fixedLink = fixReferralLink(userData.referral_link);
-                    referralLink = fixedLink;
-                    referralLinkDisplay.textContent = fixedLink;
-                    referralLinkBox.style.display = 'block';
-                    socialShare.style.display = 'block';
-                    return;
-                }
-
-                const response = await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userData.email), {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    }
-                });
-                const data = await response.json();
-
-                if (data && data.length > 0 && data[0].status === 'approved') {
-                    const uniqueId = 'REF_' + Date.now() + '_' + userData.email.split('@')[0];
-                    const link = generateReferralLink(uniqueId);
-                    referralLink = link;
-                    referralLinkDisplay.textContent = link;
-                    referralLinkBox.style.display = 'block';
-                    socialShare.style.display = 'block';
-
-                    await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_KEY
-                        },
-                        body: JSON.stringify({
-                            referral_link: link
-                        })
-                    });
-                }
-            } catch (e) {
-                console.error('Error loading referral link:', e);
-            }
-        }
-
-        // =============================================
         // INIT
         // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📈 Invest & Grow page loaded');
             checkInvestStatus();
-            loadReferralLink();
         });
     </script>
 </body>
