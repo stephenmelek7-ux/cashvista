@@ -188,9 +188,6 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        // =============================================
-        // FIXED: APP URL - Using vercel.app not .com
-        // =============================================
         const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
@@ -203,6 +200,7 @@
         // FETCH REFERRAL INFO
         // =============================================
         async function fetchReferralInfo(code) {
+            if (!code) return null;
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/users?referral_code=eq.' + code, {
                     headers: {
@@ -223,20 +221,26 @@
         // CHECK REFERRAL ON LOAD
         // =============================================
         if (referralCode) {
-            document.getElementById('referralInfo').style.display = 'block';
-            document.getElementById('refName').textContent = 'Loading...';
+            const referralInfo = document.getElementById('referralInfo');
+            const refName = document.getElementById('refName');
+            
+            referralInfo.style.display = 'block';
+            refName.textContent = 'Loading...';
             
             fetchReferralInfo(referralCode).then(refUser => {
                 if (refUser) {
-                    document.getElementById('refName').textContent = refUser.name || refUser.email || 'Someone';
+                    refName.textContent = refUser.name || refUser.email || 'Someone';
+                    console.log('✅ Referral found:', refUser.email);
                 } else {
-                    document.getElementById('referralInfo').style.display = 'none';
+                    // Referral not found - hide the message
+                    referralInfo.style.display = 'none';
+                    console.log('⚠️ Referral code not found:', referralCode);
                 }
             });
         }
 
         // =============================================
-        // REGISTER FORM SUBMIT
+        // REGISTER FORM SUBMIT - FIXED
         // =============================================
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -291,12 +295,10 @@
                     return;
                 }
 
-                // Generate referral code
-                const uniqueId = 'REF_' + Date.now() + '_' + email.split('@')[0];
-                // FIXED: Use APP_URL (cashvista.vercel.app) not cashvista.com
-                const referralLink = APP_URL + '/register.html?ref=' + uniqueId;
-
-                // Prepare user data
+                // ===== FIXED: NO REFERRAL LINK GENERATED ON REGISTRATION =====
+                // The user will get a referral link ONLY after:
+                // 1. Admin activates them manually, OR
+                // 2. Admin approves their Invest & Grow payment
                 const userData = {
                     name: name,
                     email: email,
@@ -304,8 +306,8 @@
                     password: password,
                     balance: 0,
                     is_invest_member: false,
-                    referral_code: uniqueId,
-                    referral_link: referralLink,
+                    referral_code: null,        // ← NO referral code yet
+                    referral_link: null,         // ← NO referral link yet
                     referred_by: referralCode || null,
                     is_active: true,
                     joined_date: new Date().toISOString()
