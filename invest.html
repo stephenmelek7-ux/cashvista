@@ -401,6 +401,9 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+        // =============================================
+        // FIXED: APP URL - Using vercel.app not .com
+        // =============================================
         const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
@@ -409,6 +412,46 @@
         const userData = JSON.parse(localStorage.getItem('cashvista_user') || 'null');
         if (!userData) {
             window.location.href = 'login.html';
+        }
+
+        // =============================================
+        // FIX: Generate Correct Referral Link
+        // =============================================
+        function generateReferralLink(code) {
+            // ALWAYS use register.html?ref= format with vercel.app
+            return APP_URL + '/register.html?ref=' + code;
+        }
+
+        // =============================================
+        // FIX: Fix Broken Referral Link
+        // =============================================
+        function fixReferralLink(link) {
+            if (!link) return '';
+            
+            // If link contains '/ref/', extract the code and fix it
+            if (link.includes('/ref/')) {
+                const parts = link.split('/ref/');
+                const code = parts[parts.length - 1];
+                const cleanCode = code.split('/')[0].split('?')[0];
+                return generateReferralLink(cleanCode);
+            }
+            
+            // If link has cashvista.com, replace with vercel.app
+            if (link.includes('cashvista.com')) {
+                link = link.replace('cashvista.com', 'cashvista.vercel.app');
+            }
+            
+            // If link already has register.html?ref=, just return it
+            if (link.includes('register.html?ref=')) {
+                return link;
+            }
+            
+            // If link is just a code, generate full link
+            if (link.startsWith('REF_')) {
+                return generateReferralLink(link);
+            }
+            
+            return link;
         }
 
         // =============================================
@@ -448,14 +491,12 @@
                     const invest = data[0];
                     investStatus = invest.status;
 
-                    // Show status box
                     investStatusBox.style.display = 'block';
 
                     if (invest.status === 'approved') {
                         investStatusBadge.textContent = '✅ Approved';
                         investStatusBadge.className = 'status-badge approved';
                         paidBtn.style.display = 'none';
-                        // Show referral link
                         showReferralLink();
                     } else if (invest.status === 'pending') {
                         investStatusBadge.textContent = '⏳ Pending Approval';
@@ -469,7 +510,6 @@
                         paidBtn.disabled = false;
                     }
                 } else {
-                    // No investment record
                     investStatusBox.style.display = 'none';
                     paidBtn.textContent = '💰 I Have Paid';
                     paidBtn.disabled = false;
@@ -480,16 +520,29 @@
         }
 
         // =============================================
-        // SHOW REFERRAL LINK
+        // SHOW REFERRAL LINK - FIXED
         // =============================================
         function showReferralLink() {
-            // Get referral link from user data
             let link = userData.referral_link || '';
-            if (link) {
-                link = link.replace('cashvista.com', 'cashvista.vercel.app');
-            } else {
+            
+            // Fix any broken referral link format or domain
+            link = fixReferralLink(link);
+            
+            // If still empty, generate a new one
+            if (!link) {
                 const uniqueId = 'REF_' + Date.now() + '_' + userData.email.split('@')[0];
-                link = APP_URL + '/register.html?ref=' + uniqueId;
+                link = generateReferralLink(uniqueId);
+                
+                // Save to user data
+                fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({ referral_link: link })
+                });
             }
 
             referralLink = link;
@@ -631,7 +684,6 @@
                     throw new Error('❌ Error submitting payment. Please try again.');
                 }
 
-                // Add activity log
                 await fetch(SUPABASE_URL + '/rest/v1/activity', {
                     method: 'POST',
                     headers: {
@@ -650,7 +702,6 @@
                 successMsg.innerHTML = '✅ Payment submitted successfully! Awaiting admin approval. You will be notified once approved.';
                 successMsg.style.display = 'block';
 
-                // Reset form
                 document.getElementById('transactionRef').value = '';
                 document.getElementById('receiptUpload').value = '';
                 document.getElementById('receiptPreview').style.display = 'none';
@@ -659,7 +710,6 @@
                 submitBtn.disabled = false;
                 submitBtn.querySelector('.btn-text').innerHTML = '📤 Submit for Approval';
 
-                // Update status
                 investStatusBox.style.display = 'block';
                 investStatusBadge.textContent = '⏳ Pending Approval';
                 investStatusBadge.className = 'status-badge pending';
@@ -677,13 +727,13 @@
         });
 
         // =============================================
-        // LOAD REFERRAL LINK (For existing approved users)
+        // LOAD REFERRAL LINK (For existing approved users) - FIXED
         // =============================================
         async function loadReferralLink() {
             try {
-                // Check if user already has a referral link
                 if (userData.referral_link) {
-                    const fixedLink = userData.referral_link.replace('cashvista.com', 'cashvista.vercel.app');
+                    // Fix any broken referral link format or domain
+                    const fixedLink = fixReferralLink(userData.referral_link);
                     referralLink = fixedLink;
                     referralLinkDisplay.textContent = fixedLink;
                     referralLinkBox.style.display = 'block';
@@ -691,7 +741,6 @@
                     return;
                 }
 
-                // Check if user has an approved investment
                 const response = await fetch(SUPABASE_URL + '/rest/v1/invest_members?user_email=eq.' + encodeURIComponent(userData.email), {
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -701,15 +750,13 @@
                 const data = await response.json();
 
                 if (data && data.length > 0 && data[0].status === 'approved') {
-                    // Generate referral link
                     const uniqueId = 'REF_' + Date.now() + '_' + userData.email.split('@')[0];
-                    const link = APP_URL + '/register.html?ref=' + uniqueId;
+                    const link = generateReferralLink(uniqueId);
                     referralLink = link;
                     referralLinkDisplay.textContent = link;
                     referralLinkBox.style.display = 'block';
                     socialShare.style.display = 'block';
 
-                    // Update user with referral link
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
                         method: 'PATCH',
                         headers: {
