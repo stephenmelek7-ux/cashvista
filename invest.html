@@ -401,9 +401,6 @@
         // =============================================
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
-        // =============================================
-        // FIXED: APP URL - Using vercel.app not .com
-        // =============================================
         const APP_URL = 'https://cashvista.vercel.app';
 
         // =============================================
@@ -418,7 +415,6 @@
         // FIX: Generate Correct Referral Link
         // =============================================
         function generateReferralLink(code) {
-            // ALWAYS use register.html?ref= format with vercel.app
             return APP_URL + '/register.html?ref=' + code;
         }
 
@@ -428,7 +424,6 @@
         function fixReferralLink(link) {
             if (!link) return '';
             
-            // If link contains '/ref/', extract the code and fix it
             if (link.includes('/ref/')) {
                 const parts = link.split('/ref/');
                 const code = parts[parts.length - 1];
@@ -436,17 +431,14 @@
                 return generateReferralLink(cleanCode);
             }
             
-            // If link has cashvista.com, replace with vercel.app
             if (link.includes('cashvista.com')) {
                 link = link.replace('cashvista.com', 'cashvista.vercel.app');
             }
             
-            // If link already has register.html?ref=, just return it
             if (link.includes('register.html?ref=')) {
                 return link;
             }
             
-            // If link is just a code, generate full link
             if (link.startsWith('REF_')) {
                 return generateReferralLink(link);
             }
@@ -520,20 +512,17 @@
         }
 
         // =============================================
-        // SHOW REFERRAL LINK - FIXED
+        // SHOW REFERRAL LINK
         // =============================================
         function showReferralLink() {
             let link = userData.referral_link || '';
             
-            // Fix any broken referral link format or domain
             link = fixReferralLink(link);
             
-            // If still empty, generate a new one
             if (!link) {
                 const uniqueId = 'REF_' + Date.now() + '_' + userData.email.split('@')[0];
                 link = generateReferralLink(uniqueId);
                 
-                // Save to user data
                 fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userData.email), {
                     method: 'PATCH',
                     headers: {
@@ -625,7 +614,7 @@
         });
 
         // =============================================
-        // SUBMIT PAYMENT
+        // SUBMIT PAYMENT - FIXED
         // =============================================
         document.getElementById('investForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -660,6 +649,7 @@
                     reader.readAsDataURL(receiptFile);
                 });
 
+                // ===== FIXED: Include all fields that the table expects =====
                 const investData = {
                     user_email: userData.email,
                     amount: 5000,
@@ -667,41 +657,54 @@
                     receipt_url: receiptData,
                     reason: reason || '',
                     status: 'pending',
-                    date: new Date().toISOString()
+                    date: new Date().toISOString(),
+                    referral_link: null,  // Will be set when approved
+                    created_at: new Date().toISOString()  // Auto timestamp
                 };
+
+                console.log('📤 Submitting invest data:', investData);
 
                 const response = await fetch(SUPABASE_URL + '/rest/v1/invest_members', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify(investData)
                 });
 
                 if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ Supabase error:', errorText);
                     throw new Error('❌ Error submitting payment. Please try again.');
                 }
 
-                await fetch(SUPABASE_URL + '/rest/v1/activity', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY
-                    },
-                    body: JSON.stringify({
-                        user_name: userData.name,
-                        action: 'Submitted Invest & Grow payment: ₦5,000',
-                        amount: 5000,
-                        date: new Date().toISOString()
-                    })
-                });
+                // Add activity log
+                try {
+                    await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            user_name: userData.name || userData.email,
+                            action: 'Submitted Invest & Grow payment: ₦5,000',
+                            amount: 5000,
+                            date: new Date().toISOString()
+                        })
+                    });
+                } catch (e) {
+                    console.log('⚠️ Could not log activity:', e);
+                }
 
                 successMsg.innerHTML = '✅ Payment submitted successfully! Awaiting admin approval. You will be notified once approved.';
                 successMsg.style.display = 'block';
 
+                // Reset form
                 document.getElementById('transactionRef').value = '';
                 document.getElementById('receiptUpload').value = '';
                 document.getElementById('receiptPreview').style.display = 'none';
@@ -710,6 +713,7 @@
                 submitBtn.disabled = false;
                 submitBtn.querySelector('.btn-text').innerHTML = '📤 Submit for Approval';
 
+                // Update status
                 investStatusBox.style.display = 'block';
                 investStatusBadge.textContent = '⏳ Pending Approval';
                 investStatusBadge.className = 'status-badge pending';
@@ -718,8 +722,8 @@
                 paidSection.classList.remove('show');
 
             } catch (error) {
-                console.error('Submission error:', error);
-                errorMsg.textContent = error.message;
+                console.error('❌ Submission error:', error);
+                errorMsg.textContent = error.message || '❌ Error submitting payment. Please try again.';
                 errorMsg.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.querySelector('.btn-text').innerHTML = '📤 Submit for Approval';
@@ -727,12 +731,11 @@
         });
 
         // =============================================
-        // LOAD REFERRAL LINK (For existing approved users) - FIXED
+        // LOAD REFERRAL LINK (For existing approved users)
         // =============================================
         async function loadReferralLink() {
             try {
                 if (userData.referral_link) {
-                    // Fix any broken referral link format or domain
                     const fixedLink = fixReferralLink(userData.referral_link);
                     referralLink = fixedLink;
                     referralLinkDisplay.textContent = fixedLink;
