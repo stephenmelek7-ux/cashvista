@@ -792,7 +792,7 @@
         }
 
         // =============================================
-        // ✅ NEW: ACTIVATE INVEST MEMBER
+        // ✅ FIXED: ACTIVATE INVEST MEMBER - UPDATES USERS TABLE CORRECTLY
         // =============================================
         async function activateInvestMember(email) {
             if (!confirm(`✅ Activate Invest & Grow for ${email}?\n\nThis will generate their referral link.`)) return;
@@ -801,8 +801,12 @@
                 const uniqueId = 'REF_' + Date.now() + '_' + email.split('@')[0];
                 const referralLink = generateReferralLink(uniqueId);
 
-                // Update user
-                await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                console.log('🔄 Activating user:', email);
+                console.log('📝 Generated referral code:', uniqueId);
+                console.log('🔗 Generated referral link:', referralLink);
+
+                // ✅ STEP 1: Update users table with referral code and link
+                const userUpdateResponse = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -816,7 +820,14 @@
                     })
                 });
 
-                // Check if user already has an invest_members record
+                if (!userUpdateResponse.ok) {
+                    const errorText = await userUpdateResponse.text();
+                    console.error('❌ Failed to update users table:', errorText);
+                    throw new Error('Failed to update users table: ' + errorText);
+                }
+                console.log('✅ Users table updated successfully');
+
+                // ✅ STEP 2: Check if user already has an invest_members record
                 const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
                 
                 if (!existing || existing.length === 0) {
@@ -828,15 +839,17 @@
                         referral_link: referralLink,
                         created_at: new Date().toISOString()
                     });
+                    console.log('✅ Invest members record created');
                 } else {
                     // Update existing record
                     await updateSupabase('invest_members', existing[0].id, {
                         status: 'approved',
                         referral_link: referralLink
                     });
+                    console.log('✅ Invest members record updated');
                 }
 
-                // Log activity
+                // ✅ STEP 3: Log activity
                 await insertSupabase('activity', {
                     user_name: email,
                     action: 'Invest & Grow activated by admin - referral link generated: ' + referralLink,
@@ -847,18 +860,20 @@
                 alert(`✅ ${email} activated! Referral link generated: ${referralLink}`);
                 renderDashboard();
             } catch (error) {
-                console.error('Error activating user:', error);
+                console.error('❌ Error activating user:', error);
                 alert('❌ Error activating user: ' + error.message);
             }
         }
 
         // =============================================
-        // ✅ NEW: DEACTIVATE INVEST MEMBER
+        // DEACTIVATE INVEST MEMBER
         // =============================================
         async function deactivateInvestMember(email) {
             if (!confirm(`❌ Deactivate Invest & Grow for ${email}?\n\nThis will hide their referral link.`)) return;
             
             try {
+                console.log('🔄 Deactivating user:', email);
+
                 // Update user
                 await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'PATCH',
@@ -1729,6 +1744,7 @@
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
                     const referralLink = APP_URL + '/register.html?ref=' + uniqueId;
 
+                    // Update users table
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                         method: 'PATCH',
                         headers: {
