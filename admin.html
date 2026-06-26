@@ -185,6 +185,15 @@
         .btn-assign:hover { background: #e65100; color: #fff; }
         .btn-details { background: #f3e5f5; color: #7b1fa2; }
         .btn-details:hover { background: #7b1fa2; color: #fff; }
+        /* ===== NEW: INVEST ACTIVATE/DEACTIVATE BUTTONS ===== */
+        .btn-invest-activate { background: #e8f5e9; color: #2e7d32; }
+        .btn-invest-activate:hover { background: #2e7d32; color: #fff; }
+        .btn-invest-deactivate { background: #fff3e0; color: #e65100; }
+        .btn-invest-deactivate:hover { background: #e65100; color: #fff; }
+        .btn-invest-active { background: #e8f5e9; color: #2e7d32; cursor: default; }
+        .btn-invest-active:hover { background: #e8f5e9; color: #2e7d32; }
+        .btn-invest-inactive { background: #fce4ec; color: #c62828; cursor: default; }
+        .btn-invest-inactive:hover { background: #fce4ec; color: #c62828; }
 
         .footer {
             background: #0d1b2a;
@@ -589,7 +598,7 @@
             </div>
         </div>
 
-        <!-- TAB 6: ALL USERS -->
+        <!-- TAB 6: ALL USERS (UPDATED WITH INVEST ACTIVATE/DEACTIVATE) -->
         <div id="tab-users" class="tab-content">
             <div class="section-card">
                 <div class="header"><h2>👥 All Users <span class="count-badge" id="userCountBadge">0</span></h2>
@@ -758,7 +767,7 @@
         }
 
         // =============================================
-        // ✅ FIXED: VALIDATE RECEIPT URL
+        // VALIDATE RECEIPT URL
         // =============================================
         function isValidReceipt(url) {
             if (!url) return false;
@@ -768,14 +777,125 @@
             return false;
         }
 
-        // =============================================
-        // ✅ FIXED: GET RECEIPT DISPLAY URL
-        // =============================================
         function getReceiptDisplayUrl(url) {
             if (!url) return null;
             if (url.startsWith('data:image/')) return url;
             if (url.includes('supabase.co/storage/v1/object/')) return url;
             return null;
+        }
+
+        // =============================================
+        // GENERATE REFERRAL LINK
+        // =============================================
+        function generateReferralLink(code) {
+            return APP_URL + '/register.html?ref=' + code;
+        }
+
+        // =============================================
+        // ✅ NEW: ACTIVATE INVEST MEMBER
+        // =============================================
+        async function activateInvestMember(email) {
+            if (!confirm(`✅ Activate Invest & Grow for ${email}?\n\nThis will generate their referral link.`)) return;
+            
+            try {
+                const uniqueId = 'REF_' + Date.now() + '_' + email.split('@')[0];
+                const referralLink = generateReferralLink(uniqueId);
+
+                // Update user
+                await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({
+                        is_invest_member: true,
+                        referral_code: uniqueId,
+                        referral_link: referralLink
+                    })
+                });
+
+                // Check if user already has an invest_members record
+                const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
+                
+                if (!existing || existing.length === 0) {
+                    // Create invest_members record
+                    await insertSupabase('invest_members', {
+                        user_email: email,
+                        amount: 5000,
+                        status: 'approved',
+                        referral_link: referralLink,
+                        created_at: new Date().toISOString()
+                    });
+                } else {
+                    // Update existing record
+                    await updateSupabase('invest_members', existing[0].id, {
+                        status: 'approved',
+                        referral_link: referralLink
+                    });
+                }
+
+                // Log activity
+                await insertSupabase('activity', {
+                    user_name: email,
+                    action: 'Invest & Grow activated by admin - referral link generated: ' + referralLink,
+                    amount: 5000,
+                    created_at: new Date().toISOString()
+                });
+
+                alert(`✅ ${email} activated! Referral link generated: ${referralLink}`);
+                renderDashboard();
+            } catch (error) {
+                console.error('Error activating user:', error);
+                alert('❌ Error activating user: ' + error.message);
+            }
+        }
+
+        // =============================================
+        // ✅ NEW: DEACTIVATE INVEST MEMBER
+        // =============================================
+        async function deactivateInvestMember(email) {
+            if (!confirm(`❌ Deactivate Invest & Grow for ${email}?\n\nThis will hide their referral link.`)) return;
+            
+            try {
+                // Update user
+                await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({
+                        is_invest_member: false,
+                        referral_code: null,
+                        referral_link: null
+                    })
+                });
+
+                // Update invest_members record
+                const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
+                if (existing && existing.length > 0) {
+                    await updateSupabase('invest_members', existing[0].id, {
+                        status: 'inactive'
+                    });
+                }
+
+                // Log activity
+                await insertSupabase('activity', {
+                    user_name: email,
+                    action: 'Invest & Grow deactivated by admin',
+                    amount: 0,
+                    created_at: new Date().toISOString()
+                });
+
+                alert(`❌ ${email} deactivated. Referral link hidden.`);
+                renderDashboard();
+            } catch (error) {
+                console.error('Error deactivating user:', error);
+                alert('❌ Error deactivating user: ' + error.message);
+            }
         }
 
         // =============================================
@@ -1288,13 +1408,12 @@
         }
 
         // =============================================
-        // ✅ FIXED: RENDER DASHBOARD
+        // RENDER DASHBOARD - UPDATED WITH INVEST ACTIVATE/DEACTIVATE
         // =============================================
         async function renderDashboard() {
             try {
                 console.log('🔄 Loading admin dashboard...');
 
-                // ✅ FIXED: Use 'created_at' instead of 'date'
                 const users = await fetchSupabase('users', '?order=joined_date.desc');
                 const campaigns = await fetchSupabase('campaigns', '?order=created_at.desc');
                 const investMembers = await fetchSupabase('invest_members', '?order=created_at.desc');
@@ -1312,7 +1431,6 @@
                 const totalUsers = users ? users.length : 0;
                 const totalInvest = investMembers ? investMembers.length : 0;
                 
-                // ✅ FIXED: Case-insensitive status check
                 const pendingCampaigns = campaigns ? campaigns.filter(c => {
                     const status = (c.status || '').toLowerCase();
                     return status === 'pending';
@@ -1369,7 +1487,7 @@
                             title: c.title || 'Video', 
                             duration: c.duration || 0, 
                             amount: '₦' + (c.amount || 0).toLocaleString(), 
-                            receipt: c.payment_slip_url || null, 
+                            receipt: c.receipt_url || null, 
                             date: c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A', 
                             data: c, 
                             table: 'campaigns' 
@@ -1527,29 +1645,47 @@
                     }).join('');
                 }
 
-                // --- USERS TABLE ---
+                // =============================================
+                // ✅ UPDATED: USERS TABLE WITH INVEST ACTIVATE/DEACTIVATE
+                // =============================================
                 const userBody = document.getElementById('userTableBody');
                 if (!users || users.length === 0) {
                     userBody.innerHTML = `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
                 } else {
-                    userBody.innerHTML = users.map((user, index) => `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td><strong>${user.name || 'Unknown'}</strong></td>
-                            <td>${user.email || 'No email'}</td>
-                            <td>${user.phone || 'N/A'}</td>
-                            <td>₦${(user.balance || 0).toLocaleString()}</td>
-                            <td>${user.is_invest_member ? '✅' : '❌'}</td>
-                            <td>${user.batch || 'Not assigned'}</td>
-                            <td><span class="badge ${user.is_active !== false ? 'badge-success' : 'badge-danger'}">${user.is_active !== false ? '✅ Active' : '🚫 Suspended'}</span></td>
-                            <td>
-                                <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
-                                <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" onclick="toggleUser('${user.email}')">${user.is_active !== false ? '🔒' : '🔓'}</button>
-                                <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
-                                <button class="btn-sm btn-details" onclick="openUserDetailModal('${user.email}')">📊</button>
-                            </td>
-                        </tr>
-                    `).join('');
+                    userBody.innerHTML = users.map((user, index) => {
+                        const isInvestMember = user.is_invest_member || false;
+                        let investButton = '';
+                        if (isInvestMember) {
+                            investButton = `
+                                <button class="btn-sm btn-invest-active" title="Invest Member Active">✅ Active</button>
+                                <button class="btn-sm btn-invest-deactivate" onclick="deactivateInvestMember('${user.email}')">🔴 Deactivate</button>
+                            `;
+                        } else {
+                            investButton = `
+                                <button class="btn-sm btn-invest-inactive" title="Invest Member Inactive">❌ Inactive</button>
+                                <button class="btn-sm btn-invest-activate" onclick="activateInvestMember('${user.email}')">🟢 Activate</button>
+                            `;
+                        }
+                        return `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${user.name || 'Unknown'}</strong></td>
+                                <td>${user.email || 'No email'}</td>
+                                <td>${user.phone || 'N/A'}</td>
+                                <td>₦${(user.balance || 0).toLocaleString()}</td>
+                                <td>${isInvestMember ? '✅' : '❌'}</td>
+                                <td>${user.batch || 'Not assigned'}</td>
+                                <td><span class="badge ${user.is_active !== false ? 'badge-success' : 'badge-danger'}">${user.is_active !== false ? '✅ Active' : '🚫 Suspended'}</span></td>
+                                <td>
+                                    <button class="btn-sm btn-view" onclick="viewUser('${user.email}')">👁️</button>
+                                    ${investButton}
+                                    <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" onclick="toggleUser('${user.email}')">${user.is_active !== false ? '🔒' : '🔓'}</button>
+                                    <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
+                                    <button class="btn-sm btn-details" onclick="openUserDetailModal('${user.email}')">📊</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
                 }
 
                 // --- ACTIVITY TABLE ---
