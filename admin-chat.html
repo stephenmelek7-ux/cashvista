@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Chat - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+        .topbar .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .topbar .admin-info .badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #f5c842;
+        }
+        .topbar .admin-info .email { color: #ddd; font-size: 14px; }
+        .topbar .admin-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .admin-info .logout:hover { background: #e74c3c; color: #fff; }
+        .topbar .admin-info a {
+            color: #f5c842;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .topbar .admin-info a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 18px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.03);
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .stat-card .number.red { color: #c62828; }
+        .stat-card .number.green { color: #2e7d32; }
+        .stat-card .number.blue { color: #0d47a1; }
+        .stat-card .label { font-size: 12px; color: #888; font-weight: 500; }
+
+        /* ===== CHAT LAYOUT ===== */
+        .chat-layout {
+            display: flex;
+            gap: 20px;
+            height: 600px;
+            max-height: 70vh;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+
+        /* ===== USER LIST ===== */
+        .user-list {
+            width: 320px;
+            min-width: 280px;
+            border-right: 1px solid #e8ecf0;
+            display: flex;
+            flex-direction: column;
+            background: #fafbfc;
+        }
+        .user-list .list-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8ecf0;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .user-list .list-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0d1b2a;
+        }
+        .user-list .list-header .search-box {
+            width: 100%;
+            padding: 8px 14px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.3s;
+        }
+        .user-list .list-header .search-box:focus {
+            border-color: #f5c842;
+        }
+        .user-list .users-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .user-item:hover {
+            background: #f0f4f8;
+        }
+        .user-item.active {
+            background: #fef7e0;
+            border-left: 3px solid #f5c842;
+        }
+        .user-item .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .user-item .user-info .name {
+            font-weight: 600;
+            color: #0d1b2a;
+            font-size: 14px;
+        }
+        .user-item .user-info .last-msg {
+            font-size: 12px;
+            color: #888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .user-item .user-info .time {
+            font-size: 10px;
+            color: #aaa;
+        }
+        .user-item .badge-unread {
+            background: #e74c3c;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 22px;
+            text-align: center;
+        }
+        .user-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-dot.online { background: #2e7d32; }
+        .status-dot.offline { background: #bbb; }
+
+        /* ===== CHAT AREA ===== */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .chat-area .chat-header {
+            padding: 15px 25px;
+            border-bottom: 1px solid #e8ecf0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            background: #fff;
+        }
+        .chat-area .chat-header .user-detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-area .chat-header .user-detail .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5c842;
+            color: #0d1b2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .chat-area .chat-header .user-detail .info .name {
+            font-weight: 700;
+            color: #0d1b2a;
+            font-size: 16px;
+        }
+        .chat-area .chat-header .user-detail .info .email {
+            font-size: 12px;
+            color: #888;
+        }
+        .chat-area .chat-header .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-area .chat-header .actions button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-area .chat-header .actions .btn-close {
+            background: #fce4ec;
+            color: #c62828;
+        }
+        .chat-area .chat-header .actions .btn-close:hover {
+            background: #c62828;
+            color: #fff;
+        }
+
+        /* ===== MESSAGES ===== */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 25px;
+            background: #f8fafc;
+        }
+        .chat-messages .empty-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .chat-messages .empty-msg .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .chat-messages .msg-item {
+            margin-bottom: 15px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        .chat-messages .msg-item.user-msg {
+            margin-left: auto;
+        }
+        .chat-messages .msg-item.admin-msg {
+            margin-right: auto;
+        }
+        .chat-messages .msg-item .msg-bubble {
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+        .chat-messages .msg-item.admin-msg .msg-bubble {
+            background: #0d1b2a;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-messages .msg-item.user-msg .msg-bubble {
+            background: #f5c842;
+            color: #0d1b2a;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-messages .msg-item .msg-sender {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            display: block;
+        }
+        .chat-messages .msg-item.admin-msg .msg-sender {
+            color: #f5c842;
+        }
+        .chat-messages .msg-item.user-msg .msg-sender {
+            color: #0d1b2a;
+            text-align: right;
+        }
+        .chat-messages .msg-item .msg-time {
+            font-size: 10px;
+            color: #888;
+            margin-top: 4px;
+            display: block;
+        }
+        .chat-messages .msg-item.user-msg .msg-time {
+            text-align: right;
+        }
+        .chat-messages .msg-item .msg-attachment {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .chat-messages .msg-item .msg-attachment:hover {
+            border-color: #f5c842;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== INPUT AREA ===== */
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e8ecf0;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .chat-input-area input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.3s;
+        }
+        .chat-input-area input[type="text"]:focus {
+            border-color: #f5c842;
+        }
+        .chat-input-area .btn-attach {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: 0.3s;
+        }
+        .chat-input-area .btn-attach:hover {
+            background: #ccc;
+        }
+        .chat-input-area .btn-send {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-input-area .btn-send:hover {
+            background: #e6b800;
+        }
+        .chat-input-area .btn-send:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .chat-input-area .file-input {
+            display: none;
+        }
+
+        /* ===== ATTACHMENT PREVIEW ===== */
+        .attachment-preview {
+            display: none;
+            padding: 8px 20px 0 20px;
+            background: #fff;
+        }
+        .attachment-preview .preview-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 8px 14px 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #e8ecf0;
+        }
+        .attachment-preview .preview-box img {
+            max-height: 40px;
+            border-radius: 4px;
+        }
+        .attachment-preview .preview-box .remove-attach {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* ===== BROADCAST MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #fff;
+            padding: 35px;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            color: #0d1b2a;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .modal-content .form-group {
+            margin-bottom: 18px;
+        }
+        .modal-content .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .modal-content .form-group input,
+        .modal-content .form-group textarea,
+        .modal-content .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-content .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .modal-content .form-group input:focus,
+        .modal-content .form-group textarea:focus,
+        .modal-content .form-group select:focus {
+            border-color: #f5c842;
+            outline: none;
+        }
+        .modal-content .form-group input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #e8ecf0;
+            background: #fafafa;
+        }
+        .modal-content .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-content .btn-primary:hover {
+            background: #e6b800;
+        }
+        .modal-content .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .modal-content .btn-secondary:hover {
+            background: #ccc;
+        }
+        .modal-content .close-modal {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        .modal-content .close-modal:hover { color: #0d1b2a; }
+        .modal-content .broadcast-preview-img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0d1b2a;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 99999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-family: 'Inter', sans-serif;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .chat-layout {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+            }
+            .user-list {
+                width: 100%;
+                min-width: unset;
+                max-height: 300px;
+                border-right: none;
+                border-bottom: 1px solid #e8ecf0;
+            }
+            .chat-area {
+                height: 500px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+                padding: 15px;
+            }
+            .topbar .admin-info {
+                justify-content: center;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chat-area {
+                height: 400px;
+                max-height: 55vh;
+            }
+            .chat-messages {
+                padding: 15px;
+            }
+            .chat-messages .msg-item {
+                max-width: 95%;
+            }
+            .chat-input-area {
+                flex-wrap: wrap;
+                padding: 12px 15px;
+            }
+            .chat-input-area input[type="text"] {
+                width: 100%;
+                order: 1;
+            }
+            .chat-input-area .btn-attach {
+                order: 2;
+            }
+            .chat-input-area .btn-send {
+                flex: 1;
+                order: 3;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="admin-info">
+            <span class="badge">🔐 ADMIN</span>
+            <span class="email" id="adminEmail">admin@cashvista.com</span>
+            <a href="admin.html">📊 Dashboard</a>
+            <button class="logout" onclick="adminLogout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- ===== STATS ===== -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="number blue" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="totalConversations">0</div>
+                <div class="label">Conversations</div>
+            </div>
+            <div class="stat-card">
+                <div class="number red" id="unreadCount">0</div>
+                <div class="label">Unread Messages</div>
+            </div>
+            <div class="stat-card">
+                <div class="number green" id="onlineUsers">0</div>
+                <div class="label">Online Users</div>
+            </div>
+        </div>
+
+        <!-- ===== CHAT LAYOUT ===== -->
+        <div class="chat-layout">
+            <!-- ===== USER LIST ===== -->
+            <div class="user-list">
+                <div class="list-header">
+                    <h3>💬 Conversations</h3>
+                    <input type="text" class="search-box" id="searchUsers" placeholder="🔍 Search users..." onkeyup="filterUsers(this.value)" />
+                </div>
+                <div class="users-container" id="usersContainer">
+                    <div style="text-align:center; padding:30px; color:#888;">Loading conversations...</div>
+                </div>
+            </div>
+
+            <!-- ===== CHAT AREA ===== -->
+            <div class="chat-area">
+                <div class="chat-header">
+                    <div class="user-detail">
+                        <div class="avatar" id="chatAvatar">👤</div>
+                        <div class="info">
+                            <div class="name" id="chatUserName">Select a user</div>
+                            <div class="email" id="chatUserEmail">Click on a user to start chatting</div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-close" onclick="closeChat()">✕ Close</button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="empty-msg">
+                        <div class="icon">💬</div>
+                        <h4>No conversation selected</h4>
+                        <p>Click on a user from the left panel to view messages.</p>
+                    </div>
+                </div>
+
+                <!-- Attachment Preview -->
+                <div class="attachment-preview" id="attachmentPreview">
+                    <div class="preview-box">
+                        <img id="previewThumb" src="" alt="Attachment" />
+                        <span id="previewName" style="font-size:13px; color:#333;">image.jpg</span>
+                        <button class="remove-attach" onclick="removeAttachment()">✕</button>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Type a reply..." disabled onkeypress="if(event.key==='Enter') sendAdminReply()" />
+                    <button class="btn-attach" onclick="document.getElementById('chatFileInput').click()" disabled>📎</button>
+                    <input type="file" id="chatFileInput" class="file-input" accept="image/*" onchange="handleAdminAttachment(this)" />
+                    <button class="btn-send" id="sendBtn" onclick="sendAdminReply()" disabled>📤 Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== BROADCAST BUTTON ===== -->
+        <div style="margin-top:20px; text-align:right;">
+            <button onclick="openBroadcast()" style="padding:12px 30px; background:#f5c842; color:#0d1b2a; border:none; border-radius:30px; font-weight:700; font-size:15px; cursor:pointer; transition:0.3s;">
+                📤 Send Broadcast to All Users
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== BROADCAST MODAL ===== -->
+    <div id="broadcastModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeBroadcast()">✕</button>
+            <h3>📤 Send Broadcast</h3>
+            <p style="color:#888; font-size:14px; margin-bottom:15px;">Send a message to ALL users at once.</p>
+
+            <div class="form-group">
+                <label>Subject *</label>
+                <input type="text" id="broadcastSubject" placeholder="Enter subject..." />
+            </div>
+            <div class="form-group">
+                <label>Message *</label>
+                <textarea id="broadcastMessage" placeholder="Type your broadcast message..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Target Audience</label>
+                <select id="broadcastTarget">
+                    <option value="all">All Users</option>
+                    <option value="active">Active Users Only</option>
+                    <option value="inactive">Inactive Users Only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Attach Image (Optional)</label>
+                <input type="file" id="broadcastFileInput" accept="image/*" onchange="previewBroadcastImage(this)" />
+                <img id="broadcastPreviewImg" class="broadcast-preview-img" />
+            </div>
+            <button class="btn-primary" onclick="sendBroadcast()">📤 Send Broadcast</button>
+            <button class="btn-secondary" onclick="closeBroadcast()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        let currentAdmin = null;
+        let selectedUser = null;
+        let chatFileAttachment = null;
+        let allUsers = [];
+        let messagesPollingInterval = null;
+
+        // =============================================
+        // ADMIN SESSION CHECK
+        // =============================================
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
+
+        // =============================================
+        // HELPER FUNCTIONS
+        // =============================================
+        async function fetchSupabase(table, params = '') {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error('Fetch error:', e);
+                return [];
+            }
+        }
+
+        async function insertSupabase(table, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Insert error:', e);
+                return false;
+            }
+        }
+
+        async function updateSupabase(table, id, data) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (e) {
+                console.error('Update error:', e);
+                return false;
+            }
+        }
+
+        function timeSince(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            let interval = Math.floor(seconds / 86400);
+            if (interval > 0) return interval + 'd ago';
+            interval = Math.floor(seconds / 3600);
+            if (interval > 0) return interval + 'h ago';
+            interval = Math.floor(seconds / 60);
+            if (interval > 0) return interval + 'm ago';
+            return 'Just now';
+        }
+
+        // =============================================
+        // LOAD CHAT LIST
+        // =============================================
+        async function loadChatList() {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = '<div style="text-align:center; padding:30px; color:#888;">Loading conversations...</div>';
+
+            try {
+                // Get all users
+                const users = await fetchSupabase('users', '?order=name.asc');
+                allUsers = users || [];
+
+                // Get all messages
+                const messages = await fetchSupabase('messages', '?order=created_at.desc');
+
+                // Build conversation list
+                const conversations = [];
+                const adminEmail = document.getElementById('adminEmail').textContent;
+
+                // Group messages by user
+                const userMap = new Map();
+
+                users.forEach(u => {
+                    userMap.set(u.email, {
+                        email: u.email,
+                        name: u.name || u.email,
+                        lastMsg: null,
+                        lastTime: null,
+                        unread: 0,
+                        user: u
+                    });
+                });
+
+                if (messages) {
+                    messages.forEach(msg => {
+                        let userEmail = null;
+                        if (msg.sender_email !== adminEmail && msg.sender_email !== 'admin@cashvista.com') {
+                            userEmail = msg.sender_email;
+                        } else if (msg.recipient_email !== adminEmail && msg.recipient_email !== 'admin@cashvista.com') {
+                            userEmail = msg.recipient_email;
+                        }
+
+                        if (userEmail && userMap.has(userEmail)) {
+                            const conv = userMap.get(userEmail);
+                            if (!conv.lastTime || new Date(msg.created_at) > new Date(conv.lastTime)) {
+                                conv.lastMsg = msg.message;
+                                conv.lastTime = msg.created_at;
+                            }
+                            if (msg.recipient_email === adminEmail && !msg.is_read) {
+                                conv.unread = (conv.unread || 0) + 1;
+                            }
+                        }
+                    });
+                }
+
+                // Convert to array and sort by last message time
+                const convArray = Array.from(userMap.values())
+                    .filter(c => c.lastMsg !== null)
+                    .sort((a, b) => {
+                        if (!a.lastTime) return 1;
+                        if (!b.lastTime) return -1;
+                        return new Date(b.lastTime) - new Date(a.lastTime);
+                    });
+
+                // Update stats
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('totalConversations').textContent = convArray.length;
+                let totalUnread = 0;
+                convArray.forEach(c => { totalUnread += (c.unread || 0); });
+                document.getElementById('unreadCount').textContent = totalUnread;
+                document.getElementById('onlineUsers').textContent = Math.floor(users.length * 0.2) + 2;
+
+                if (convArray.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:30px; color:#888;">
+                            <div style="font-size:40px;">💬</div>
+                            <p>No conversations yet.</p>
+                            <p style="font-size:13px;">Users will appear here when they send messages.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                convArray.forEach(conv => {
+                    const isActive = selectedUser && selectedUser.email === conv.email;
+                    const unreadBadge = conv.unread > 0 ? `<span class="badge-unread">${conv.unread}</span>` : '';
+                    const statusDot = conv.user && conv.user.is_active !== false ? 'online' : 'offline';
+
+                    html += `
+                        <div class="user-item ${isActive ? 'active' : ''}" onclick="selectUser('${conv.email}')">
+                            <div class="user-info">
+                                <div class="name">
+                                    <span class="status-dot ${statusDot}"></span>
+                                    ${conv.name}
+                                </div>
+                                <div class="last-msg">${conv.lastMsg ? conv.lastMsg.substring(0, 50) : 'No messages'}</div>
+                                <div class="time">${conv.lastTime ? timeSince(conv.lastTime) : 'N/A'}</div>
+                            </div>
+                            ${unreadBadge}
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+                // If a user was selected, keep them selected
+                if (selectedUser) {
+                    const found = allUsers.find(u => u.email === selectedUser.email);
+                    if (found) {
+                        selectUser(selectedUser.email);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading chat list:', error);
+                container.innerHTML = `
+                    <div style="text-align:center; padding:30px; color:#888;">
+                        <div style="font-size:40px;">❌</div>
+                        <p>Error loading conversations.</p>
+                        <button onclick="loadChatList()" style="margin-top:10px; padding:8px 24px; background:#f5c842; border:none; border-radius:30px; font-weight:700; cursor:pointer;">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // =============================================
+        // SELECT USER
+        // =============================================
+        async function selectUser(email) {
+            const user = allUsers.find(u => u.email === email);
+            if (!user) {
+                showToast('❌ User not found');
+                return;
+            }
+
+            selectedUser = user;
+
+            // Update chat header
+            document.getElementById('chatUserName').textContent = user.name || user.email;
+            document.getElementById('chatUserEmail').textContent = user.email;
+            document.getElementById('chatAvatar').textContent = (user.name || 'U')[0].toUpperCase();
+
+            // Enable input
+            document.getElementById('chatInput').disabled = false;
+            document.getElementById('chatInput').placeholder = `Reply to ${user.name || user.email}...`;
+            document.querySelector('.btn-attach').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+
+            // Load messages
+            await loadMessages(user.email);
+
+            // Mark messages as read
+            await markMessagesAsRead(user.email);
+
+            // Update user list to show active
+            loadChatList();
+        }
+
+        // =============================================
+        // LOAD MESSAGES
+        // =============================================
+        async function loadMessages(email) {
+            const container = document.getElementById('chatMessages');
+            const adminEmail = document.getElementById('adminEmail').textContent;
+
+            container.innerHTML = '<div style="text-align:center; padding:30px; color:#888;">Loading messages...</div>';
+
+            try {
+                const messages = await fetchSupabase(
+                    'messages',
+                    `?or=(sender_email.eq.${encodeURIComponent(email)},recipient_email.eq.${encodeURIComponent(email)})&order=created_at.asc`
+                );
+
+                if (!messages || messages.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-msg">
+                            <div class="icon">💬</div>
+                            <h4>No messages yet</h4>
+                            <p>Start the conversation by sending a message to ${selectedUser ? selectedUser.name : 'this user'}.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                let lastDate = '';
+
+                for (const msg of messages) {
+                    const msgDate = new Date(msg.created_at).toDateString();
+                    if (msgDate !== lastDate) {
+                        html += `
+                            <div style="text-align:center; margin:10px 0; font-size:12px; color:#aaa;">
+                                ${new Date(msg.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            </div>
+                        `;
+                        lastDate = msgDate;
+                    }
+
+                    const isAdmin = msg.sender_email === adminEmail;
+                    const msgClass = isAdmin ? 'admin-msg' : 'user-msg';
+                    const senderName = isAdmin ? 'Admin (You)' : (msg.sender_name || msg.sender_email || 'User');
+                    const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    let attachmentHtml = '';
+                    if (msg.attachment_url) {
+                        attachmentHtml = `<img src="${msg.attachment_url}" class="msg-attachment" onclick="viewFullImage('${msg.attachment_url}')" title="Click to view full image" />`;
+                    }
+
+                    html += `
+                        <div class="msg-item ${msgClass}">
+                            <span class="msg-sender">${senderName}</span>
+                            <div class="msg-bubble">
+                                ${msg.message}
+                                ${attachmentHtml}
+                                <span class="msg-time">${time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                container.innerHTML = `
+                    <div class="empty-msg">
+                        <div class="icon">❌</div>
+                        <h4>Error loading messages</h4>
+                        <p>Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // =============================================
+        // MARK MESSAGES AS READ
+        // =============================================
+        async function markMessagesAsRead(email) {
+            const adminEmail = document.getElementById('adminEmail').textContent;
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages?recipient_email=eq.' + encodeURIComponent(adminEmail) + '&sender_email=eq.' + encodeURIComponent(email) + '&is_read=eq.false', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({ is_read: true, read_at: new Date().toISOString() })
+                });
+                if (!response.ok) {
+                    console.log('Could not mark messages as read');
+                }
+            } catch (e) {
+                console.error('Error marking messages as read:', e);
+            }
+        }
+
+        // =============================================
+        // SEND ADMIN REPLY
+        // =============================================
+        async function sendAdminReply() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (!selectedUser) {
+                showToast('❌ Please select a user first.');
+                return;
+            }
+
+            if (!message && !chatFileAttachment) {
+                showToast('❌ Please type a message or attach an image.');
+                return;
+            }
+
+            const adminEmail = document.getElementById('adminEmail').textContent;
+            const adminName = 'Admin';
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = '⏳ Sending...';
+
+            try {
+                const msgData = {
+                    sender_email: adminEmail,
+                    sender_name: adminName,
+                    recipient_email: selectedUser.email,
+                    recipient_name: selectedUser.name || selectedUser.email,
+                    message: message || '📎 Sent an attachment',
+                    attachment_url: chatFileAttachment || null,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                };
+
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(msgData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+
+                // Log activity
+                await insertSupabase('activity', {
+                    user_name: 'Admin',
+                    action: `💬 Sent message to ${selectedUser.name}`,
+                    amount: 0,
+                    date: new Date().toISOString()
+                });
+
+                input.value = '';
+                removeAttachment();
+                sendBtn.textContent = '📤 Send';
+                sendBtn.disabled = false;
+
+                showToast('✅ Message sent!');
+
+                await loadMessages(selectedUser.email);
+                await loadChatList();
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showToast('❌ Error sending message. Please try again.');
+                sendBtn.textContent = '📤 Send';
+                sendBtn.disabled = false;
+            }
+        }
+
+        // =============================================
+        // HANDLE ADMIN ATTACHMENT
+        // =============================================
+        function handleAdminAttachment(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('❌ Please upload an image file (JPG, PNG, GIF)');
+                input.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('❌ Image size must be less than 5MB');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                chatFileAttachment = e.target.result;
+                document.getElementById('previewThumb').src = e.target.result;
+                document.getElementById('previewName').textContent = file.name;
+                document.getElementById('attachmentPreview').style.display = 'block';
+                showToast('📎 Image attached! Send your message.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeAttachment() {
+            chatFileAttachment = null;
+            document.getElementById('attachmentPreview').style.display = 'none';
+            document.getElementById('chatFileInput').value = '';
+        }
+
+        // =============================================
+        // CLOSE CHAT
+        // =============================================
+        function closeChat() {
+            selectedUser = null;
+            document.getElementById('chatUserName').textContent = 'Select a user';
+            document.getElementById('chatUserEmail').textContent = 'Click on a user to start chatting';
+            document.getElementById('chatAvatar').textContent = '👤';
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="empty-msg">
+                    <div class="icon">💬</div>
+                    <h4>No conversation selected</h4>
+                    <p>Click on a user from the left panel to view messages.</p>
+                </div>
+            `;
+            document.getElementById('chatInput').disabled = true;
+            document.getElementById('chatInput').placeholder = 'Select a user first...';
+            document.querySelector('.btn-attach').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+            removeAttachment();
+            loadChatList();
+        }
+
+        // =============================================
+        // VIEW FULL IMAGE
+        // =============================================
+        function viewFullImage(url) {
+            if (url) window.open(url, '_blank');
+        }
+
+        // =============================================
+        // FILTER USERS
+        // =============================================
+        function filterUsers(query) {
+            const items = document.querySelectorAll('.user-item');
+            const q = query.toLowerCase().trim();
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(q) ? 'flex' : 'none';
+            });
+        }
+
+        // =============================================
+        // BROADCAST FUNCTIONS
+        // =============================================
+        function openBroadcast() {
+            document.getElementById('broadcastModal').classList.add('active');
+            document.getElementById('broadcastSubject').value = '';
+            document.getElementById('broadcastMessage').value = '';
+            document.getElementById('broadcastFileInput').value = '';
+            document.getElementById('broadcastPreviewImg').style.display = 'none';
+        }
+
+        function closeBroadcast() {
+            document.getElementById('broadcastModal').classList.remove('active');
+        }
+
+        function previewBroadcastImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('broadcastPreviewImg');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function sendBroadcast() {
+            const subject = document.getElementById('broadcastSubject').value.trim();
+            const message = document.getElementById('broadcastMessage').value.trim();
+            const target = document.getElementById('broadcastTarget').value;
+            const fileInput = document.getElementById('broadcastFileInput');
+
+            if (!subject) {
+                showToast('❌ Please enter a subject.');
+                return;
+            }
+            if (!message) {
+                showToast('❌ Please enter a message.');
+                return;
+            }
+
+            if (!confirm(`📤 Send this broadcast to ALL ${target} users?\n\nSubject: ${subject}`)) return;
+
+            try {
+                let targetUsers = allUsers;
+                if (target === 'active') {
+                    targetUsers = allUsers.filter(u => u.is_invest_member === true);
+                } else if (target === 'inactive') {
+                    targetUsers = allUsers.filter(u => u.is_invest_member !== true);
+                }
+
+                if (targetUsers.length === 0) {
+                    showToast('❌ No users found for this target audience.');
+                    return;
+                }
+
+                let attachmentUrl = null;
+                if (fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    attachmentUrl = await new Promise((resolve) => {
+                        reader.onload = function(e) { resolve(e.target.result); };
+                        reader.readAsDataURL(fileInput.files[0]);
+                    });
+                }
+
+                const adminEmail = document.getElementById('adminEmail').textContent;
+                let sentCount = 0;
+
+                for (const user of targetUsers) {
+                    const msgData = {
+                        sender_email: adminEmail,
+                        sender_name: 'Admin',
+                        recipient_email: user.email,
+                        recipient_name: user.name || user.email,
+                        subject: subject,
+                        message: message,
+                        attachment_url: attachmentUrl,
+                        is_broadcast: true,
+                        is_read: false,
+                        created_at: new Date().toISOString()
+                    };
+                    const success = await insertSupabase('messages', msgData);
+                    if (success) sentCount++;
+                }
+
+                await insertSupabase('activity', {
+                    user_name: 'Admin',
+                    action: `📤 Sent broadcast to ${sentCount} users: ${subject}`,
+                    amount: 0,
+                    date: new Date().toISOString()
+                });
+
+                showToast(`✅ Broadcast sent to ${sentCount} users!`);
+                closeBroadcast();
+                loadChatList();
+
+            } catch (error) {
+                console.error('Error sending broadcast:', error);
+                showToast('❌ Error sending broadcast. Please try again.');
+            }
+        }
+
+        // =============================================
+        // TOAST NOTIFICATION
+        // =============================================
+        function showToast(message) {
+            const existing = document.querySelector('.toast-notification');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // =============================================
+        // POLL FOR NEW MESSAGES
+        // =============================================
+        function startPolling() {
+            if (messagesPollingInterval) {
+                clearInterval(messagesPollingInterval);
+            }
+            messagesPollingInterval = setInterval(() => {
+                if (document.querySelector('.chat-layout')) {
+                    loadChatList();
+                    if (selectedUser) {
+                        loadMessages(selectedUser.email);
+                    }
+                }
+            }, 15000);
+        }
+
+        // =============================================
+        // ADMIN LOGOUT
+        // =============================================
+        function adminLogout() {
+            if (confirm('Logout from admin panel?')) {
+                if (messagesPollingInterval) {
+                    clearInterval(messagesPollingInterval);
+                }
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminEmail');
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        // =============================================
+        // ENTER KEY TO SEND
+        // =============================================
+        document.getElementById('chatInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendAdminReply();
+            }
+        });
+
+        // =============================================
+        // INITIALIZE
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChatList();
+            startPolling();
+            console.log('💬 Admin Chat loaded successfully');
+        });
+    </script>
+</body>
+</html>
