@@ -195,6 +195,18 @@
         .btn-invest-inactive { background: #fce4ec; color: #c62828; cursor: default; }
         .btn-invest-inactive:hover { background: #fce4ec; color: #c62828; }
 
+        /* ===== NEW: CHAT UNREAD BADGE ===== */
+        .unread-badge {
+            background: #e74c3c;
+            color: #fff;
+            border-radius: 50%;
+            padding: 1px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 5px;
+            display: inline-block;
+        }
+
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -229,6 +241,130 @@
         .nav-tabs button:hover:not(.active) { background: #ccc; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+
+        /* ===== CHAT TAB STYLES ===== */
+        .chat-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .chat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-item:hover { background: #f8fafc; }
+        .chat-item .chat-info { flex: 1; }
+        .chat-item .chat-info .name { font-weight: 700; color: #0d1b2a; }
+        .chat-item .chat-info .last-msg { font-size: 13px; color: #888; }
+        .chat-item .chat-info .time { font-size: 11px; color: #aaa; }
+        .chat-item .unread-count {
+            background: #e74c3c;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .chat-item .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-dot.online { background: #2e7d32; }
+        .status-dot.offline { background: #888; }
+
+        .chat-conversation {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            max-width: 80%;
+        }
+        .chat-message.admin-msg {
+            background: #0d1b2a;
+            color: #fff;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-message.user-msg {
+            background: #f5c842;
+            color: #0d1b2a;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message .msg-time {
+            font-size: 10px;
+            opacity: 0.7;
+            display: block;
+            margin-top: 4px;
+        }
+        .chat-message .msg-attachment {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e8ecf0;
+        }
+        .chat-input-area input[type="text"] {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-input-area input[type="text"]:focus {
+            border-color: #f5c842;
+            outline: none;
+        }
+        .chat-input-area .btn-send {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-input-area .btn-send:hover { background: #e6b800; }
+        .chat-input-area .btn-attach {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        .chat-input-area .btn-attach:hover { background: #ccc; }
+        .chat-input-area .file-input { display: none; }
+
+        .chat-empty {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        .chat-empty .icon { font-size: 48px; margin-bottom: 10px; }
 
         .receipt-img {
             max-width: 200px;
@@ -488,6 +624,8 @@
             #receiptViewerOverlay .close-btn { font-size: 30px; top: 10px; right: 15px; }
             #receiptViewerOverlay .download-btn { font-size: 14px; padding: 10px 25px; }
             #receiptViewerOverlay .hint { font-size: 11px; }
+            .chat-input-area { flex-wrap: wrap; }
+            .chat-input-area input[type="text"] { width: 100%; }
         }
     </style>
 </head>
@@ -516,6 +654,7 @@
             <div class="stat-card"><div class="icon">📊</div><div class="number" id="todaySignups">0</div><div class="label">Today's Signups</div></div>
         </div>
 
+        <!-- ===== NAV TABS WITH CHAT TAB ADDED ===== -->
         <div class="nav-tabs">
             <button class="active" onclick="switchTab('pending')">📋 Pending <span id="pendingTabBadge" style="background:red; color:#fff; border-radius:50%; padding:0 8px; font-size:11px;">0</span></button>
             <button onclick="switchTab('campaigns')">📹 Campaigns</button>
@@ -524,6 +663,8 @@
             <button onclick="switchTab('batches')">📦 Batches</button>
             <button onclick="switchTab('users')">👥 Users</button>
             <button onclick="switchTab('activity')">🕐 Activity</button>
+            <!-- ===== NEW: CHAT TAB ===== -->
+            <button onclick="switchTab('chat')" id="chatTabBtn">💬 Chat <span id="chatUnreadBadge" class="unread-badge" style="display:none;">0</span></button>
         </div>
 
         <!-- TAB 1: PENDING APPROVALS -->
@@ -598,7 +739,7 @@
             </div>
         </div>
 
-        <!-- TAB 6: ALL USERS (UPDATED WITH INVEST ACTIVATE/DEACTIVATE) -->
+        <!-- TAB 6: ALL USERS -->
         <div id="tab-users" class="tab-content">
             <div class="section-card">
                 <div class="header"><h2>👥 All Users <span class="count-badge" id="userCountBadge">0</span></h2>
@@ -624,6 +765,25 @@
                         <thead><tr><th>User</th><th>Action</th><th>Amount</th><th>Date</th></tr></thead>
                         <tbody id="activityTableBody"><tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB 8: CHAT ===== -->
+        <div id="tab-chat" class="tab-content">
+            <div class="section-card">
+                <div class="header">
+                    <h2>💬 Admin Chat</h2>
+                    <div class="actions">
+                        <button class="btn-refresh" onclick="loadChatList()">🔄 Refresh</button>
+                        <button class="btn-refresh" style="background:#f5c842; color:#0d1b2a;" onclick="openBroadcast()">📤 Broadcast</button>
+                    </div>
+                </div>
+                <div id="chatContainer">
+                    <div class="chat-empty">
+                        <div class="icon">💬</div>
+                        <p>Loading conversations...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -666,6 +826,55 @@
                 <div class="empty-state"><div class="icon">👤</div><p>Loading user details...</p></div>
             </div>
             <button class="btn-close-modal" onclick="closeUserDetailModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- ===== CHAT REPLY MODAL ===== -->
+    <div id="chatReplyModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeChatReply()">✕</button>
+            <h3 id="chatReplyTitle">💬 Chat with <span id="chatUserName">User</span></h3>
+            <div id="chatReplyContent">
+                <div class="chat-conversation" id="chatConversation"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatReplyInput" placeholder="Type your reply..." />
+                    <button class="btn-attach" onclick="document.getElementById('chatFileInput').click()">📎</button>
+                    <input type="file" id="chatFileInput" class="file-input" accept="image/*" onchange="attachChatFile(this)" />
+                    <button class="btn-send" onclick="sendChatReply()">📤 Send</button>
+                </div>
+            </div>
+            <button class="btn-close-modal" onclick="closeChatReply()">Close</button>
+        </div>
+    </div>
+
+    <!-- ===== BROADCAST MODAL ===== -->
+    <div id="broadcastModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeBroadcast()">✕</button>
+            <h3>📤 Send Broadcast to All Users</h3>
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Subject</label>
+                <input type="text" id="broadcastSubject" placeholder="Enter subject..." style="width:100%; padding:10px 15px; border:2px solid #e8ecf0; border-radius:12px; font-size:15px;" />
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Message</label>
+                <textarea id="broadcastMessage" rows="6" placeholder="Type your message here..." style="width:100%; padding:10px 15px; border:2px solid #e8ecf0; border-radius:12px; font-size:15px; font-family: 'Inter', sans-serif;"></textarea>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Target Audience</label>
+                <select id="broadcastTarget" style="width:100%; padding:10px 15px; border:2px solid #e8ecf0; border-radius:12px; font-size:15px;">
+                    <option value="all">All Users</option>
+                    <option value="active">Active Users Only</option>
+                    <option value="inactive">Inactive Users Only</option>
+                </select>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; display:block; margin-bottom:5px; font-size:14px;">Attach Image (Optional)</label>
+                <input type="file" id="broadcastFileInput" accept="image/*" style="width:100%; padding:10px; border:2px dashed #e8ecf0; border-radius:12px;" />
+                <img id="broadcastPreview" style="max-width:100%; max-height:150px; border-radius:8px; margin-top:8px; display:none;" />
+            </div>
+            <button onclick="sendBroadcast()" style="width:100%; padding:14px; background:#f5c842; color:#0d1b2a; border:none; border-radius:12px; font-weight:700; font-size:16px; cursor:pointer;">📤 Send Broadcast</button>
+            <button onclick="closeBroadcast()" style="width:100%; padding:12px; background:#e0e0e0; color:#333; border:none; border-radius:12px; font-weight:600; margin-top:10px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
@@ -792,7 +1001,7 @@
         }
 
         // =============================================
-        // ✅ FIXED: ACTIVATE INVEST MEMBER - UPDATES USERS TABLE CORRECTLY
+        // ACTIVATE INVEST MEMBER
         // =============================================
         async function activateInvestMember(email) {
             if (!confirm(`✅ Activate Invest & Grow for ${email}?\n\nThis will generate their referral link.`)) return;
@@ -802,10 +1011,7 @@
                 const referralLink = generateReferralLink(uniqueId);
 
                 console.log('🔄 Activating user:', email);
-                console.log('📝 Generated referral code:', uniqueId);
-                console.log('🔗 Generated referral link:', referralLink);
 
-                // ✅ STEP 1: Update users table with referral code and link
                 const userUpdateResponse = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'PATCH',
                     headers: {
@@ -821,17 +1027,12 @@
                 });
 
                 if (!userUpdateResponse.ok) {
-                    const errorText = await userUpdateResponse.text();
-                    console.error('❌ Failed to update users table:', errorText);
-                    throw new Error('Failed to update users table: ' + errorText);
+                    throw new Error('Failed to update users table');
                 }
-                console.log('✅ Users table updated successfully');
 
-                // ✅ STEP 2: Check if user already has an invest_members record
                 const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
                 
                 if (!existing || existing.length === 0) {
-                    // Create invest_members record
                     await insertSupabase('invest_members', {
                         user_email: email,
                         amount: 5000,
@@ -839,17 +1040,13 @@
                         referral_link: referralLink,
                         created_at: new Date().toISOString()
                     });
-                    console.log('✅ Invest members record created');
                 } else {
-                    // Update existing record
                     await updateSupabase('invest_members', existing[0].id, {
                         status: 'approved',
                         referral_link: referralLink
                     });
-                    console.log('✅ Invest members record updated');
                 }
 
-                // ✅ STEP 3: Log activity
                 await insertSupabase('activity', {
                     user_name: email,
                     action: 'Invest & Grow activated by admin - referral link generated: ' + referralLink,
@@ -872,9 +1069,6 @@
             if (!confirm(`❌ Deactivate Invest & Grow for ${email}?\n\nThis will hide their referral link.`)) return;
             
             try {
-                console.log('🔄 Deactivating user:', email);
-
-                // Update user
                 await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'PATCH',
                     headers: {
@@ -889,7 +1083,6 @@
                     })
                 });
 
-                // Update invest_members record
                 const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
                 if (existing && existing.length > 0) {
                     await updateSupabase('invest_members', existing[0].id, {
@@ -897,7 +1090,6 @@
                     });
                 }
 
-                // Log activity
                 await insertSupabase('activity', {
                     user_name: email,
                     action: 'Invest & Grow deactivated by admin',
@@ -921,10 +1113,11 @@
             document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             const buttons = document.querySelectorAll('.nav-tabs button');
-            const tabs = ['pending', 'campaigns', 'invest', 'withdrawals', 'batches', 'users', 'activity'];
+            const tabs = ['pending', 'campaigns', 'invest', 'withdrawals', 'batches', 'users', 'activity', 'chat'];
             const index = tabs.indexOf(tabName);
             if (index !== -1) buttons[index].classList.add('active');
             if (tabName === 'batches') renderBatches();
+            if (tabName === 'chat') loadChatList();
         }
 
         // =============================================
@@ -1423,7 +1616,384 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD - UPDATED WITH INVEST ACTIVATE/DEACTIVATE
+        // =============================================
+        // CHAT FUNCTIONS
+        // =============================================
+        let chatFileAttachment = null;
+        let currentChatUser = null;
+
+        // =============================================
+        // LOAD CHAT LIST
+        // =============================================
+        async function loadChatList() {
+            const container = document.getElementById('chatContainer');
+            container.innerHTML = '<div class="chat-empty"><div class="icon">🔄</div><p>Loading conversations...</p></div>';
+
+            try {
+                // Get all users who have sent messages
+                const messages = await fetchSupabase('messages', '?order=created_at.desc');
+                
+                if (!messages || messages.length === 0) {
+                    container.innerHTML = `
+                        <div class="chat-empty">
+                            <div class="icon">💬</div>
+                            <p>No messages yet. Users will appear here when they send messages.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Group messages by sender/recipient
+                const usersMap = new Map();
+                const adminEmail = document.getElementById('adminEmail').textContent;
+
+                messages.forEach(msg => {
+                    let userEmail, userName, lastMsg, lastTime;
+                    
+                    // Determine if message is from user or admin
+                    if (msg.sender_email !== adminEmail && msg.sender_email !== 'admin@cashvista.com') {
+                        // Message from user to admin
+                        userEmail = msg.sender_email;
+                        userName = msg.sender_name || msg.sender_email;
+                        lastMsg = msg.message;
+                        lastTime = msg.created_at;
+                    } else if (msg.recipient_email !== adminEmail && msg.recipient_email !== 'admin@cashvista.com') {
+                        // Message from admin to user
+                        userEmail = msg.recipient_email;
+                        userName = msg.recipient_name || msg.recipient_email;
+                        lastMsg = msg.message;
+                        lastTime = msg.created_at;
+                    }
+
+                    if (userEmail && !usersMap.has(userEmail)) {
+                        usersMap.set(userEmail, { email: userEmail, name: userName, lastMsg: lastMsg, lastTime: lastTime, unread: 0 });
+                    }
+                });
+
+                if (usersMap.size === 0) {
+                    container.innerHTML = `
+                        <div class="chat-empty">
+                            <div class="icon">💬</div>
+                            <p>No conversations yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `<div class="chat-list">`;
+                for (const [email, data] of usersMap) {
+                    const timeAgo = data.lastTime ? timeSince(new Date(data.lastTime)) : 'N/A';
+                    html += `
+                        <div class="chat-item" onclick="openChatReply('${email}', '${data.name}')">
+                            <div class="chat-info">
+                                <div class="name">${data.name}</div>
+                                <div class="last-msg">${data.lastMsg ? data.lastMsg.substring(0, 60) : 'No messages'}</div>
+                                <div class="time">${timeAgo}</div>
+                            </div>
+                            ${data.unread > 0 ? `<span class="unread-count">${data.unread}</span>` : ''}
+                            <span class="status-dot offline"></span>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading chat list:', error);
+                container.innerHTML = `<div class="chat-empty"><div class="icon">❌</div><p>Error loading conversations. Please try again.</p></div>`;
+            }
+        }
+
+        // =============================================
+        // OPEN CHAT REPLY
+        // =============================================
+        async function openChatReply(email, name) {
+            currentChatUser = { email, name };
+            document.getElementById('chatUserName').textContent = name;
+            document.getElementById('chatReplyTitle').innerHTML = `💬 Chat with <span id="chatUserName">${name}</span>`;
+            document.getElementById('chatReplyModal').style.display = 'flex';
+            document.getElementById('chatReplyInput').value = '';
+            chatFileAttachment = null;
+
+            // Load conversation
+            await loadConversation(email);
+        }
+
+        // =============================================
+        // LOAD CONVERSATION
+        // =============================================
+        async function loadConversation(email) {
+            const conversationDiv = document.getElementById('chatConversation');
+            conversationDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Loading messages...</div>';
+
+            try {
+                const adminEmail = document.getElementById('adminEmail').textContent;
+                const messages = await fetchSupabase(
+                    'messages',
+                    `?or=(sender_email.eq.${encodeURIComponent(email)},recipient_email.eq.${encodeURIComponent(email)})&order=created_at.asc`
+                );
+
+                if (!messages || messages.length === 0) {
+                    conversationDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">No messages yet. Start the conversation!</div>';
+                    return;
+                }
+
+                let html = '';
+                messages.forEach(msg => {
+                    const isAdmin = msg.sender_email === adminEmail || msg.sender_email === 'admin@cashvista.com';
+                    const msgClass = isAdmin ? 'admin-msg' : 'user-msg';
+                    const senderLabel = isAdmin ? 'Admin' : msg.sender_name || 'User';
+                    const time = new Date(msg.created_at).toLocaleTimeString();
+
+                    html += `
+                        <div class="chat-message ${msgClass}">
+                            <strong>${senderLabel}</strong>
+                            <div>${msg.message}</div>
+                            ${msg.attachment_url ? `<img src="${msg.attachment_url}" class="msg-attachment" onclick="viewReceipt('${msg.attachment_url}')" />` : ''}
+                            <span class="msg-time">${time}</span>
+                        </div>
+                    `;
+                });
+
+                conversationDiv.innerHTML = html;
+                conversationDiv.scrollTop = conversationDiv.scrollHeight;
+
+            } catch (error) {
+                console.error('Error loading conversation:', error);
+                conversationDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Error loading messages.</div>';
+            }
+        }
+
+        // =============================================
+        // SEND CHAT REPLY
+        // =============================================
+        async function sendChatReply() {
+            const input = document.getElementById('chatReplyInput');
+            const message = input.value.trim();
+            
+            if (!message && !chatFileAttachment) {
+                alert('Please type a message or attach an image.');
+                return;
+            }
+
+            if (!currentChatUser) {
+                alert('No user selected.');
+                return;
+            }
+
+            try {
+                const adminEmail = document.getElementById('adminEmail').textContent;
+                const adminName = 'Admin';
+
+                let attachmentUrl = null;
+                if (chatFileAttachment) {
+                    attachmentUrl = chatFileAttachment;
+                }
+
+                const msgData = {
+                    sender_email: adminEmail,
+                    sender_name: adminName,
+                    recipient_email: currentChatUser.email,
+                    recipient_name: currentChatUser.name,
+                    message: message || '📎 Sent an attachment',
+                    attachment_url: attachmentUrl,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                };
+
+                const success = await insertSupabase('messages', msgData);
+
+                if (!success) {
+                    alert('❌ Error sending message. Please try again.');
+                    return;
+                }
+
+                // Add to activity log
+                await insertSupabase('activity', {
+                    user_name: 'Admin',
+                    action: `Sent message to ${currentChatUser.name}`,
+                    amount: 0,
+                    date: new Date().toISOString()
+                });
+
+                input.value = '';
+                chatFileAttachment = null;
+                document.getElementById('chatFileInput').value = '';
+
+                await loadConversation(currentChatUser.email);
+                await loadChatList();
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('❌ Error sending message. Please try again.');
+            }
+        }
+
+        // =============================================
+        // ATTACH CHAT FILE
+        // =============================================
+        function attachChatFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                chatFileAttachment = e.target.result;
+                alert('✅ Image attached! Send your message to share it.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // =============================================
+        // CLOSE CHAT REPLY
+        // =============================================
+        function closeChatReply() {
+            document.getElementById('chatReplyModal').style.display = 'none';
+            currentChatUser = null;
+            chatFileAttachment = null;
+        }
+
+        document.getElementById('chatReplyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeChatReply();
+            }
+        });
+
+        document.getElementById('chatReplyInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatReply();
+            }
+        });
+
+        // =============================================
+        // BROADCAST FUNCTIONS
+        // =============================================
+        function openBroadcast() {
+            document.getElementById('broadcastModal').style.display = 'flex';
+            document.getElementById('broadcastSubject').value = '';
+            document.getElementById('broadcastMessage').value = '';
+            document.getElementById('broadcastFileInput').value = '';
+            document.getElementById('broadcastPreview').style.display = 'none';
+        }
+
+        function closeBroadcast() {
+            document.getElementById('broadcastModal').style.display = 'none';
+        }
+
+        document.getElementById('broadcastModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBroadcast();
+            }
+        });
+
+        document.getElementById('broadcastFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('broadcastPreview');
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function sendBroadcast() {
+            const subject = document.getElementById('broadcastSubject').value.trim();
+            const message = document.getElementById('broadcastMessage').value.trim();
+            const target = document.getElementById('broadcastTarget').value;
+
+            if (!subject) {
+                alert('❌ Please enter a subject.');
+                return;
+            }
+            if (!message) {
+                alert('❌ Please enter a message.');
+                return;
+            }
+
+            if (!confirm(`📤 Send this broadcast to ALL ${target} users?\n\nSubject: ${subject}`)) return;
+
+            try {
+                const users = await fetchSupabase('users', '');
+                let targetUsers = users;
+                
+                if (target === 'active') {
+                    targetUsers = users.filter(u => u.is_invest_member === true);
+                } else if (target === 'inactive') {
+                    targetUsers = users.filter(u => u.is_invest_member !== true);
+                }
+
+                if (targetUsers.length === 0) {
+                    alert('❌ No users found for this target audience.');
+                    return;
+                }
+
+                const adminEmail = document.getElementById('adminEmail').textContent;
+                const adminName = 'Admin';
+
+                let attachmentUrl = null;
+                const fileInput = document.getElementById('broadcastFileInput');
+                if (fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    attachmentUrl = await new Promise((resolve) => {
+                        reader.onload = function(e) { resolve(e.target.result); };
+                        reader.readAsDataURL(fileInput.files[0]);
+                    });
+                }
+
+                let sentCount = 0;
+                for (const user of targetUsers) {
+                    const msgData = {
+                        sender_email: adminEmail,
+                        sender_name: adminName,
+                        recipient_email: user.email,
+                        recipient_name: user.name || user.email,
+                        subject: subject,
+                        message: message,
+                        attachment_url: attachmentUrl,
+                        is_broadcast: true,
+                        is_read: false,
+                        created_at: new Date().toISOString()
+                    };
+                    const success = await insertSupabase('messages', msgData);
+                    if (success) sentCount++;
+                }
+
+                await insertSupabase('activity', {
+                    user_name: 'Admin',
+                    action: `Sent broadcast to ${sentCount} users: ${subject}`,
+                    amount: 0,
+                    date: new Date().toISOString()
+                });
+
+                alert(`✅ Broadcast sent to ${sentCount} users!`);
+                closeBroadcast();
+                loadChatList();
+
+            } catch (error) {
+                console.error('Error sending broadcast:', error);
+                alert('❌ Error sending broadcast. Please try again.');
+            }
+        }
+
+        // =============================================
+        // TIME AGO HELPER
+        // =============================================
+        function timeSince(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = Math.floor(seconds / 86400);
+            if (interval > 0) return interval + 'd ago';
+            interval = Math.floor(seconds / 3600);
+            if (interval > 0) return interval + 'h ago';
+            interval = Math.floor(seconds / 60);
+            if (interval > 0) return interval + 'm ago';
+            return 'Just now';
+        }
+
+        // =============================================
+        // RENDER DASHBOARD - UPDATED WITH CHAT
         // =============================================
         async function renderDashboard() {
             try {
@@ -1435,6 +2005,22 @@
                 const withdrawals = await fetchSupabase('withdrawals', '?order=created_at.desc');
                 const activity = await fetchSupabase('activity', '?order=created_at.desc&limit=20');
                 const batches = await fetchSupabase('batches', '?order=created_at.asc');
+
+                // Get unread chat messages count
+                const adminEmail = document.getElementById('adminEmail').textContent;
+                const unreadMessages = await fetchSupabase(
+                    'messages',
+                    `?recipient_email=eq.${encodeURIComponent(adminEmail)}&is_read=eq.false&sender_email=neq.${encodeURIComponent(adminEmail)}`
+                );
+                const unreadCount = unreadMessages ? unreadMessages.length : 0;
+
+                const chatBadge = document.getElementById('chatUnreadBadge');
+                if (unreadCount > 0) {
+                    chatBadge.style.display = 'inline-block';
+                    chatBadge.textContent = unreadCount;
+                } else {
+                    chatBadge.style.display = 'none';
+                }
 
                 console.log('Users:', users?.length || 0);
                 console.log('Campaigns:', campaigns?.length || 0);
@@ -1660,9 +2246,7 @@
                     }).join('');
                 }
 
-                // =============================================
-                // ✅ UPDATED: USERS TABLE WITH INVEST ACTIVATE/DEACTIVATE
-                // =============================================
+                // --- USERS TABLE ---
                 const userBody = document.getElementById('userTableBody');
                 if (!users || users.length === 0) {
                     userBody.innerHTML = `<tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr>`;
@@ -1697,6 +2281,7 @@
                                     <button class="btn-sm ${user.is_active !== false ? 'btn-suspend' : 'btn-activate'}" onclick="toggleUser('${user.email}')">${user.is_active !== false ? '🔒' : '🔓'}</button>
                                     <button class="btn-sm btn-delete" onclick="deleteUser('${user.email}')">🗑️</button>
                                     <button class="btn-sm btn-details" onclick="openUserDetailModal('${user.email}')">📊</button>
+                                    <button class="btn-sm btn-link" onclick="openChatReply('${user.email}', '${user.name || user.email}')">💬</button>
                                 </td>
                             </tr>
                         `;
@@ -1744,7 +2329,6 @@
                     const uniqueId = 'REF_' + Date.now() + '_' + userEmail.split('@')[0];
                     const referralLink = APP_URL + '/register.html?ref=' + uniqueId;
 
-                    // Update users table
                     await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
                         method: 'PATCH',
                         headers: {
