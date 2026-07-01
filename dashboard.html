@@ -53,6 +53,40 @@
             transition: 0.3s;
         }
         .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
+
+        /* ===== NEW: CHAT ICON IN TOP BAR ===== */
+        .chat-icon-container {
+            position: relative;
+            display: inline-block;
+        }
+        .chat-icon-container .chat-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ddd;
+            transition: 0.3s;
+            padding: 4px 8px;
+            border-radius: 50%;
+        }
+        .chat-icon-container .chat-btn:hover {
+            color: #f5c842;
+            background: rgba(245, 200, 66, 0.1);
+        }
+        .chat-icon-container .unread-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+        }
+
         .container { max-width: 1300px; margin: 0 auto; padding: 25px 20px; }
         .welcome-banner {
             background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 100%);
@@ -225,9 +259,161 @@
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
+
+        /* ===== CHAT MODAL STYLES ===== */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            max-width: 95%;
+            height: 500px;
+            max-height: 80vh;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 99998;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+        .chat-modal.active {
+            display: flex;
+        }
+        .chat-modal .chat-header {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .chat-modal .chat-header h4 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .chat-modal .chat-header .close-chat {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+        .chat-modal .chat-header .close-chat:hover { opacity: 1; }
+        .chat-modal .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+            background: #f8fafc;
+        }
+        .chat-modal .chat-messages .empty-msg {
+            text-align: center;
+            color: #888;
+            padding: 30px 0;
+            font-size: 14px;
+        }
+        .chat-modal .chat-messages .msg-item {
+            margin-bottom: 12px;
+            max-width: 85%;
+        }
+        .chat-modal .chat-messages .msg-item.user-msg {
+            margin-left: auto;
+        }
+        .chat-modal .chat-messages .msg-item .msg-bubble {
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        .chat-modal .chat-messages .msg-item.admin-msg .msg-bubble {
+            background: #0d1b2a;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-modal .chat-messages .msg-item.user-msg .msg-bubble {
+            background: #f5c842;
+            color: #0d1b2a;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-modal .chat-messages .msg-item .msg-time {
+            font-size: 10px;
+            color: #888;
+            margin-top: 3px;
+            display: block;
+        }
+        .chat-modal .chat-messages .msg-item.user-msg .msg-time {
+            text-align: right;
+        }
+        .chat-modal .chat-messages .msg-attachment {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+        .chat-modal .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 12px 15px;
+            border-top: 1px solid #e8ecf0;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .chat-modal .chat-input-area input[type="text"] {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .chat-modal .chat-input-area input[type="text"]:focus {
+            border-color: #f5c842;
+        }
+        .chat-modal .chat-input-area .btn-attach {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        .chat-modal .chat-input-area .btn-attach:hover { background: #ccc; }
+        .chat-modal .chat-input-area .btn-send {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-modal .chat-input-area .btn-send:hover { background: #e6b800; }
+        .chat-modal .chat-input-area .file-input { display: none; }
+
+        @media (max-width: 480px) {
+            .chat-modal {
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
-            .topbar .user-info { justify-content: center; }
+            .topbar .user-info { justify-content: center; flex-wrap: wrap; }
             .welcome-banner { flex-direction: column; text-align: center; padding: 25px 20px; }
             .welcome-banner .stats-mini { justify-content: center; margin-top: 12px; }
             .dashboard-grid { grid-template-columns: 1fr; }
@@ -247,7 +433,29 @@
         <div class="user-info">
             <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
             <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
+            <!-- ===== NEW: CHAT ICON ===== -->
+            <div class="chat-icon-container">
+                <button class="chat-btn" onclick="toggleChat()" title="Chat with Admin">💬</button>
+                <span class="unread-badge" id="chatUnreadBadge" style="display:none;">0</span>
+            </div>
             <button class="logout" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <!-- ===== CHAT MODAL ===== -->
+    <div id="chatModal" class="chat-modal">
+        <div class="chat-header">
+            <h4>💬 Chat with Admin</h4>
+            <button class="close-chat" onclick="toggleChat()">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="empty-msg">💬 Send a message to admin</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendUserMessage()" />
+            <button class="btn-attach" onclick="document.getElementById('chatFileInput').click()">📎</button>
+            <input type="file" id="chatFileInput" class="file-input" accept="image/*" onchange="attachUserFile(this)" />
+            <button class="btn-send" onclick="sendUserMessage()">📤</button>
         </div>
     </div>
 
@@ -349,15 +557,14 @@
         const APP_URL = 'https://cashvista.vercel.app';
 
         let currentUser = null;
+        let chatFileAttachment = null;
 
         // =============================================
         // GET LOGGED-IN USER
         // =============================================
         async function getLoggedInUser() {
-            // Check sessionStorage first
             let userEmail = sessionStorage.getItem('userEmail');
             
-            // If not in sessionStorage, check localStorage
             if (!userEmail) {
                 const stored = localStorage.getItem('cashvista_user');
                 if (stored) {
@@ -399,7 +606,6 @@
                 }
 
                 const user = users[0];
-                // Update localStorage with fresh data
                 localStorage.setItem('cashvista_user', JSON.stringify(user));
                 sessionStorage.setItem('userEmail', user.email);
                 if (user.name) sessionStorage.setItem('userName', user.name);
@@ -448,14 +654,12 @@
         }
 
         // =============================================
-        // ✅ FIXED: LOAD TRANSACTIONS - NO ORDER BY ERROR
+        // LOAD TRANSACTIONS
         // =============================================
         async function loadTransactions(email) {
             const tbody = document.getElementById('transactionHistory');
 
             try {
-                // ✅ FIXED: Remove the ORDER BY clause that was causing 400 error
-                // Just get the data and sort it in JavaScript
                 const response = await fetch(SUPABASE_URL + '/rest/v1/activity?user_email=eq.' + encodeURIComponent(email), {
                     method: 'GET',
                     headers: {
@@ -464,10 +668,7 @@
                     }
                 });
 
-                // If activity table doesn't exist, try wallet_transactions
                 if (!response.ok) {
-                    console.log('Activity table not found, trying wallet_transactions');
-                    
                     const fallbackResponse = await fetch(SUPABASE_URL + '/rest/v1/wallet_transactions?user_email=eq.' + encodeURIComponent(email), {
                         headers: {
                             'apikey': SUPABASE_KEY,
@@ -495,7 +696,7 @@
         }
 
         // =============================================
-        // RENDER TRANSACTIONS - SORT IN JAVASCRIPT
+        // RENDER TRANSACTIONS
         // =============================================
         function renderTransactions(tbody, data) {
             if (!data || data.length === 0) {
@@ -503,14 +704,12 @@
                 return;
             }
 
-            // ✅ Sort by date in JavaScript (newest first)
             data.sort((a, b) => {
                 const dateA = new Date(a.created_at || a.date || a.timestamp || 0);
                 const dateB = new Date(b.created_at || b.date || b.timestamp || 0);
                 return dateB - dateA;
             });
 
-            // Take only last 10
             const recent = data.slice(0, 10);
 
             tbody.innerHTML = recent.map(t => {
@@ -532,6 +731,224 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        // =============================================
+        // ✅ NEW: GET UNREAD MESSAGE COUNT
+        // =============================================
+        async function getUnreadMessageCount(userEmail) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages?recipient_email=eq.' + encodeURIComponent(userEmail) + '&is_read=eq.false', {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+                if (!response.ok) return 0;
+                const data = await response.json();
+                return data ? data.length : 0;
+            } catch (e) {
+                console.error('Error getting unread count:', e);
+                return 0;
+            }
+        }
+
+        // =============================================
+        // ✅ NEW: LOAD CHAT MESSAGES
+        // =============================================
+        async function loadChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages?or=(sender_email.eq.' + encodeURIComponent(currentUser.email) + ',recipient_email.eq.' + encodeURIComponent(currentUser.email) + ')&order=created_at.asc', {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+
+                if (!response.ok) {
+                    container.innerHTML = '<div class="empty-msg">💬 Unable to load messages</div>';
+                    return;
+                }
+
+                const messages = await response.json();
+
+                if (!messages || messages.length === 0) {
+                    container.innerHTML = '<div class="empty-msg">💬 No messages yet. Send a message to admin.</div>';
+                    return;
+                }
+
+                let html = '';
+                for (const msg of messages) {
+                    const isAdmin = msg.sender_email === 'admin@cashvista.com';
+                    const msgClass = isAdmin ? 'admin-msg' : 'user-msg';
+                    const senderName = isAdmin ? 'Admin' : 'You';
+                    const time = new Date(msg.created_at).toLocaleTimeString();
+
+                    html += `
+                        <div class="msg-item ${msgClass}">
+                            <div class="msg-bubble">
+                                <strong>${senderName}</strong>
+                                <div>${msg.message}</div>
+                                ${msg.attachment_url ? `<img src="${msg.attachment_url}" class="msg-attachment" onclick="showToast('📸 Viewing image...')" />` : ''}
+                                <span class="msg-time">${time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+
+                // Mark messages as read
+                await markMessagesAsRead(currentUser.email);
+
+            } catch (error) {
+                console.error('Error loading chat messages:', error);
+                container.innerHTML = '<div class="empty-msg">💬 Error loading messages</div>';
+            }
+        }
+
+        // =============================================
+        // ✅ NEW: MARK MESSAGES AS READ
+        // =============================================
+        async function markMessagesAsRead(userEmail) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages?recipient_email=eq.' + encodeURIComponent(userEmail) + '&is_read=eq.false', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({ is_read: true, read_at: new Date().toISOString() })
+                });
+                if (response.ok) {
+                    updateUnreadBadge(userEmail);
+                }
+            } catch (e) {
+                console.error('Error marking messages as read:', e);
+            }
+        }
+
+        // =============================================
+        // ✅ NEW: UPDATE UNREAD BADGE
+        // =============================================
+        async function updateUnreadBadge(userEmail) {
+            const count = await getUnreadMessageCount(userEmail);
+            const badge = document.getElementById('chatUnreadBadge');
+            if (count > 0) {
+                badge.style.display = 'inline-block';
+                badge.textContent = count;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // =============================================
+        // ✅ NEW: TOGGLE CHAT MODAL
+        // =============================================
+        function toggleChat() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.toggle('active');
+            if (modal.classList.contains('active')) {
+                loadChatMessages();
+            }
+        }
+
+        // =============================================
+        // ✅ NEW: ATTACH USER FILE
+        // =============================================
+        function attachUserFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                chatFileAttachment = e.target.result;
+                showToast('📎 Image attached! Send your message.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // =============================================
+        // ✅ NEW: SEND USER MESSAGE
+        // =============================================
+        async function sendUserMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message && !chatFileAttachment) {
+                showToast('❌ Please type a message or attach an image.');
+                return;
+            }
+
+            if (!currentUser) {
+                showToast('❌ Please login to send messages.');
+                return;
+            }
+
+            try {
+                const msgData = {
+                    sender_email: currentUser.email,
+                    sender_name: currentUser.name || currentUser.email,
+                    recipient_email: 'admin@cashvista.com',
+                    recipient_name: 'Admin',
+                    message: message || '📎 Sent an attachment',
+                    attachment_url: chatFileAttachment || null,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                };
+
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(msgData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+
+                // Send email notification to admin
+                try {
+                    await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            user_name: currentUser.name || currentUser.email,
+                            action: '💬 New message from ' + (currentUser.name || currentUser.email),
+                            amount: 0,
+                            date: new Date().toISOString()
+                        })
+                    });
+                } catch (e) {
+                    console.log('Could not log activity:', e);
+                }
+
+                input.value = '';
+                chatFileAttachment = null;
+                document.getElementById('chatFileInput').value = '';
+
+                showToast('✅ Message sent to admin!');
+
+                // Reload messages
+                await loadChatMessages();
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showToast('❌ Error sending message. Please try again.');
+            }
         }
 
         // =============================================
@@ -575,6 +992,9 @@
                 }
 
                 await loadTransactions(user.email);
+
+                // ✅ NEW: Update chat unread badge
+                await updateUnreadBadge(user.email);
 
             } catch (error) {
                 console.error('Error loading dashboard:', error);
