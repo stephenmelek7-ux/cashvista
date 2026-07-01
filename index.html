@@ -479,12 +479,12 @@
         <a href="register.html" class="btn">Get Started — It's Free</a>
     </section>
 
-    <!-- ===== STATS BAR ===== -->
+    <!-- ===== STATS BAR - UPDATED ===== -->
     <section class="stats-bar">
-        <div class="stat"><h2 id="statUsers">0+</h2><p>Active Users</p></div>
-        <div class="stat"><h2 id="statEarnings">₦0+</h2><p>Earnings Paid</p></div>
-        <div class="stat"><h2 id="statCampaigns">0+</h2><p>Video Campaigns</p></div>
-        <div class="stat"><h2 id="statAdvertisers">0+</h2><p>Advertisers</p></div>
+        <div class="stat"><h2>1000+</h2><p>Active Users</p></div>
+        <div class="stat"><h2>₦375,000+</h2><p>Earnings Paid</p></div>
+        <div class="stat"><h2>11+</h2><p>Video Campaigns</p></div>
+        <div class="stat"><h2>11+</h2><p>Advertisers</p></div>
     </section>
 
     <!-- ===== FEATURES ===== -->
@@ -598,24 +598,10 @@
         <p class="whatsapp">📱 WhatsApp: 08039541999</p>
     </footer>
 
-    <!-- ===== STATS SCRIPT ===== -->
+    <!-- ===== STATS SCRIPT - REMOVED DYNAMIC UPDATES ===== -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                const users = JSON.parse(localStorage.getItem('cashvista_users') || '[]');
-                const campaigns = JSON.parse(localStorage.getItem('cashvista_campaigns') || '[]');
-                document.getElementById('statUsers').textContent = users.length + '+';
-                document.getElementById('statCampaigns').textContent = campaigns.length + '+';
-                let totalEarnings = 0;
-                users.forEach(u => totalEarnings += (u.balance || 0));
-                document.getElementById('statEarnings').textContent = '₦' + totalEarnings.toLocaleString() + '+';
-                const advertisers = new Set();
-                campaigns.forEach(c => advertisers.add(c.userEmail));
-                document.getElementById('statAdvertisers').textContent = advertisers.size + '+';
-            } catch (e) {
-                // Stats stay as default
-            }
-        });
+        // Stats are now static - no need to update from localStorage
+        console.log('📊 CashVista stats loaded successfully');
     </script>
     
     <!-- ===== INSTALL APP SCRIPT ===== -->
