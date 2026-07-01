@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - CashVista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c842;
+        }
+        .topbar .logo span { color: #fff; }
+        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+        .topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .topbar .user-info .greeting {
+            color: #ddd;
+            font-size: 14px;
+        }
+        .topbar .user-info .greeting strong {
+            color: #f5c842;
+            font-weight: 700;
+        }
+        .topbar .user-info .balance-badge {
+            background: rgba(245, 200, 66, 0.15);
+            border: 1px solid #f5c842;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #f5c842;
+        }
+        .topbar .user-info .logout {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .topbar .user-info .logout:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .topbar .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .topbar .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== CHAT HEADER ===== */
+        .chat-header {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .chat-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0d1b2a;
+        }
+        .chat-header h2 span {
+            color: #f5c842;
+        }
+        .chat-header .status-badge {
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* ===== CHAT CONTAINER ===== */
+        .chat-container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            height: 550px;
+            max-height: 70vh;
+            overflow: hidden;
+        }
+
+        /* ===== MESSAGES AREA ===== */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 25px;
+            background: #f8fafc;
+        }
+
+        .chat-messages .empty-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .chat-messages .empty-msg .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .chat-messages .empty-msg h4 {
+            color: #0d1b2a;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        /* ===== MESSAGE ITEMS ===== */
+        .msg-item {
+            margin-bottom: 15px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        .msg-item.user-msg {
+            margin-left: auto;
+        }
+        .msg-item.admin-msg {
+            margin-right: auto;
+        }
+        .msg-item .msg-bubble {
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+        .msg-item.admin-msg .msg-bubble {
+            background: #0d1b2a;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+        .msg-item.user-msg .msg-bubble {
+            background: #f5c842;
+            color: #0d1b2a;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-item .msg-sender {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            display: block;
+        }
+        .msg-item.admin-msg .msg-sender {
+            color: #f5c842;
+        }
+        .msg-item.user-msg .msg-sender {
+            color: #0d1b2a;
+            text-align: right;
+        }
+        .msg-item .msg-time {
+            font-size: 10px;
+            color: #888;
+            margin-top: 4px;
+            display: block;
+        }
+        .msg-item.user-msg .msg-time {
+            text-align: right;
+        }
+        .msg-item .msg-attachment {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .msg-item .msg-attachment:hover {
+            border-color: #f5c842;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== TYPING INDICATOR ===== */
+        .typing-indicator {
+            display: none;
+            padding: 8px 25px;
+            font-size: 13px;
+            color: #888;
+        }
+        .typing-indicator .dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #888;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator .dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator .dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* ===== INPUT AREA ===== */
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e8ecf0;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .chat-input-area input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.3s;
+        }
+        .chat-input-area input[type="text"]:focus {
+            border-color: #f5c842;
+            box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.1);
+        }
+        .chat-input-area .btn-attach {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .chat-input-area .btn-attach:hover {
+            background: #ccc;
+        }
+        .chat-input-area .btn-send {
+            background: #f5c842;
+            color: #0d1b2a;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-input-area .btn-send:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+        }
+        .chat-input-area .btn-send:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .chat-input-area .file-input {
+            display: none;
+        }
+
+        /* ===== ATTACHMENT PREVIEW ===== */
+        .attachment-preview {
+            display: none;
+            padding: 8px 20px 0 20px;
+            background: #fff;
+        }
+        .attachment-preview .preview-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 8px 14px 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #e8ecf0;
+        }
+        .attachment-preview .preview-box img {
+            max-height: 40px;
+            border-radius: 4px;
+        }
+        .attachment-preview .preview-box .remove-attach {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .attachment-preview .preview-box .remove-attach:hover {
+            color: #c62828;
+        }
+
+        /* ===== LOADING ===== */
+        .loading-chat {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        .loading-chat .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e8ecf0;
+            border-top-color: #f5c842;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+                padding: 15px;
+            }
+            .topbar .user-info {
+                justify-content: center;
+            }
+            .chat-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            .chat-container {
+                height: 500px;
+                max-height: 60vh;
+            }
+            .chat-messages {
+                padding: 15px;
+            }
+            .msg-item {
+                max-width: 90%;
+            }
+            .chat-input-area {
+                flex-wrap: wrap;
+                padding: 12px 15px;
+            }
+            .chat-input-area input[type="text"] {
+                width: 100%;
+                order: 1;
+            }
+            .chat-input-area .btn-attach {
+                order: 2;
+            }
+            .chat-input-area .btn-send {
+                flex: 1;
+                order: 3;
+            }
+            .msg-item .msg-bubble {
+                font-size: 13px;
+                padding: 10px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                height: 400px;
+                max-height: 55vh;
+            }
+            .msg-item .msg-bubble {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo">
+            <span class="play-icon">▶</span>Cash<span>Vista</span>
+        </div>
+        <div class="user-info">
+            <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
+            <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
+            <a href="dashboard.html" class="back-btn">← Dashboard</a>
+            <button class="logout" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- ===== CHAT HEADER ===== -->
+        <div class="chat-header">
+            <div>
+                <h2>💬 <span>Chat</span> with Admin</h2>
+                <p style="font-size:13px; color:#888; margin-top:2px;">Send a message and get support from the CashVista team</p>
+            </div>
+            <span class="status-badge">🟢 Online</span>
+        </div>
+
+        <!-- ===== CHAT CONTAINER ===== -->
+        <div class="chat-container">
+            <!-- Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="loading-chat">
+                    <div class="spinner"></div>
+                    <p>Loading messages...</p>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span style="color:#888;">Admin is typing</span>
+                <span class="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+
+            <!-- Attachment Preview -->
+            <div class="attachment-preview" id="attachmentPreview">
+                <div class="preview-box">
+                    <img id="previewThumb" src="" alt="Attachment" />
+                    <span id="previewName" style="font-size:13px; color:#333;">image.jpg</span>
+                    <button class="remove-attach" onclick="removeAttachment()">✕</button>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendUserMessage()" />
+                <button class="btn-attach" onclick="document.getElementById('chatFileInput').click()" title="Attach Image">📎</button>
+                <input type="file" id="chatFileInput" class="file-input" accept="image/*" onchange="handleFileAttachment(this)" />
+                <button class="btn-send" id="sendBtn" onclick="sendUserMessage()">📤 Send</button>
+            </div>
+        </div>
+
+        <!-- ===== CHAT INFO ===== -->
+        <div style="margin-top:15px; text-align:center; font-size:12px; color:#888;">
+            💡 You can attach images to help explain your issue. All messages are secure.
+        </div>
+    </div>
+
+    <footer class="footer" style="background:#0d1b2a; color:#aaa; text-align:center; padding:20px; margin-top:20px; border-radius:20px 20px 0 0;">
+        <p>&copy; 2026 CashVista. All rights reserved.</p>
+        <p class="founder" style="color:#f5c842; font-weight:600;">Designed & Built by Stephen Melek Elisha</p>
+    </footer>
+
+    <script>
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
+
+        let currentUser = null;
+        let chatFileAttachment = null;
+        let messagePollingInterval = null;
+
+        // =============================================
+        // GET LOGGED-IN USER
+        // =============================================
+        async function getLoggedInUser() {
+            let userEmail = sessionStorage.getItem('userEmail');
+
+            if (!userEmail) {
+                const stored = localStorage.getItem('cashvista_user');
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        userEmail = parsed.email;
+                        if (userEmail) {
+                            sessionStorage.setItem('userEmail', userEmail);
+                            if (parsed.name) sessionStorage.setItem('userName', parsed.name);
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return null;
+            }
+
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(userEmail), {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+
+                if (!response.ok) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+
+                const users = await response.json();
+
+                if (!users || users.length === 0) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+
+                const user = users[0];
+                localStorage.setItem('cashvista_user', JSON.stringify(user));
+                sessionStorage.setItem('userEmail', user.email);
+                if (user.name) sessionStorage.setItem('userName', user.name);
+
+                return user;
+            } catch (e) {
+                console.error('Error fetching user:', e);
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
+
+        // =============================================
+        // LOAD CHAT MESSAGES
+        // =============================================
+        async function loadChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages?or=(sender_email.eq.' + encodeURIComponent(currentUser.email) + ',recipient_email.eq.' + encodeURIComponent(currentUser.email) + ')&order=created_at.asc', {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    }
+                });
+
+                if (!response.ok) {
+                    container.innerHTML = `
+                        <div class="empty-msg">
+                            <div class="icon">❌</div>
+                            <h4>Unable to load messages</h4>
+                            <p>Please try again later.</p>
+                            <button onclick="loadChatMessages()" style="margin-top:10px; padding:8px 24px; background:#f5c842; border:none; border-radius:30px; font-weight:700; cursor:pointer;">🔄 Retry</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const messages = await response.json();
+
+                if (!messages || messages.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-msg">
+                            <div class="icon">💬</div>
+                            <h4>No messages yet</h4>
+                            <p>Send a message to the admin and get support.</p>
+                            <div style="margin-top:10px; font-size:30px;">👇</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                let lastDate = '';
+
+                for (const msg of messages) {
+                    const msgDate = new Date(msg.created_at).toDateString();
+                    if (msgDate !== lastDate) {
+                        html += `
+                            <div style="text-align:center; margin:10px 0; font-size:12px; color:#aaa;">
+                                ${new Date(msg.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            </div>
+                        `;
+                        lastDate = msgDate;
+                    }
+
+                    const isAdmin = msg.sender_email === 'admin@cashvista.com';
+                    const msgClass = isAdmin ? 'admin-msg' : 'user-msg';
+                    const senderName = isAdmin ? 'Admin' : 'You';
+                    const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    let attachmentHtml = '';
+                    if (msg.attachment_url) {
+                        attachmentHtml = `<img src="${msg.attachment_url}" class="msg-attachment" onclick="viewFullImage('${msg.attachment_url}')" title="Click to view full image" />`;
+                    }
+
+                    html += `
+                        <div class="msg-item ${msgClass}">
+                            <span class="msg-sender">${senderName}</span>
+                            <div class="msg-bubble">
+                                ${msg.message}
+                                ${attachmentHtml}
+                                <span class="msg-time">${time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+
+                // Mark messages as read
+                await markMessagesAsRead(currentUser.email);
+
+            } catch (error) {
+                console.error('Error loading chat messages:', error);
+                container.innerHTML = `
+                    <div class="empty-msg">
+                        <div class="icon">❌</div>
+                        <h4>Error loading messages</h4>
+                        <p>Please refresh the page and try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // =============================================
+        // MARK MESSAGES AS READ
+        // =============================================
+        async function markMessagesAsRead(userEmail) {
+            try {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages?recipient_email=eq.' + encodeURIComponent(userEmail) + '&is_read=eq.false', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify({ is_read: true, read_at: new Date().toISOString() })
+                });
+                if (!response.ok) {
+                    console.log('Could not mark messages as read');
+                }
+            } catch (e) {
+                console.error('Error marking messages as read:', e);
+            }
+        }
+
+        // =============================================
+        // HANDLE FILE ATTACHMENT
+        // =============================================
+        function handleFileAttachment(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('❌ Please upload an image file (JPG, PNG, GIF)');
+                input.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('❌ Image size must be less than 5MB');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                chatFileAttachment = e.target.result;
+                // Show preview
+                const preview = document.getElementById('attachmentPreview');
+                document.getElementById('previewThumb').src = e.target.result;
+                document.getElementById('previewName').textContent = file.name;
+                preview.style.display = 'block';
+                showToast('📎 Image attached! Send your message.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // =============================================
+        // REMOVE ATTACHMENT
+        // =============================================
+        function removeAttachment() {
+            chatFileAttachment = null;
+            document.getElementById('attachmentPreview').style.display = 'none';
+            document.getElementById('chatFileInput').value = '';
+        }
+
+        // =============================================
+        // SEND USER MESSAGE
+        // =============================================
+        async function sendUserMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (!message && !chatFileAttachment) {
+                showToast('❌ Please type a message or attach an image.');
+                return;
+            }
+
+            if (!currentUser) {
+                showToast('❌ Please login to send messages.');
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = '⏳ Sending...';
+
+            try {
+                const msgData = {
+                    sender_email: currentUser.email,
+                    sender_name: currentUser.name || currentUser.email,
+                    recipient_email: 'admin@cashvista.com',
+                    recipient_name: 'Admin',
+                    message: message || '📎 Sent an attachment',
+                    attachment_url: chatFileAttachment || null,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                };
+
+                const response = await fetch(SUPABASE_URL + '/rest/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY
+                    },
+                    body: JSON.stringify(msgData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+
+                // Log activity
+                try {
+                    await fetch(SUPABASE_URL + '/rest/v1/activity', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_KEY
+                        },
+                        body: JSON.stringify({
+                            user_name: currentUser.name || currentUser.email,
+                            action: '💬 Sent message to admin',
+                            amount: 0,
+                            date: new Date().toISOString()
+                        })
+                    });
+                } catch (e) {
+                    console.log('Could not log activity:', e);
+                }
+
+                // Clear input
+                input.value = '';
+                removeAttachment();
+                sendBtn.textContent = '📤 Send';
+                sendBtn.disabled = false;
+
+                showToast('✅ Message sent!');
+
+                // Reload messages
+                await loadChatMessages();
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showToast('❌ Error sending message. Please try again.');
+                sendBtn.textContent = '📤 Send';
+                sendBtn.disabled = false;
+            }
+        }
+
+        // =============================================
+        // VIEW FULL IMAGE
+        // =============================================
+        function viewFullImage(url) {
+            if (!url) return;
+            // Open in new tab
+            window.open(url, '_blank');
+        }
+
+        // =============================================
+        // TOAST NOTIFICATION
+        // =============================================
+        function showToast(message) {
+            const existing = document.querySelector('.toast-notification');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #0d1b2a;
+                color: #fff;
+                padding: 12px 28px;
+                border-radius: 12px;
+                font-weight: 600;
+                z-index: 99999;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                font-family: 'Inter', 'Segoe UI', sans-serif;
+                animation: slideUp 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // =============================================
+        // POLL FOR NEW MESSAGES
+        // =============================================
+        function startMessagePolling() {
+            if (messagePollingInterval) {
+                clearInterval(messagePollingInterval);
+            }
+            // Poll every 10 seconds for new messages
+            messagePollingInterval = setInterval(() => {
+                if (document.querySelector('.chat-messages')) {
+                    loadChatMessages();
+                }
+            }, 10000);
+        }
+
+        // =============================================
+        // LOGOUT
+        // =============================================
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                if (messagePollingInterval) {
+                    clearInterval(messagePollingInterval);
+                }
+                sessionStorage.removeItem('userEmail');
+                sessionStorage.removeItem('userName');
+                localStorage.removeItem('cashvista_user');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // =============================================
+        // INITIALIZE
+        // =============================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            currentUser = await getLoggedInUser();
+            if (!currentUser) return;
+
+            document.getElementById('userName').textContent = currentUser.name || 'User';
+            document.getElementById('userBalance').textContent = '₦' + (currentUser.balance || 0).toLocaleString();
+
+            await loadChatMessages();
+            startMessagePolling();
+
+            console.log('💬 Chat page loaded successfully');
+        });
+
+        // Clean up polling on page unload
+        window.addEventListener('beforeunload', function() {
+            if (messagePollingInterval) {
+                clearInterval(messagePollingInterval);
+            }
+        });
+
+        // Enter key to send
+        document.getElementById('chatInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendUserMessage();
+            }
+        });
+    </script>
+</body>
+</html>
