@@ -122,7 +122,36 @@
             text-align: center;
             margin-top: 15px;
         }
-        .terms a { color: #f5c842; text-decoration: none; }
+        .terms a {
+            color: #f5c842;
+            text-decoration: none;
+        }
+        .terms a:hover {
+            text-decoration: underline;
+        }
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #555;
+        }
+        .terms-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: #f5c842;
+        }
+        .terms-checkbox a {
+            color: #f5c842;
+            text-decoration: none;
+        }
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
         .loader {
             display: inline-block;
             width: 20px;
@@ -136,6 +165,28 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .btn-text { display: inline-flex; align-items: center; justify-content: center; }
+        .login-link {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+        .login-link a {
+            color: #f5c842;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 25px 20px;
+            }
+            .register-container .logo {
+                font-size: 26px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -169,15 +220,24 @@
                 <input type="password" id="password" placeholder="Min 6 characters" required minlength="6" />
                 <div class="password-hint">Password must be at least 6 characters</div>
             </div>
+
+            <!-- Terms & Conditions Checkbox -->
+            <div class="terms-checkbox">
+                <input type="checkbox" id="termsCheckbox" required />
+                <label for="termsCheckbox">
+                    I agree to the
+                    <a href="privacy.html" target="_blank">Privacy Policy</a>
+                    and
+                    <a href="terms.html" target="_blank">Terms &amp; Conditions</a>
+                </label>
+            </div>
+
             <button type="submit" class="btn-register" id="registerBtn">
                 <span class="btn-text">Create Account</span>
             </button>
         </form>
 
-        <p class="terms">
-            By registering, you agree to our <a href="#">Terms of Service</a> &amp; <a href="#">Privacy Policy</a>
-        </p>
-        <p class="terms" style="margin-top:8px;">
+        <p class="login-link">
             Already have an account? <a href="login.html">Login here</a>
         </p>
     </div>
@@ -232,7 +292,6 @@
                     refName.textContent = refUser.name || refUser.email || 'Someone';
                     console.log('✅ Referral found:', refUser.email);
                 } else {
-                    // Referral not found - hide the message
                     referralInfo.style.display = 'none';
                     console.log('⚠️ Referral code not found:', referralCode);
                 }
@@ -240,7 +299,7 @@
         }
 
         // =============================================
-        // REGISTER FORM SUBMIT - FIXED
+        // REGISTER FORM SUBMIT
         // =============================================
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -249,10 +308,18 @@
             const successMsg = document.getElementById('successMsg');
             const registerBtn = document.getElementById('registerBtn');
             const btnText = registerBtn.querySelector('.btn-text');
+            const termsCheckbox = document.getElementById('termsCheckbox');
 
             // Reset messages
             errorMsg.style.display = 'none';
             successMsg.style.display = 'none';
+
+            // Check terms agreement
+            if (!termsCheckbox.checked) {
+                errorMsg.textContent = '❌ Please agree to the Privacy Policy and Terms & Conditions.';
+                errorMsg.style.display = 'block';
+                return;
+            }
 
             // Get values
             const name = document.getElementById('fullName').value.trim();
@@ -295,10 +362,6 @@
                     return;
                 }
 
-                // ===== FIXED: NO REFERRAL LINK GENERATED ON REGISTRATION =====
-                // The user will get a referral link ONLY after:
-                // 1. Admin activates them manually, OR
-                // 2. Admin approves their Invest & Grow payment
                 const userData = {
                     name: name,
                     email: email,
@@ -306,8 +369,8 @@
                     password: password,
                     balance: 0,
                     is_invest_member: false,
-                    referral_code: null,        // ← NO referral code yet
-                    referral_link: null,         // ← NO referral link yet
+                    referral_code: null,
+                    referral_link: null,
                     referred_by: referralCode || null,
                     is_active: true,
                     joined_date: new Date().toISOString()
