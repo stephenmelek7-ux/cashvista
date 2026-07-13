@@ -6,27 +6,137 @@
     <title>Admin Dashboard - CashVista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
+        /* =============================================
+           RESET & BASE
+           ============================================= */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background: #f0f4f8;
             color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
         }
-        .topbar {
-            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+
+        /* =============================================
+           SIDEBAR
+           ============================================= */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1a3a5c 100%);
             color: #fff;
-            padding: 15px 25px;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #f5c842;
+            padding: 0 24px 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 16px;
+        }
+        .sidebar .logo span { color: #fff; }
+        .sidebar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+
+        .sidebar .nav-section {
+            padding: 8px 0;
+        }
+        .sidebar .nav-section .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.3);
+            padding: 8px 24px;
+            font-weight: 600;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 24px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+        .sidebar .nav-item:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+        .sidebar .nav-item.active {
+            background: rgba(245, 200, 66, 0.12);
+            color: #f5c842;
+            border-left-color: #f5c842;
+        }
+        .sidebar .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+        .sidebar .nav-item .badge {
+            background: #e74c3c;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 20px;
+            margin-left: auto;
+        }
+        .sidebar .nav-item .badge.gold { background: #f5c842; color: #0d1b2a; }
+
+        .sidebar .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 24px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .sidebar-footer .nav-item {
+            padding: 8px 0;
+        }
+
+        /* =============================================
+           MAIN CONTENT
+           ============================================= */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =============================================
+           TOP BAR
+           ============================================= */
+        .topbar {
+            background: #fff;
+            padding: 12px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            border-bottom: 1px solid #e8ecf0;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .topbar .logo { font-size: 28px; font-weight: 800; color: #f5c842; }
-        .topbar .logo span { color: #fff; }
-        .topbar .logo .play-icon { color: #f5c842; margin-right: 5px; }
+        .topbar .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #0d1b2a;
+        }
         .topbar .admin-info {
             display: flex;
             align-items: center;
@@ -34,17 +144,16 @@
             flex-wrap: wrap;
         }
         .topbar .admin-info .badge {
-            background: rgba(245, 200, 66, 0.15);
-            border: 1px solid #f5c842;
+            background: rgba(13, 27, 42, 0.08);
             padding: 4px 16px;
             border-radius: 30px;
             font-size: 12px;
             font-weight: 600;
-            color: #f5c842;
+            color: #0d1b2a;
         }
-        .topbar .admin-info .email { color: #ddd; font-size: 14px; }
+        .topbar .admin-info .email { color: #555; font-size: 14px; }
         .topbar .admin-info .logout {
-            background: rgba(231, 76, 60, 0.2);
+            background: rgba(231, 76, 60, 0.1);
             color: #e74c3c;
             border: 1px solid #e74c3c;
             padding: 6px 18px;
@@ -56,14 +165,24 @@
         }
         .topbar .admin-info .logout:hover { background: #e74c3c; color: #fff; }
         .topbar .admin-info a {
-            color: #f5c842;
+            color: #0d1b2a;
             text-decoration: none;
             font-weight: 600;
             font-size: 13px;
         }
-        .topbar .admin-info a:hover { text-decoration: underline; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 25px 20px; }
+        .topbar .admin-info a:hover { color: #f5c842; }
 
+        /* =============================================
+           PAGE CONTENT
+           ============================================= */
+        .page-content {
+            padding: 25px 30px;
+            flex: 1;
+        }
+
+        /* =============================================
+           STATS GRID
+           ============================================= */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -87,6 +206,9 @@
         .stat-card .number.blue { color: #0d47a1; }
         .stat-card .label { font-size: 12px; color: #888; font-weight: 500; }
 
+        /* =============================================
+           SECTION CARD
+           ============================================= */
         .section-card {
             background: #fff;
             border-radius: 20px;
@@ -127,6 +249,15 @@
         .btn-refresh { background: #e3f2fd; color: #0d47a1; }
         .btn-refresh:hover { background: #0d47a1; color: #fff; }
 
+        /* =============================================
+           TAB CONTENT
+           ============================================= */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* =============================================
+           TABLES
+           ============================================= */
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th {
@@ -185,7 +316,6 @@
         .btn-assign:hover { background: #e65100; color: #fff; }
         .btn-details { background: #f3e5f5; color: #7b1fa2; }
         .btn-details:hover { background: #7b1fa2; color: #fff; }
-        /* ===== NEW: INVEST ACTIVATE/DEACTIVATE BUTTONS ===== */
         .btn-invest-activate { background: #e8f5e9; color: #2e7d32; }
         .btn-invest-activate:hover { background: #2e7d32; color: #fff; }
         .btn-invest-deactivate { background: #fff3e0; color: #e65100; }
@@ -195,7 +325,6 @@
         .btn-invest-inactive { background: #fce4ec; color: #c62828; cursor: default; }
         .btn-invest-inactive:hover { background: #fce4ec; color: #c62828; }
 
-        /* ===== NEW: CHAT UNREAD BADGE ===== */
         .unread-badge {
             background: #e74c3c;
             color: #fff;
@@ -207,42 +336,62 @@
             display: inline-block;
         }
 
-        .footer {
-            background: #0d1b2a;
-            color: #aaa;
-            text-align: center;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 20px 20px 0 0;
+        /* =============================================
+           BATCH BOX
+           ============================================= */
+        .batch-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e8ecf0;
         }
-        .footer .founder { color: #f5c842; font-weight: 600; }
-
-        .nav-tabs {
+        .batch-box .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .batch-box .batch-header h4 { color: #0d1b2a; font-size: 16px; }
+        .batch-box .batch-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .batch-box .batch-users .user-tag {
+            background: #fff;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .batch-box .batch-users .user-tag:hover {
+            border-color: #f5c842;
+            background: #fef7e0;
+        }
+        .batch-box .batch-users .user-tag.active { border-color: #2e7d32; background: #e8f5e9; }
+        .batch-box .batch-select-all {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .batch-box .batch-select-all label { font-size: 13px; color: #555; font-weight: 500; }
+        .batch-box .batch-select-all input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .batch-box .batch-actions {
+            margin-top: 10px;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
-            background: #fff;
-            padding: 10px 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
         }
-        .nav-tabs button {
-            background: #e0e0e0;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 13px;
-        }
-        .nav-tabs button.active { background: #0d1b2a; color: #fff; }
-        .nav-tabs button:hover:not(.active) { background: #ccc; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
 
-        /* ===== CHAT TAB STYLES ===== */
+        /* =============================================
+           CHAT STYLES
+           ============================================= */
         .chat-list {
             max-height: 500px;
             overflow-y: auto;
@@ -302,12 +451,7 @@
             margin-left: auto;
             border-bottom-right-radius: 4px;
         }
-        .chat-message .msg-time {
-            font-size: 10px;
-            opacity: 0.7;
-            display: block;
-            margin-top: 4px;
-        }
+        .chat-message .msg-time { font-size: 10px; opacity: 0.7; display: block; margin-top: 4px; }
         .chat-message .msg-attachment {
             max-width: 200px;
             max-height: 150px;
@@ -315,7 +459,6 @@
             margin-top: 5px;
             cursor: pointer;
         }
-
         .chat-input-area {
             display: flex;
             gap: 10px;
@@ -358,94 +501,12 @@
         }
         .chat-input-area .btn-attach:hover { background: #ccc; }
         .chat-input-area .file-input { display: none; }
-
-        .chat-empty {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
+        .chat-empty { text-align: center; padding: 40px; color: #888; }
         .chat-empty .icon { font-size: 48px; margin-bottom: 10px; }
 
-        .receipt-img {
-            max-width: 200px;
-            max-height: 150px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 1px solid #ddd;
-            object-fit: cover;
-        }
-        .receipt-img:hover { border-color: #f5c842; }
-        .no-receipt {
-            color: #999;
-            font-size: 12px;
-            font-style: italic;
-        }
-        .video-link {
-            color: #0d47a1;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .video-link:hover { color: #f5c842; }
-
-        .batch-box {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            border: 1px solid #e8ecf0;
-        }
-        .batch-box .batch-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .batch-box .batch-header h4 { color: #0d1b2a; font-size: 16px; }
-        .batch-box .batch-users {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .batch-box .batch-users .user-tag {
-            background: #fff;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .batch-box .batch-users .user-tag:hover {
-            border-color: #f5c842;
-            background: #fef7e0;
-        }
-        .batch-box .batch-users .user-tag.active { border-color: #2e7d32; background: #e8f5e9; }
-        .batch-box .batch-select-all {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .batch-box .batch-select-all label {
-            font-size: 13px;
-            color: #555;
-            font-weight: 500;
-        }
-        .batch-box .batch-select-all input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-        .batch-box .batch-actions {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
+        /* =============================================
+           MODALS
+           ============================================= */
         .modal {
             display: none;
             position: fixed;
@@ -468,11 +529,7 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-content h3 {
-            color: #0d1b2a;
-            margin-bottom: 10px;
-            font-size: 22px;
-        }
+        .modal-content h3 { color: #0d1b2a; margin-bottom: 10px; font-size: 22px; }
         .modal-content .close-modal {
             float: right;
             background: none;
@@ -540,7 +597,9 @@
         }
         .modal-content .btn-close-modal:hover { background: #ccc; }
 
-        /* Receipt Viewer Overlay */
+        /* =============================================
+           RECEIPT VIEWER
+           ============================================= */
         #receiptViewerOverlay {
             position: fixed;
             top: 0;
@@ -569,10 +628,7 @@
             transition: 0.3s;
             font-family: Arial, sans-serif;
         }
-        #receiptViewerOverlay .close-btn:hover {
-            color: #f5c842;
-            transform: scale(1.2);
-        }
+        #receiptViewerOverlay .close-btn:hover { color: #f5c842; transform: scale(1.2); }
         #receiptViewerOverlay img {
             max-width: 95%;
             max-height: 85vh;
@@ -595,10 +651,7 @@
             font-family: 'Inter', Arial, sans-serif;
             z-index: 100001;
         }
-        #receiptViewerOverlay .download-btn:hover {
-            background: #e6b800;
-            transform: scale(1.05);
-        }
+        #receiptViewerOverlay .download-btn:hover { background: #e6b800; transform: scale(1.05); }
         #receiptViewerOverlay .hint {
             margin-top: 15px;
             color: rgba(255,255,255,0.4);
@@ -607,9 +660,85 @@
             z-index: 100001;
         }
 
+        .receipt-img {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            object-fit: cover;
+        }
+        .receipt-img:hover { border-color: #f5c842; }
+        .no-receipt { color: #999; font-size: 12px; font-style: italic; }
+        .video-link { color: #0d47a1; text-decoration: underline; cursor: pointer; font-weight: 600; }
+        .video-link:hover { color: #f5c842; }
+
+        /* =============================================
+           CPX IFRAME WRAPPER
+           ============================================= */
+        .cpx-iframe-wrapper {
+            width: 100%;
+            min-height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e8ecf0;
+            background: #fff;
+        }
+        .cpx-iframe-wrapper iframe {
+            width: 100%;
+            min-height: 600px;
+            border: none;
+            display: block;
+        }
+        .cpx-iframe-wrapper .loading-placeholder {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            color: #888;
+            font-size: 16px;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .cpx-iframe-wrapper .loading-placeholder .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e8ecf0;
+            border-top-color: #f5c842;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
+        .footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer .founder { color: #f5c842; font-weight: 600; }
+
+        /* =============================================
+           MOBILE RESPONSIVE
+           ============================================= */
         @media (max-width: 768px) {
-            .topbar { flex-direction: column; gap: 10px; text-align: center; padding: 15px; }
-            .topbar .admin-info { justify-content: center; }
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .topbar .hamburger { display: block; }
+            .topbar { padding: 12px 16px; flex-wrap: wrap; }
+            .topbar .admin-info { flex-wrap: wrap; justify-content: center; }
+            .page-content { padding: 15px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .stat-card .number { font-size: 20px; }
             .section-card { padding: 15px; }
@@ -617,8 +746,6 @@
             table { font-size: 12px; }
             th, td { padding: 6px 8px; }
             .btn-sm { font-size: 10px; padding: 3px 8px; }
-            .nav-tabs { flex-direction: column; }
-            .nav-tabs button { width: 100%; }
             .modal-content { padding: 20px; }
             .modal-content .user-detail-grid { grid-template-columns: 1fr; }
             #receiptViewerOverlay .close-btn { font-size: 30px; top: 10px; right: 15px; }
@@ -626,171 +753,343 @@
             #receiptViewerOverlay .hint { font-size: 11px; }
             .chat-input-area { flex-wrap: wrap; }
             .chat-input-area input[type="text"] { width: 100%; }
+            .cpx-iframe-wrapper { min-height: 400px; }
+            .cpx-iframe-wrapper iframe { min-height: 400px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card { padding: 12px 14px; }
+            .stat-card .number { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="topbar">
+    <!-- =============================================
+    SIDEBAR
+    ============================================= -->
+    <aside class="sidebar" id="sidebar">
         <div class="logo">
             <span class="play-icon">▶</span>Cash<span>Vista</span>
-        </div>
-        <div class="admin-info">
-            <span class="badge">🔐 ADMIN</span>
-            <span class="email" id="adminEmail">admin@cashvista.com</span>
-            <a href="settings.html">⚙️ Settings</a>
-            <button class="logout" onclick="adminLogout()">🚪 Logout</button>
-        </div>
-    </div>
-
-    <div class="container">
-
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card"><div class="icon">👥</div><div class="number gold" id="totalUsers">0</div><div class="label">Total Users</div></div>
-            <div class="stat-card"><div class="icon">💰</div><div class="number green" id="totalRevenue">₦0</div><div class="label">Total Revenue</div></div>
-            <div class="stat-card"><div class="icon">💳</div><div class="number blue" id="totalWallet">₦0</div><div class="label">Wallet Balance</div></div>
-            <div class="stat-card"><div class="icon">📈</div><div class="number gold" id="investMembers">0</div><div class="label">Invest Members</div></div>
-            <div class="stat-card"><div class="icon">⏳</div><div class="number red" id="pendingCount">0</div><div class="label">Pending Approvals</div></div>
-            <div class="stat-card"><div class="icon">📊</div><div class="number" id="todaySignups">0</div><div class="label">Today's Signups</div></div>
+            <span style="font-size:12px; color:rgba(255,255,255,0.4); display:block; font-weight:400; margin-top:2px;">Admin Panel</span>
         </div>
 
-        <!-- ===== NAV TABS WITH CHAT TAB ADDED ===== -->
-        <div class="nav-tabs">
-            <button class="active" onclick="switchTab('pending')">📋 Pending <span id="pendingTabBadge" style="background:red; color:#fff; border-radius:50%; padding:0 8px; font-size:11px;">0</span></button>
-            <button onclick="switchTab('campaigns')">📹 Campaigns</button>
-            <button onclick="switchTab('invest')">📈 Invest</button>
-            <button onclick="switchTab('withdrawals')">💰 Withdrawals</button>
-            <button onclick="switchTab('batches')">📦 Batches</button>
-            <button onclick="switchTab('users')">👥 Users</button>
-            <button onclick="switchTab('activity')">🕐 Activity</button>
-            <!-- ===== NEW: CHAT TAB ===== -->
-            <button onclick="switchTab('chat')" id="chatTabBtn">💬 Chat <span id="chatUnreadBadge" class="unread-badge" style="display:none;">0</span></button>
-        </div>
-
-        <!-- TAB 1: PENDING APPROVALS -->
-        <div id="tab-pending" class="tab-content active">
-            <div class="section-card">
-                <div class="header"><h2>📋 Pending Approvals <span class="count-badge" id="pendingBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+        <nav>
+            <div class="nav-section">
+                <div class="section-label">Main</div>
+                <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                    <span class="icon">📊</span> Dashboard
                 </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>Type</th><th>User</th><th>Title</th><th>Duration</th><th>Amount</th><th>Receipt</th><th>Date</th><th>Action</th></tr></thead>
-                        <tbody id="pendingTableBody"><tr><td colspan="8" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr></tbody>
-                    </table>
+                <div class="nav-item" data-tab="pending" onclick="switchTab('pending')">
+                    <span class="icon">📋</span> Pending
+                    <span class="badge" id="sidebarPendingBadge">0</span>
+                </div>
+                <div class="nav-item" data-tab="users" onclick="switchTab('users')">
+                    <span class="icon">👥</span> Users
+                    <span class="badge gold" id="sidebarUserBadge">0</span>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 2: CAMPAIGNS -->
-        <div id="tab-campaigns" class="tab-content">
-            <div class="section-card">
-                <div class="header"><h2>📹 All Campaigns <span class="count-badge" id="campaignCountBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+            <div class="nav-section">
+                <div class="section-label">Content</div>
+                <div class="nav-item" data-tab="campaigns" onclick="switchTab('campaigns')">
+                    <span class="icon">📹</span> Campaigns
                 </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>Title</th><th>User</th><th>Duration</th><th>Amount</th><th>Viewers</th><th>Video Link</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody id="campaignTableBody"><tr><td colspan="8" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr></tbody>
-                    </table>
+                <div class="nav-item" data-tab="invest" onclick="switchTab('invest')">
+                    <span class="icon">📈</span> Invest
+                </div>
+                <div class="nav-item" data-tab="withdrawals" onclick="switchTab('withdrawals')">
+                    <span class="icon">💰</span> Withdrawals
+                </div>
+                <div class="nav-item" data-tab="batches" onclick="switchTab('batches')">
+                    <span class="icon">📦</span> Batches
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 3: INVEST & GROW -->
-        <div id="tab-invest" class="tab-content">
-            <div class="section-card">
-                <div class="header"><h2>📈 Invest Members <span class="count-badge" id="investCountBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+            <div class="nav-section">
+                <div class="section-label">Communications</div>
+                <div class="nav-item" data-tab="chat" onclick="switchTab('chat')">
+                    <span class="icon">💬</span> Chat
+                    <span class="badge" id="sidebarChatBadge" style="display:none;">0</span>
                 </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>User</th><th>Amount</th><th>Receipt</th><th>Referral Link</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody id="investTableBody"><tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr></tbody>
-                    </table>
+                <div class="nav-item" data-tab="cpx" onclick="switchTab('cpx')">
+                    <span class="icon">📊</span> CPX Surveys
+                    <span class="badge gold">Live</span>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 4: WITHDRAWALS -->
-        <div id="tab-withdrawals" class="tab-content">
-            <div class="section-card">
-                <div class="header"><h2>💰 Withdrawals <span class="count-badge" id="withdrawalCountBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>User</th><th>Amount</th><th>Bank</th><th>Account</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody id="withdrawalTableBody"><tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No withdrawals yet.</p></td></tr></tbody>
-                    </table>
+            <div class="nav-section">
+                <div class="section-label">System</div>
+                <div class="nav-item" data-tab="activity" onclick="switchTab('activity')">
+                    <span class="icon">🕐</span> Activity
                 </div>
             </div>
-        </div>
+        </nav>
 
-        <!-- TAB 5: BATCHES -->
-        <div id="tab-batches" class="tab-content">
-            <div class="section-card">
-                <div class="header"><h2>📦 Batch Management <span class="count-badge" id="batchCountBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
-                </div>
-                <div id="batchesContainer">
-                    <div class="empty-state"><div class="icon">📦</div><p>No batches created yet.</p></div>
-                </div>
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="adminLogout()" style="color:#e74c3c;">
+                <span class="icon">🚪</span> Logout
             </div>
         </div>
+    </aside>
 
-        <!-- TAB 6: ALL USERS -->
-        <div id="tab-users" class="tab-content">
-            <div class="section-card">
-                <div class="header"><h2>👥 All Users <span class="count-badge" id="userCountBadge">0</span></h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Balance</th><th>Invest</th><th>Batch</th><th>Status</th><th>Action</th></tr></thead>
-                        <tbody id="userTableBody"><tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr></tbody>
-                    </table>
-                </div>
+    <!-- =============================================
+    MAIN CONTENT
+    ============================================= -->
+    <div class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div>
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
             </div>
-        </div>
-
-        <!-- TAB 7: ACTIVITY -->
-        <div id="tab-activity" class="tab-content">
-            <div class="section-card">
-                <div class="header"><h2>🕐 Recent Activity</h2>
-                    <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>User</th><th>Action</th><th>Amount</th><th>Date</th></tr></thead>
-                        <tbody id="activityTableBody"><tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr></tbody>
-                    </table>
-                </div>
+            <div class="admin-info">
+                <span class="badge">🔐 ADMIN</span>
+                <span class="email" id="adminEmail">admin@cashvista.com</span>
+                <a href="#" onclick="switchTab('cpx')">📊 CPX</a>
+                <button class="logout" onclick="adminLogout()">🚪 Logout</button>
             </div>
-        </div>
+        </header>
 
-        <!-- ===== TAB 8: CHAT ===== -->
-        <div id="tab-chat" class="tab-content">
-            <div class="section-card">
-                <div class="header">
-                    <h2>💬 Admin Chat</h2>
-                    <div class="actions">
-                        <button class="btn-refresh" onclick="loadChatList()">🔄 Refresh</button>
-                        <button class="btn-refresh" style="background:#f5c842; color:#0d1b2a;" onclick="openBroadcast()">📤 Broadcast</button>
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- =============================================
+            TAB: DASHBOARD
+            ============================================= -->
+            <div id="tab-dashboard" class="tab-content active">
+
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card"><div class="icon">👥</div><div class="number gold" id="totalUsers">0</div><div class="label">Total Users</div></div>
+                    <div class="stat-card"><div class="icon">💰</div><div class="number green" id="totalRevenue">₦0</div><div class="label">Total Revenue</div></div>
+                    <div class="stat-card"><div class="icon">💳</div><div class="number blue" id="totalWallet">₦0</div><div class="label">Wallet Balance</div></div>
+                    <div class="stat-card"><div class="icon">📈</div><div class="number gold" id="investMembers">0</div><div class="label">Invest Members</div></div>
+                    <div class="stat-card"><div class="icon">⏳</div><div class="number red" id="pendingCount">0</div><div class="label">Pending Approvals</div></div>
+                    <div class="stat-card"><div class="icon">📊</div><div class="number" id="todaySignups">0</div><div class="label">Today's Signups</div></div>
+                </div>
+
+                <div class="section-card">
+                    <div class="header">
+                        <h2>📊 Quick Overview</h2>
+                        <div class="actions">
+                            <button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button>
+                        </div>
                     </div>
+                    <p style="color:#888; font-size:14px; text-align:center; padding:20px 0;">
+                        Welcome to your admin dashboard. Use the sidebar to navigate to different sections.
+                        <br><br>
+                        📹 <strong>CPX Surveys</strong> tab is now available for managing survey integrations.
+                    </p>
                 </div>
-                <div id="chatContainer">
-                    <div class="chat-empty">
-                        <div class="icon">💬</div>
-                        <p>Loading conversations...</p>
+            </div>
+
+            <!-- =============================================
+            TAB: PENDING
+            ============================================= -->
+            <div id="tab-pending" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>📋 Pending Approvals <span class="count-badge" id="pendingBadge">0</span></h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Type</th><th>User</th><th>Title</th><th>Duration</th><th>Amount</th><th>Receipt</th><th>Date</th><th>Action</th></tr></thead>
+                            <tbody id="pendingTableBody"><tr><td colspan="8" class="empty-state"><div class="icon">✅</div><p>No pending approvals.</p></td></tr></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+            <!-- =============================================
+            TAB: CAMPAIGNS
+            ============================================= -->
+            <div id="tab-campaigns" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>📹 All Campaigns <span class="count-badge" id="campaignCountBadge">0</span></h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Title</th><th>User</th><th>Duration</th><th>Amount</th><th>Viewers</th><th>Video Link</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody id="campaignTableBody"><tr><td colspan="8" class="empty-state"><div class="icon">📭</div><p>No campaigns yet.</p></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-    <!-- ===== ASSIGN CAMPAIGN MODAL ===== -->
+            <!-- =============================================
+            TAB: INVEST
+            ============================================= -->
+            <div id="tab-invest" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>📈 Invest Members <span class="count-badge" id="investCountBadge">0</span></h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>User</th><th>Amount</th><th>Receipt</th><th>Referral Link</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody id="investTableBody"><tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No Invest & Grow members yet.</p></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+            TAB: WITHDRAWALS
+            ============================================= -->
+            <div id="tab-withdrawals" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>💰 Withdrawals <span class="count-badge" id="withdrawalCountBadge">0</span></h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>User</th><th>Amount</th><th>Bank</th><th>Account</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody id="withdrawalTableBody"><tr><td colspan="6" class="empty-state"><div class="icon">📭</div><p>No withdrawals yet.</p></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+            TAB: BATCHES
+            ============================================= -->
+            <div id="tab-batches" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>📦 Batch Management <span class="count-badge" id="batchCountBadge">0</span></h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div id="batchesContainer">
+                        <div class="empty-state"><div class="icon">📦</div><p>No batches created yet.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+            TAB: USERS
+            ============================================= -->
+            <div id="tab-users" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>👥 All Users <span class="count-badge" id="userCountBadge">0</span></h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Balance</th><th>Invest</th><th>Batch</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody id="userTableBody"><tr><td colspan="9" class="empty-state"><div class="icon">👤</div><p>No users registered yet.</p></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+            TAB: ACTIVITY
+            ============================================= -->
+            <div id="tab-activity" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>🕐 Recent Activity</h2>
+                        <div class="actions"><button class="btn-refresh" onclick="renderDashboard()">🔄 Refresh</button></div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>User</th><th>Action</th><th>Amount</th><th>Date</th></tr></thead>
+                            <tbody id="activityTableBody"><tr><td colspan="4" class="empty-state"><div class="icon">📭</div><p>No activity yet.</p></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+            TAB: CHAT
+            ============================================= -->
+            <div id="tab-chat" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>💬 Admin Chat</h2>
+                        <div class="actions">
+                            <button class="btn-refresh" onclick="loadChatList()">🔄 Refresh</button>
+                            <button class="btn-refresh" style="background:#f5c842; color:#0d1b2a;" onclick="openBroadcast()">📤 Broadcast</button>
+                        </div>
+                    </div>
+                    <div id="chatContainer">
+                        <div class="chat-empty"><div class="icon">💬</div><p>Loading conversations...</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+            TAB: CPX SURVEYS (NEW)
+            ============================================= -->
+            <div id="tab-cpx" class="tab-content">
+                <div class="section-card">
+                    <div class="header">
+                        <h2>📊 CPX Research Surveys <span class="count-badge" style="background:#2e7d32; color:#fff;">App ID: 34470</span></h2>
+                        <div class="actions">
+                            <button class="btn-refresh" onclick="document.getElementById('cpxIframe').src = document.getElementById('cpxIframe').src;">🔄 Refresh</button>
+                            <button class="btn-refresh" style="background:#0d47a1; color:#fff;" onclick="window.open('https://publisher.cpx-research.com', '_blank')">🔗 Open CPX</button>
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border-radius:12px; padding:16px 20px; margin-bottom:20px; border-left:4px solid #f5c842;">
+                        <p style="font-size:14px; color:#333; margin:0;">
+                            <strong>📌 CPX Survey Integration</strong><br>
+                            This iframe displays survey offers from CPX Research. Users can complete surveys and earn rewards.
+                            <br><br>
+                            <span style="font-size:13px; color:#888;">
+                                <strong>App ID:</strong> 34470 &nbsp;|&nbsp; 
+                                <strong>Status:</strong> <span style="color:#2e7d32;">✅ Live</span> &nbsp;|&nbsp;
+                                <strong>Currency:</strong> Coins (1 USD = 800 Coins)
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="cpx-iframe-wrapper">
+                        <div id="cpxLoading" class="loading-placeholder">
+                            <div class="spinner"></div>
+                            <p>Loading CPX Survey Wall...</p>
+                        </div>
+                        <iframe
+                            id="cpxIframe"
+                            width="100%"
+                            frameborder="0"
+                            height="600px"
+                            src="https://offers.cpx-research.com/index.php?app_id=34470&ext_user_id=admin_test&secure_hash=&username=Admin&email=admin@cashvista.com&subid_1=&subid_2"
+                            onload="document.getElementById('cpxLoading').style.display='none';"
+                            style="display:block;"
+                        ></iframe>
+                    </div>
+
+                    <div style="margin-top:15px; display:flex; gap:12px; flex-wrap:wrap; padding:12px 0; border-top:1px solid #e8ecf0;">
+                        <button class="btn-sm btn-approve" onclick="document.getElementById('cpxIframe').src = 'https://offers.cpx-research.com/index.php?app_id=34470&ext_user_id=admin_test&secure_hash=&username=Admin&email=admin@cashvista.com&subid_1=&subid_2';">🔄 Reload Wall</button>
+                        <button class="btn-sm btn-view" onclick="window.open('https://offers.cpx-research.com/index.php?app_id=34470&ext_user_id=admin_test&secure_hash=&username=Admin&email=admin@cashvista.com&subid_1=&subid_2', '_blank')">🔗 Open Full Screen</button>
+                        <button class="btn-sm btn-details" onclick="alert('📊 CPX Survey Info\n\nApp ID: 34470\nCurrency: Coins (1 USD = 800 Coins)\nCommission: 20%\nStatus: Live')">ℹ️ Info</button>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /page-content -->
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p>&copy; 2026 CashVista. All rights reserved.</p>
+            <p class="founder">Designed & Built by Stephen Melek Elisha</p>
+        </footer>
+
+    </div><!-- /main-content -->
+
+    <!-- =============================================
+    MODALS
+    ============================================= -->
+
+    <!-- ASSIGN CAMPAIGN MODAL -->
     <div id="assignModal" class="modal">
         <div class="modal-content">
             <h3>📹 Assign Campaign to Batch</h3>
@@ -817,7 +1116,7 @@
         </div>
     </div>
 
-    <!-- ===== USER DETAILS MODAL ===== -->
+    <!-- USER DETAILS MODAL -->
     <div id="userDetailModal" class="modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeUserDetailModal()">✕</button>
@@ -829,7 +1128,7 @@
         </div>
     </div>
 
-    <!-- ===== CHAT REPLY MODAL ===== -->
+    <!-- CHAT REPLY MODAL -->
     <div id="chatReplyModal" class="modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeChatReply()">✕</button>
@@ -847,7 +1146,7 @@
         </div>
     </div>
 
-    <!-- ===== BROADCAST MODAL ===== -->
+    <!-- BROADCAST MODAL -->
     <div id="broadcastModal" class="modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeBroadcast()">✕</button>
@@ -878,11 +1177,6 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2026 CashVista. All rights reserved.</p>
-        <p class="founder">Designed & Built by Stephen Melek Elisha</p>
-    </footer>
-
     <script>
         // =============================================
         // SUPABASE CONFIGURATION
@@ -898,6 +1192,57 @@
             window.location.href = 'admin-login.html';
         }
         document.getElementById('adminEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@cashvista.com';
+
+        // =============================================
+        // SIDEBAR TOGGLE
+        // =============================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Close sidebar on outside click (mobile)
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+
+        // =============================================
+        // SWITCH TABS
+        // =============================================
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            // Show selected tab
+            const targetTab = document.getElementById('tab-' + tabName);
+            if (targetTab) targetTab.classList.add('active');
+            // Highlight nav item
+            const navItem = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
+            if (navItem) navItem.classList.add('active');
+
+            // Load data for specific tabs
+            if (tabName === 'batches') renderBatches();
+            if (tabName === 'chat') loadChatList();
+            if (tabName === 'cpx') {
+                // Refresh iframe when switching to CPX tab
+                const iframe = document.getElementById('cpxIframe');
+                if (iframe) {
+                    const currentSrc = iframe.src;
+                    iframe.src = currentSrc;
+                }
+            }
+
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
 
         // =============================================
         // HELPER FUNCTIONS
@@ -957,7 +1302,7 @@
         }
 
         // =============================================
-        // FORMAT DURATION FOR DISPLAY
+        // FORMAT DURATION
         // =============================================
         function formatDurationDisplay(seconds) {
             if (!seconds || seconds <= 0) return 'N/A';
@@ -976,7 +1321,7 @@
         }
 
         // =============================================
-        // VALIDATE RECEIPT URL
+        // VALIDATE RECEIPT
         // =============================================
         function isValidReceipt(url) {
             if (!url) return false;
@@ -993,26 +1338,20 @@
             return null;
         }
 
-        // =============================================
-        // GENERATE REFERRAL LINK
-        // =============================================
         function generateReferralLink(code) {
             return APP_URL + '/register.html?ref=' + code;
         }
 
         // =============================================
-        // ACTIVATE INVEST MEMBER
+        // ACTIVATE / DEACTIVATE INVEST
         // =============================================
         async function activateInvestMember(email) {
             if (!confirm(`✅ Activate Invest & Grow for ${email}?\n\nThis will generate their referral link.`)) return;
-            
             try {
                 const uniqueId = 'REF_' + Date.now() + '_' + email.split('@')[0];
                 const referralLink = generateReferralLink(uniqueId);
 
-                console.log('🔄 Activating user:', email);
-
-                const userUpdateResponse = await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
+                await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1026,12 +1365,7 @@
                     })
                 });
 
-                if (!userUpdateResponse.ok) {
-                    throw new Error('Failed to update users table');
-                }
-
                 const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
-                
                 if (!existing || existing.length === 0) {
                     await insertSupabase('invest_members', {
                         user_email: email,
@@ -1062,12 +1396,8 @@
             }
         }
 
-        // =============================================
-        // DEACTIVATE INVEST MEMBER
-        // =============================================
         async function deactivateInvestMember(email) {
             if (!confirm(`❌ Deactivate Invest & Grow for ${email}?\n\nThis will hide their referral link.`)) return;
-            
             try {
                 await fetch(SUPABASE_URL + '/rest/v1/users?email=eq.' + encodeURIComponent(email), {
                     method: 'PATCH',
@@ -1085,9 +1415,7 @@
 
                 const existing = await fetchSupabase('invest_members', '?user_email=eq.' + encodeURIComponent(email));
                 if (existing && existing.length > 0) {
-                    await updateSupabase('invest_members', existing[0].id, {
-                        status: 'inactive'
-                    });
+                    await updateSupabase('invest_members', existing[0].id, { status: 'inactive' });
                 }
 
                 await insertSupabase('activity', {
@@ -1106,28 +1434,12 @@
         }
 
         // =============================================
-        // SWITCH TABS
-        // =============================================
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-            const buttons = document.querySelectorAll('.nav-tabs button');
-            const tabs = ['pending', 'campaigns', 'invest', 'withdrawals', 'batches', 'users', 'activity', 'chat'];
-            const index = tabs.indexOf(tabName);
-            if (index !== -1) buttons[index].classList.add('active');
-            if (tabName === 'batches') renderBatches();
-            if (tabName === 'chat') loadChatList();
-        }
-
-        // =============================================
         // RENDER BATCHES
         // =============================================
         async function renderBatches() {
             try {
                 const batches = await fetchSupabase('batches', '?order=created_at.asc');
                 const users = await fetchSupabase('users', '');
-
                 const container = document.getElementById('batchesContainer');
 
                 if (!batches || batches.length === 0) {
@@ -1138,7 +1450,6 @@
                 let html = '';
                 for (const batch of batches) {
                     const batchUsers = users ? users.filter(u => u.batch === batch.name) : [];
-
                     html += `
                         <div class="batch-box">
                             <div class="batch-header">
@@ -1165,40 +1476,30 @@
                     `;
                 }
                 container.innerHTML = html;
-
             } catch (error) {
                 console.error('Error rendering batches:', error);
             }
         }
 
-        // =============================================
-        // SELECT ALL / APPROVE ALL
-        // =============================================
         function toggleSelectAll(batchName) {
-            const checkbox = document.getElementById('selectAll_' + batchName);
             alert('✅ ' + batchName + ' selected for campaign assignment. Use "Assign Campaign" to continue.');
         }
 
         async function approveBatch(batchName) {
             if (!confirm(`✅ Approve ALL users in ${batchName} for current campaign?`)) return;
-            
             try {
                 const users = await fetchSupabase('users', '');
                 const batchUsers = users ? users.filter(u => u.batch === batchName) : [];
-
                 if (batchUsers.length === 0) {
                     alert('No users in this batch to approve.');
                     return;
                 }
-
                 const campaigns = await fetchSupabase('campaigns', '?status=eq.approved&order=created_at.desc&limit=1');
                 if (!campaigns || campaigns.length === 0) {
                     alert('No approved campaign available to assign.');
                     return;
                 }
-
                 const campaign = campaigns[0];
-                
                 for (const user of batchUsers) {
                     await insertSupabase('task_completions', {
                         user_email: user.email,
@@ -1209,17 +1510,14 @@
                         completed_at: new Date().toISOString()
                     });
                 }
-
                 await updateSupabase('campaigns', campaign.id, {
                     assigned_batch: batchName,
                     assigned_viewers: batchUsers.length,
                     status: 'live',
                     assigned_at: new Date().toISOString()
                 });
-
                 alert(`✅ ${batchUsers.length} users in ${batchName} have been approved for the campaign!`);
                 renderDashboard();
-                
             } catch (error) {
                 alert('❌ Error approving batch: ' + error.message);
                 console.error(error);
@@ -1258,7 +1556,6 @@
                 const totalWithdrawn = withdrawals ? withdrawals.reduce((sum, w) => sum + (w.amount || 0), 0) : 0;
                 const totalWatchEarnings = tasks ? tasks.reduce((sum, t) => sum + (t.amount_earned || 0), 0) : 0;
                 const videosWatched = tasks ? tasks.length : 0;
-
                 const isInvestMember = user.is_invest_member || false;
                 let referralLink = user.referral_link || 'Not generated yet';
                 if (referralLink && referralLink !== 'Not generated yet') {
@@ -1268,71 +1565,26 @@
 
                 let html = `
                     <div class="user-detail-grid">
-                        <div class="detail-item">
-                            <div class="label">📧 Email</div>
-                            <div class="value">${user.email || 'N/A'}</div>
+                        <div class="detail-item"><div class="label">📧 Email</div><div class="value">${user.email || 'N/A'}</div></div>
+                        <div class="detail-item"><div class="label">📞 Phone</div><div class="value">${user.phone || 'N/A'}</div></div>
+                        <div class="detail-item"><div class="label">💰 Wallet Balance</div><div class="value gold">₦${(user.balance || 0).toLocaleString()}</div></div>
+                        <div class="detail-item"><div class="label">🏦 Total Withdrawn</div><div class="value red">₦${totalWithdrawn.toLocaleString()}</div></div>
+                        <div class="detail-item"><div class="label">📊 Remaining Balance</div><div class="value green">₦${((user.balance || 0) - totalWithdrawn).toLocaleString()}</div></div>
+                        <div class="detail-item"><div class="label">📈 Invest Member</div><div class="value ${isInvestMember ? 'green' : 'red'}">${isInvestMember ? '✅ Yes' : '❌ No'}</div></div>
+                        <div class="detail-item full-width"><div class="label">🔗 Referral Link</div><div class="value small">${referralLink}</div></div>
+                        <div class="detail-item"><div class="label">👥 Direct Referrals</div><div class="value blue">${user.direct_count || 0}</div></div>
+                        <div class="detail-item"><div class="label">🌳 Downliners</div><div class="value small">${downliners && downliners.length > 0 ? downliners.map(d => `<span class="downliner-tag">${d.name || d.email}</span>`).join('') : 'No downliners yet'}</div></div>
+                        <div class="detail-item"><div class="label">🎬 Videos Watched</div><div class="value blue">${videosWatched}</div></div>
+                        <div class="detail-item"><div class="label">💰 Watch Earnings</div><div class="value gold">₦${totalWatchEarnings.toLocaleString()}</div></div>
+                        <div class="detail-item full-width"><div class="label">📹 Advertised Videos (${activeCampaigns.length})</div>
+                            <div class="value small">${activeCampaigns.length > 0 ? activeCampaigns.map(c => `
+                                <div style="margin:4px 0;">📹 ${c.title} - Duration: ${formatDurationDisplay(c.duration)} - <a href="${c.video_link}" target="_blank" class="video-link-sm">🔗 Watch Video</a></div>
+                            `).join('') : 'No advertised videos yet'}</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="label">📞 Phone</div>
-                            <div class="value">${user.phone || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">💰 Wallet Balance</div>
-                            <div class="value gold">₦${(user.balance || 0).toLocaleString()}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">🏦 Total Withdrawn</div>
-                            <div class="value red">₦${totalWithdrawn.toLocaleString()}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">📊 Remaining Balance</div>
-                            <div class="value green">₦${((user.balance || 0) - totalWithdrawn).toLocaleString()}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">📈 Invest Member</div>
-                            <div class="value ${isInvestMember ? 'green' : 'red'}">${isInvestMember ? '✅ Yes' : '❌ No'}</div>
-                        </div>
-                        <div class="detail-item full-width">
-                            <div class="label">🔗 Referral Link</div>
-                            <div class="value small">${referralLink}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">👥 Direct Referrals</div>
-                            <div class="value blue">${user.direct_count || 0}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">🌳 Downliners</div>
-                            <div class="value small">
-                                ${downliners && downliners.length > 0 ? downliners.map(d => `<span class="downliner-tag">${d.name || d.email}</span>`).join('') : 'No downliners yet'}
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">🎬 Videos Watched</div>
-                            <div class="value blue">${videosWatched}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">💰 Watch Earnings</div>
-                            <div class="value gold">₦${totalWatchEarnings.toLocaleString()}</div>
-                        </div>
-                        <div class="detail-item full-width">
-                            <div class="label">📹 Advertised Videos (${activeCampaigns.length})</div>
-                            <div class="value small">
-                                ${activeCampaigns.length > 0 ? activeCampaigns.map(c => `
-                                    <div style="margin:4px 0;">
-                                        📹 ${c.title} - Duration: ${formatDurationDisplay(c.duration)} - 
-                                        <a href="${c.video_link}" target="_blank" class="video-link-sm">🔗 Watch Video</a>
-                                    </div>
-                                `).join('') : 'No advertised videos yet'}
-                            </div>
-                        </div>
-                        <div class="detail-item full-width">
-                            <div class="label">📅 Joined Date</div>
-                            <div class="value small">${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}</div>
-                        </div>
+                        <div class="detail-item full-width"><div class="label">📅 Joined Date</div><div class="value small">${user.joined_date ? new Date(user.joined_date).toLocaleString() : 'N/A'}</div></div>
                     </div>
                 `;
                 content.innerHTML = html;
-
             } catch (error) {
                 console.error('Error loading user details:', error);
                 content.innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>Error loading user details. Please try again.</p></div>';
@@ -1344,9 +1596,7 @@
         }
 
         document.getElementById('userDetailModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeUserDetailModal();
-            }
+            if (e.target === this) closeUserDetailModal();
         });
 
         // =============================================
@@ -1355,25 +1605,23 @@
         async function openBatchUserDetails(batchName) {
             const users = await fetchSupabase('users', '');
             const batchUsers = users ? users.filter(u => u.batch === batchName) : [];
-
             if (batchUsers.length === 0) {
                 alert('No users in this batch.');
                 return;
             }
-
-            let message = `📦 ${batchName} Users Details:\n\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
-
+            let message = `📦 ${batchName} Users Details:\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             for (const user of batchUsers) {
                 const withdrawals = await fetchSupabase('withdrawals', '?user_email=eq.' + encodeURIComponent(user.email));
                 const tasks = await fetchSupabase('task_completions', '?user_email=eq.' + encodeURIComponent(user.email));
                 const campaigns = await fetchSupabase('campaigns', '?user_email=eq.' + encodeURIComponent(user.email));
-
                 const totalWithdrawn = withdrawals ? withdrawals.reduce((sum, w) => sum + (w.amount || 0), 0) : 0;
                 const totalWatchEarnings = tasks ? tasks.reduce((sum, t) => sum + (t.amount_earned || 0), 0) : 0;
                 const videosWatched = tasks ? tasks.length : 0;
                 const isInvestMember = user.is_invest_member || false;
-
+                let referralLink = user.referral_link || 'Not generated';
+                if (referralLink && referralLink !== 'Not generated') {
+                    referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
+                }
                 message += `👤 ${user.name || user.email}\n`;
                 message += `   Balance: ₦${(user.balance || 0).toLocaleString()}\n`;
                 message += `   Withdrawn: ₦${totalWithdrawn.toLocaleString()}\n`;
@@ -1381,15 +1629,10 @@
                 message += `   Videos Watched: ${videosWatched}\n`;
                 message += `   Watch Earnings: ₦${totalWatchEarnings.toLocaleString()}\n`;
                 message += `   Advertised Videos: ${campaigns ? campaigns.length : 0}\n`;
-                let referralLink = user.referral_link || 'Not generated';
-                if (referralLink && referralLink !== 'Not generated') {
-                    referralLink = referralLink.replace('cashvista.com', 'cashvista.vercel.app');
-                }
                 message += `   Referral Link: ${referralLink}\n`;
                 message += `   Direct Referrals: ${user.direct_count || 0}\n`;
                 message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             }
-
             alert(message);
         }
 
@@ -1399,7 +1642,6 @@
         function populateAssignDropdowns(campaigns, batches) {
             const campaignSelect = document.getElementById('assignCampaign');
             const batchSelect = document.getElementById('assignBatch');
-
             if (campaignSelect) {
                 campaignSelect.innerHTML = '<option value="">-- Select Campaign --</option>';
                 if (campaigns) {
@@ -1414,7 +1656,6 @@
                     });
                 }
             }
-
             if (batchSelect) {
                 batchSelect.innerHTML = '<option value="">-- Select Batch --</option>';
                 if (batches) {
@@ -1451,9 +1692,7 @@
         }
 
         document.getElementById('assignModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAssignModal();
-            }
+            if (e.target === this) closeAssignModal();
         });
 
         document.getElementById('assignForm').addEventListener('submit', async function(e) {
@@ -1461,12 +1700,10 @@
             const campaignId = document.getElementById('assignCampaign').value;
             const batchName = document.getElementById('assignBatch').value;
             const viewers = parseInt(document.getElementById('assignViewers').value);
-
             if (!campaignId || !batchName) {
                 alert('❌ Please select both campaign and batch.');
                 return;
             }
-
             try {
                 const success = await updateSupabase('campaigns', campaignId, {
                     assigned_batch: batchName,
@@ -1474,23 +1711,19 @@
                     status: 'live',
                     assigned_at: new Date().toISOString()
                 });
-
                 if (!success) {
                     alert('❌ Error assigning campaign. Please try again.');
                     return;
                 }
-
                 await insertSupabase('activity', {
                     user_name: 'Admin',
                     action: 'Assigned campaign to ' + batchName + ' (' + viewers + ' viewers)',
                     amount: 0,
                     date: new Date().toISOString()
                 });
-
                 alert('✅ Campaign assigned successfully!');
                 closeAssignModal();
                 renderDashboard();
-
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
@@ -1504,7 +1737,6 @@
                 alert('❌ No valid receipt image available.');
                 return;
             }
-
             try {
                 fetch(imageData)
                     .then(response => response.blob())
@@ -1515,9 +1747,7 @@
                             URL.revokeObjectURL(url);
                             showImageModal(imageData);
                         } else {
-                            setTimeout(() => {
-                                URL.revokeObjectURL(url);
-                            }, 30000);
+                            setTimeout(() => { URL.revokeObjectURL(url); }, 30000);
                         }
                     })
                     .catch(error => {
@@ -1530,14 +1760,9 @@
             }
         }
 
-        // =============================================
-        // SHOW IMAGE IN MODAL
-        // =============================================
         function showImageModal(imageData) {
             const existingViewer = document.getElementById('receiptViewerOverlay');
-            if (existingViewer) {
-                existingViewer.remove();
-            }
+            if (existingViewer) existingViewer.remove();
 
             const overlay = document.createElement('div');
             overlay.id = 'receiptViewerOverlay';
@@ -1579,17 +1804,10 @@
             document.body.appendChild(overlay);
 
             overlay.addEventListener('click', function(e) {
-                if (e.target === overlay || e.target === hint) {
-                    overlay.remove();
-                }
+                if (e.target === overlay || e.target === hint) overlay.remove();
             });
-
-            img.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-            downloadBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
+            img.addEventListener('click', function(e) { e.stopPropagation(); });
+            downloadBtn.addEventListener('click', function(e) { e.stopPropagation(); });
             closeBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 overlay.remove();
@@ -1604,83 +1822,55 @@
             document.addEventListener('keydown', escHandler);
         }
 
-        // =============================================
-        // VIEW VIDEO
-        // =============================================
-        function viewVideo(url) { 
-            if (url) {
-                window.open(url, '_blank');
-            } else {
-                alert('No video link available.');
-            }
+        function viewVideo(url) {
+            if (url) window.open(url, '_blank');
+            else alert('No video link available.');
         }
 
-        // =============================================
         // =============================================
         // CHAT FUNCTIONS
         // =============================================
         let chatFileAttachment = null;
         let currentChatUser = null;
 
-        // =============================================
-        // LOAD CHAT LIST
-        // =============================================
         async function loadChatList() {
             const container = document.getElementById('chatContainer');
             container.innerHTML = '<div class="chat-empty"><div class="icon">🔄</div><p>Loading conversations...</p></div>';
 
             try {
-                // Get all users who have sent messages
                 const messages = await fetchSupabase('messages', '?order=created_at.desc');
-                
                 if (!messages || messages.length === 0) {
-                    container.innerHTML = `
-                        <div class="chat-empty">
-                            <div class="icon">💬</div>
-                            <p>No messages yet. Users will appear here when they send messages.</p>
-                        </div>
-                    `;
+                    container.innerHTML = `<div class="chat-empty"><div class="icon">💬</div><p>No messages yet. Users will appear here when they send messages.</p></div>`;
                     return;
                 }
 
-                // Group messages by sender/recipient
                 const usersMap = new Map();
                 const adminEmail = document.getElementById('adminEmail').textContent;
 
                 messages.forEach(msg => {
                     let userEmail, userName, lastMsg, lastTime;
-                    
-                    // Determine if message is from user or admin
                     if (msg.sender_email !== adminEmail && msg.sender_email !== 'admin@cashvista.com') {
-                        // Message from user to admin
                         userEmail = msg.sender_email;
                         userName = msg.sender_name || msg.sender_email;
                         lastMsg = msg.message;
                         lastTime = msg.created_at;
                     } else if (msg.recipient_email !== adminEmail && msg.recipient_email !== 'admin@cashvista.com') {
-                        // Message from admin to user
                         userEmail = msg.recipient_email;
                         userName = msg.recipient_name || msg.recipient_email;
                         lastMsg = msg.message;
                         lastTime = msg.created_at;
                     }
-
                     if (userEmail && !usersMap.has(userEmail)) {
                         usersMap.set(userEmail, { email: userEmail, name: userName, lastMsg: lastMsg, lastTime: lastTime, unread: 0 });
                     }
                 });
 
                 if (usersMap.size === 0) {
-                    container.innerHTML = `
-                        <div class="chat-empty">
-                            <div class="icon">💬</div>
-                            <p>No conversations yet.</p>
-                        </div>
-                    `;
+                    container.innerHTML = `<div class="chat-empty"><div class="icon">💬</div><p>No conversations yet.</p></div>`;
                     return;
                 }
 
-                let html = `<div class="chat-list">`;
+                let html = '<div class="chat-list">';
                 for (const [email, data] of usersMap) {
                     const timeAgo = data.lastTime ? timeSince(new Date(data.lastTime)) : 'N/A';
                     html += `
@@ -1695,18 +1885,14 @@
                         </div>
                     `;
                 }
-                html += `</div>`;
+                html += '</div>';
                 container.innerHTML = html;
-
             } catch (error) {
                 console.error('Error loading chat list:', error);
                 container.innerHTML = `<div class="chat-empty"><div class="icon">❌</div><p>Error loading conversations. Please try again.</p></div>`;
             }
         }
 
-        // =============================================
-        // OPEN CHAT REPLY
-        // =============================================
         async function openChatReply(email, name) {
             currentChatUser = { email, name };
             document.getElementById('chatUserName').textContent = name;
@@ -1714,14 +1900,9 @@
             document.getElementById('chatReplyModal').style.display = 'flex';
             document.getElementById('chatReplyInput').value = '';
             chatFileAttachment = null;
-
-            // Load conversation
             await loadConversation(email);
         }
 
-        // =============================================
-        // LOAD CONVERSATION
-        // =============================================
         async function loadConversation(email) {
             const conversationDiv = document.getElementById('chatConversation');
             conversationDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Loading messages...</div>';
@@ -1757,25 +1938,20 @@
 
                 conversationDiv.innerHTML = html;
                 conversationDiv.scrollTop = conversationDiv.scrollHeight;
-
             } catch (error) {
                 console.error('Error loading conversation:', error);
                 conversationDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Error loading messages.</div>';
             }
         }
 
-        // =============================================
-        // SEND CHAT REPLY
-        // =============================================
         async function sendChatReply() {
             const input = document.getElementById('chatReplyInput');
             const message = input.value.trim();
-            
+
             if (!message && !chatFileAttachment) {
                 alert('Please type a message or attach an image.');
                 return;
             }
-
             if (!currentChatUser) {
                 alert('No user selected.');
                 return;
@@ -1802,13 +1978,11 @@
                 };
 
                 const success = await insertSupabase('messages', msgData);
-
                 if (!success) {
                     alert('❌ Error sending message. Please try again.');
                     return;
                 }
 
-                // Add to activity log
                 await insertSupabase('activity', {
                     user_name: 'Admin',
                     action: `Sent message to ${currentChatUser.name}`,
@@ -1822,20 +1996,15 @@
 
                 await loadConversation(currentChatUser.email);
                 await loadChatList();
-
             } catch (error) {
                 console.error('Error sending message:', error);
                 alert('❌ Error sending message. Please try again.');
             }
         }
 
-        // =============================================
-        // ATTACH CHAT FILE
-        // =============================================
         function attachChatFile(input) {
             const file = input.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 chatFileAttachment = e.target.result;
@@ -1844,9 +2013,6 @@
             reader.readAsDataURL(file);
         }
 
-        // =============================================
-        // CLOSE CHAT REPLY
-        // =============================================
         function closeChatReply() {
             document.getElementById('chatReplyModal').style.display = 'none';
             currentChatUser = null;
@@ -1854,15 +2020,11 @@
         }
 
         document.getElementById('chatReplyModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeChatReply();
-            }
+            if (e.target === this) closeChatReply();
         });
 
         document.getElementById('chatReplyInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendChatReply();
-            }
+            if (e.key === 'Enter') sendChatReply();
         });
 
         // =============================================
@@ -1881,9 +2043,7 @@
         }
 
         document.getElementById('broadcastModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeBroadcast();
-            }
+            if (e.target === this) closeBroadcast();
         });
 
         document.getElementById('broadcastFileInput').addEventListener('change', function(e) {
@@ -1904,26 +2064,15 @@
             const message = document.getElementById('broadcastMessage').value.trim();
             const target = document.getElementById('broadcastTarget').value;
 
-            if (!subject) {
-                alert('❌ Please enter a subject.');
-                return;
-            }
-            if (!message) {
-                alert('❌ Please enter a message.');
-                return;
-            }
-
+            if (!subject) { alert('❌ Please enter a subject.'); return; }
+            if (!message) { alert('❌ Please enter a message.'); return; }
             if (!confirm(`📤 Send this broadcast to ALL ${target} users?\n\nSubject: ${subject}`)) return;
 
             try {
                 const users = await fetchSupabase('users', '');
                 let targetUsers = users;
-                
-                if (target === 'active') {
-                    targetUsers = users.filter(u => u.is_invest_member === true);
-                } else if (target === 'inactive') {
-                    targetUsers = users.filter(u => u.is_invest_member !== true);
-                }
+                if (target === 'active') targetUsers = users.filter(u => u.is_invest_member === true);
+                else if (target === 'inactive') targetUsers = users.filter(u => u.is_invest_member !== true);
 
                 if (targetUsers.length === 0) {
                     alert('❌ No users found for this target audience.');
@@ -1971,7 +2120,6 @@
                 alert(`✅ Broadcast sent to ${sentCount} users!`);
                 closeBroadcast();
                 loadChatList();
-
             } catch (error) {
                 console.error('Error sending broadcast:', error);
                 alert('❌ Error sending broadcast. Please try again.');
@@ -1993,7 +2141,7 @@
         }
 
         // =============================================
-        // RENDER DASHBOARD - UPDATED WITH CHAT
+        // RENDER DASHBOARD
         // =============================================
         async function renderDashboard() {
             try {
@@ -2006,7 +2154,6 @@
                 const activity = await fetchSupabase('activity', '?order=created_at.desc&limit=20');
                 const batches = await fetchSupabase('batches', '?order=created_at.asc');
 
-                // Get unread chat messages count
                 const adminEmail = document.getElementById('adminEmail').textContent;
                 const unreadMessages = await fetchSupabase(
                     'messages',
@@ -2014,7 +2161,8 @@
                 );
                 const unreadCount = unreadMessages ? unreadMessages.length : 0;
 
-                const chatBadge = document.getElementById('chatUnreadBadge');
+                // Update sidebar badges
+                const chatBadge = document.getElementById('sidebarChatBadge');
                 if (unreadCount > 0) {
                     chatBadge.style.display = 'inline-block';
                     chatBadge.textContent = unreadCount;
@@ -2022,31 +2170,24 @@
                     chatBadge.style.display = 'none';
                 }
 
-                console.log('Users:', users?.length || 0);
-                console.log('Campaigns:', campaigns?.length || 0);
-                console.log('Invest Members:', investMembers?.length || 0);
-                console.log('Withdrawals:', withdrawals?.length || 0);
-                console.log('Activity:', activity?.length || 0);
-                console.log('Batches:', batches?.length || 0);
-
                 const totalUsers = users ? users.length : 0;
                 const totalInvest = investMembers ? investMembers.length : 0;
-                
+
                 const pendingCampaigns = campaigns ? campaigns.filter(c => {
                     const status = (c.status || '').toLowerCase();
                     return status === 'pending';
                 }).length : 0;
-                
+
                 const pendingInvest = investMembers ? investMembers.filter(i => {
                     const status = (i.status || '').toLowerCase();
                     return status === 'pending';
                 }).length : 0;
-                
+
                 const pendingWithdrawals = withdrawals ? withdrawals.filter(w => {
                     const status = (w.status || '').toLowerCase();
                     return status === 'pending';
                 }).length : 0;
-                
+
                 const totalPending = pendingCampaigns + pendingInvest + pendingWithdrawals;
 
                 let totalWallet = 0;
@@ -2064,9 +2205,12 @@
                 document.getElementById('investMembers').textContent = totalInvest;
                 document.getElementById('pendingCount').textContent = totalPending;
                 document.getElementById('todaySignups').textContent = todaySignups;
+
+                // Update badges
                 document.getElementById('pendingBadge').textContent = totalPending;
-                document.getElementById('pendingTabBadge').textContent = totalPending;
+                document.getElementById('sidebarPendingBadge').textContent = totalPending;
                 document.getElementById('userCountBadge').textContent = totalUsers;
+                document.getElementById('sidebarUserBadge').textContent = totalUsers;
                 document.getElementById('campaignCountBadge').textContent = campaigns ? campaigns.length : 0;
                 document.getElementById('investCountBadge').textContent = totalInvest;
                 document.getElementById('withdrawalCountBadge').textContent = withdrawals ? withdrawals.length : 0;
@@ -2081,17 +2225,17 @@
                         const status = (c.status || '').toLowerCase();
                         return status === 'pending';
                     }).forEach(c => {
-                        pendingItems.push({ 
-                            type: '📹 Campaign', 
-                            id: c.id, 
-                            user: c.user_email || 'Unknown', 
-                            title: c.title || 'Video', 
-                            duration: c.duration || 0, 
-                            amount: '₦' + (c.amount || 0).toLocaleString(), 
-                            receipt: c.receipt_url || null, 
-                            date: c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A', 
-                            data: c, 
-                            table: 'campaigns' 
+                        pendingItems.push({
+                            type: '📹 Campaign',
+                            id: c.id,
+                            user: c.user_email || 'Unknown',
+                            title: c.title || 'Video',
+                            duration: c.duration || 0,
+                            amount: '₦' + (c.amount || 0).toLocaleString(),
+                            receipt: c.receipt_url || null,
+                            date: c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A',
+                            data: c,
+                            table: 'campaigns'
                         });
                     });
                 }
@@ -2100,17 +2244,17 @@
                         const status = (i.status || '').toLowerCase();
                         return status === 'pending';
                     }).forEach(i => {
-                        pendingItems.push({ 
-                            type: '📈 Invest', 
-                            id: i.id, 
-                            user: i.user_email || 'Unknown', 
-                            title: 'Invest & Grow', 
-                            duration: 0, 
-                            amount: '₦' + (i.amount || 5000).toLocaleString(), 
-                            receipt: i.receipt_url || null, 
-                            date: i.created_at ? new Date(i.created_at).toLocaleDateString() : 'N/A', 
-                            data: i, 
-                            table: 'invest_members' 
+                        pendingItems.push({
+                            type: '📈 Invest',
+                            id: i.id,
+                            user: i.user_email || 'Unknown',
+                            title: 'Invest & Grow',
+                            duration: 0,
+                            amount: '₦' + (i.amount || 5000).toLocaleString(),
+                            receipt: i.receipt_url || null,
+                            date: i.created_at ? new Date(i.created_at).toLocaleDateString() : 'N/A',
+                            data: i,
+                            table: 'invest_members'
                         });
                     });
                 }
@@ -2119,17 +2263,17 @@
                         const status = (w.status || '').toLowerCase();
                         return status === 'pending';
                     }).forEach(w => {
-                        pendingItems.push({ 
-                            type: '💰 Withdraw', 
-                            id: w.id, 
-                            user: w.user_email || 'Unknown', 
-                            title: 'Withdrawal', 
-                            duration: 0, 
-                            amount: '₦' + (w.amount || 0).toLocaleString(), 
-                            receipt: null, 
-                            date: w.created_at ? new Date(w.created_at).toLocaleDateString() : 'N/A', 
-                            data: w, 
-                            table: 'withdrawals' 
+                        pendingItems.push({
+                            type: '💰 Withdraw',
+                            id: w.id,
+                            user: w.user_email || 'Unknown',
+                            title: 'Withdrawal',
+                            duration: 0,
+                            amount: '₦' + (w.amount || 0).toLocaleString(),
+                            receipt: null,
+                            date: w.created_at ? new Date(w.created_at).toLocaleDateString() : 'N/A',
+                            data: w,
+                            table: 'withdrawals'
                         });
                     });
                 }
@@ -2305,8 +2449,17 @@
 
                 populateAssignDropdowns(campaigns, batches);
 
-                console.log('✅ Admin dashboard updated successfully!');
+                // Update CPX iframe with admin email if needed
+                const cpxIframe = document.getElementById('cpxIframe');
+                if (cpxIframe) {
+                    const adminEmailClean = document.getElementById('adminEmail').textContent;
+                    // Only update if it's the default admin
+                    if (cpxIframe.src.includes('admin@cashvista.com')) {
+                        // Keep as is
+                    }
+                }
 
+                console.log('✅ Admin dashboard updated successfully!');
             } catch (error) {
                 console.error('Error rendering dashboard:', error);
             }
@@ -2319,7 +2472,6 @@
             if (!confirm(`✅ Approve this ${table} for ${userEmail}?`)) return;
             try {
                 const success = await updateSupabase(table, id, { status: 'approved' });
-
                 if (!success) {
                     alert('❌ Error approving. Please try again.');
                     return;
