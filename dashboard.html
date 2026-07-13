@@ -8,6 +8,10 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a1a2e; }
+
+        /* =============================================
+           TOP BAR
+           ============================================= */
         .topbar {
             background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
             color: #fff;
@@ -54,7 +58,9 @@
         }
         .topbar .user-info .logout:hover { background: #e74c3c; color: #fff; }
 
-        /* ===== NEW: CHAT ICON IN TOP BAR ===== */
+        /* =============================================
+           CHAT ICON
+           ============================================= */
         .chat-icon-container {
             position: relative;
             display: inline-block;
@@ -87,7 +93,14 @@
             text-align: center;
         }
 
+        /* =============================================
+           CONTAINER
+           ============================================= */
         .container { max-width: 1300px; margin: 0 auto; padding: 25px 20px; }
+
+        /* =============================================
+           WELCOME BANNER
+           ============================================= */
         .welcome-banner {
             background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 100%);
             color: #fff;
@@ -107,6 +120,10 @@
         .welcome-banner .stats-mini .stat-item { text-align: center; }
         .welcome-banner .stats-mini .stat-item .num { font-size: 22px; font-weight: 800; color: #f5c842; }
         .welcome-banner .stats-mini .stat-item .label { font-size: 12px; color: #aac; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* =============================================
+           DASHBOARD GRID
+           ============================================= */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -152,6 +169,9 @@
         .card .btn-purple:hover { background: #6a1b9a; }
         .card .btn-teal { background: #00897b; color: #fff; }
         .card .btn-teal:hover { background: #00796b; }
+        .card .btn-cpx { background: #0d47a1; color: #fff; }
+        .card .btn-cpx:hover { background: #1565c0; transform: scale(1.02); }
+
         .card .referral-link-box {
             background: #f8fafc;
             padding: 12px 16px;
@@ -188,12 +208,121 @@
         }
         .badge-mini.gold { background: #f5c842; color: #0d1b2a; }
         .badge-mini.green { background: #e8f5e9; color: #2e7d32; }
+        .badge-mini.blue { background: #e3f2fd; color: #0d47a1; }
+
         .card-gradient-1 { background: linear-gradient(135deg, #fff 60%, #fef7e0); }
         .card-gradient-2 { background: linear-gradient(135deg, #fff 60%, #e8f5e9); }
         .card-gradient-3 { background: linear-gradient(135deg, #fff 60%, #e3f2fd); }
         .card-gradient-4 { background: linear-gradient(135deg, #fff 60%, #fce4ec); }
         .card-gradient-5 { background: linear-gradient(135deg, #fff 60%, #f3e5f5); }
         .card-gradient-6 { background: linear-gradient(135deg, #fff 60%, #e0f7fa); }
+        .card-gradient-7 { background: linear-gradient(135deg, #fff 60%, #fef7e0); }
+
+        /* =============================================
+           CPX SURVEY SECTION (NEW)
+           ============================================= */
+        .cpx-section {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px 28px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .cpx-section .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .cpx-section .header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d1b2a;
+        }
+        .cpx-section .header .badge-cpx {
+            background: #0d47a1;
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .cpx-section .header .actions button {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .cpx-section .info-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f5c842;
+        }
+        .cpx-section .info-box p {
+            font-size: 14px;
+            color: #333;
+            margin: 0;
+        }
+        .cpx-section .info-box .highlight {
+            color: #0d47a1;
+            font-weight: 700;
+        }
+
+        .cpx-iframe-wrapper {
+            width: 100%;
+            min-height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e8ecf0;
+            background: #fff;
+        }
+        .cpx-iframe-wrapper iframe {
+            width: 100%;
+            min-height: 600px;
+            border: none;
+            display: block;
+        }
+        .cpx-iframe-wrapper .loading-placeholder {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            color: #888;
+            font-size: 16px;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .cpx-iframe-wrapper .loading-placeholder .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e8ecf0;
+            border-top-color: #f5c842;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .cpx-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 12px 0;
+            border-top: 1px solid #e8ecf0;
+        }
+
+        /* =============================================
+           TABLE SECTION
+           ============================================= */
         .table-section {
             background: #fff;
             border-radius: 20px;
@@ -231,6 +360,10 @@
         .status-badge.success { background: #e8f5e9; color: #2e7d32; }
         .status-badge.warning { background: #fff3e0; color: #e65100; }
         .status-badge.danger { background: #fce4ec; color: #c62828; }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
         .footer {
             background: #0d1b2a;
             color: #aaa;
@@ -240,6 +373,10 @@
             border-radius: 20px 20px 0 0;
         }
         .footer .founder { color: #f5c842; font-weight: 600; }
+
+        /* =============================================
+           TOAST NOTIFICATION
+           ============================================= */
         .toast-notification {
             position: fixed;
             bottom: 30px;
@@ -260,7 +397,9 @@
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
-        /* ===== CHAT MODAL STYLES ===== */
+        /* =============================================
+           CHAT MODAL
+           ============================================= */
         .chat-modal {
             display: none;
             position: fixed;
@@ -278,9 +417,7 @@
             overflow: hidden;
             animation: slideUp 0.3s ease;
         }
-        .chat-modal.active {
-            display: flex;
-        }
+        .chat-modal.active { display: flex; }
         .chat-modal .chat-header {
             background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
             color: #fff;
@@ -290,10 +427,7 @@
             align-items: center;
             flex-shrink: 0;
         }
-        .chat-modal .chat-header h4 {
-            font-size: 16px;
-            font-weight: 700;
-        }
+        .chat-modal .chat-header h4 { font-size: 16px; font-weight: 700; }
         .chat-modal .chat-header .close-chat {
             background: none;
             border: none;
@@ -320,9 +454,7 @@
             margin-bottom: 12px;
             max-width: 85%;
         }
-        .chat-modal .chat-messages .msg-item.user-msg {
-            margin-left: auto;
-        }
+        .chat-modal .chat-messages .msg-item.user-msg { margin-left: auto; }
         .chat-modal .chat-messages .msg-item .msg-bubble {
             padding: 10px 15px;
             border-radius: 12px;
@@ -345,9 +477,7 @@
             margin-top: 3px;
             display: block;
         }
-        .chat-modal .chat-messages .msg-item.user-msg .msg-time {
-            text-align: right;
-        }
+        .chat-modal .chat-messages .msg-item.user-msg .msg-time { text-align: right; }
         .chat-modal .chat-messages .msg-attachment {
             max-width: 100%;
             max-height: 150px;
@@ -372,9 +502,7 @@
             font-family: 'Inter', sans-serif;
             outline: none;
         }
-        .chat-modal .chat-input-area input[type="text"]:focus {
-            border-color: #f5c842;
-        }
+        .chat-modal .chat-input-area input[type="text"]:focus { border-color: #f5c842; }
         .chat-modal .chat-input-area .btn-attach {
             background: #e0e0e0;
             color: #333;
@@ -399,6 +527,9 @@
         .chat-modal .chat-input-area .btn-send:hover { background: #e6b800; }
         .chat-modal .chat-input-area .file-input { display: none; }
 
+        /* =============================================
+           MOBILE RESPONSIVE
+           ============================================= */
         @media (max-width: 480px) {
             .chat-modal {
                 bottom: 0;
@@ -409,6 +540,8 @@
                 max-height: 100vh;
                 border-radius: 0;
             }
+            .cpx-iframe-wrapper { min-height: 400px; }
+            .cpx-iframe-wrapper iframe { min-height: 400px; }
         }
 
         @media (max-width: 768px) {
@@ -420,7 +553,10 @@
             .table-section { padding: 18px; overflow-x: auto; }
             .table-section table { font-size: 12px; }
             .table-section th, .table-section td { padding: 8px 10px; }
+            .cpx-section { padding: 15px; }
+            .cpx-section .header { flex-direction: column; gap: 10px; align-items: flex-start; }
         }
+
         @media (min-width: 769px) and (max-width: 1024px) {
             .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
         }
@@ -428,12 +564,14 @@
 </head>
 <body>
 
+    <!-- =============================================
+    TOP BAR
+    ============================================= -->
     <div class="topbar">
         <div class="logo"><span class="play-icon">▶</span>Cash<span>Vista</span></div>
         <div class="user-info">
             <span class="greeting">👋 Welcome, <strong id="userName">User</strong></span>
             <span class="balance-badge">💰 <span id="userBalance">₦0.00</span></span>
-            <!-- ===== NEW: CHAT ICON ===== -->
             <div class="chat-icon-container">
                 <button class="chat-btn" onclick="toggleChat()" title="Chat with Admin">💬</button>
                 <span class="unread-badge" id="chatUnreadBadge" style="display:none;">0</span>
@@ -442,7 +580,9 @@
         </div>
     </div>
 
-    <!-- ===== CHAT MODAL ===== -->
+    <!-- =============================================
+    CHAT MODAL
+    ============================================= -->
     <div id="chatModal" class="chat-modal">
         <div class="chat-header">
             <h4>💬 Chat with Admin</h4>
@@ -459,7 +599,14 @@
         </div>
     </div>
 
+    <!-- =============================================
+    MAIN CONTAINER
+    ============================================= -->
     <div class="container">
+
+        <!-- =============================================
+        WELCOME BANNER
+        ============================================= -->
         <div class="welcome-banner">
             <div>
                 <h1>Welcome back, <span id="bannerName">User</span>!</h1>
@@ -472,7 +619,11 @@
             </div>
         </div>
 
+        <!-- =============================================
+        DASHBOARD GRID
+        ============================================= -->
         <div class="dashboard-grid">
+            <!-- Card 1: Wallet Balance -->
             <div class="card card-gradient-1">
                 <div class="card-icon">💰</div>
                 <h3>Wallet Balance</h3>
@@ -481,6 +632,7 @@
                 <button class="btn btn-green" onclick="window.location.href='withdraw.html'">💸 Withdraw Funds</button>
             </div>
 
+            <!-- Card 2: Invest & Grow -->
             <div class="card card-gradient-2">
                 <div class="card-icon">📈</div>
                 <h3>Invest & Grow</h3>
@@ -489,6 +641,7 @@
                 <button class="btn btn-gold" onclick="window.location.href='invest.html'">🚀 Go to Invest & Grow</button>
             </div>
 
+            <!-- Card 3: Advertise Video -->
             <div class="card card-gradient-3">
                 <div class="card-icon">📹</div>
                 <h3>Advertise Video</h3>
@@ -496,6 +649,7 @@
                 <button class="btn btn-blue" onclick="window.location.href='advertise.html'">📢 Start Campaign</button>
             </div>
 
+            <!-- Card 4: Watch & Earn -->
             <div class="card card-gradient-4">
                 <div class="card-icon">🎬</div>
                 <h3>Watch & Earn</h3>
@@ -504,6 +658,7 @@
                 <button class="btn btn-purple" onclick="window.location.href='watch.html'">▶️ Watch Videos</button>
             </div>
 
+            <!-- Card 5: Referral Link -->
             <div class="card card-gradient-5">
                 <div class="card-icon">🔗</div>
                 <h3>Your Referral Link</h3>
@@ -516,6 +671,7 @@
                 <button class="btn btn-outline" onclick="window.location.href='invest.html'" style="margin-top:8px;">🔍 View Details</button>
             </div>
 
+            <!-- Card 6: Referral Network -->
             <div class="card card-gradient-6">
                 <div class="card-icon">🌐</div>
                 <h3>Referral Network</h3>
@@ -529,6 +685,61 @@
             </div>
         </div>
 
+        <!-- =============================================
+        CPX SURVEY SECTION (NEW - UPGRADED)
+        ============================================= -->
+        <div class="cpx-section">
+            <div class="header">
+                <h2>📊 Earn More with Surveys</h2>
+                <div>
+                    <span class="badge-cpx">🟢 Live</span>
+                    <span class="badge-cpx" style="background:#f5c842; color:#0d1b2a; margin-left:8px;">App ID: 34470</span>
+                </div>
+                <div class="actions">
+                    <button class="btn-refresh" style="background:#e3f2fd; color:#0d47a1; padding:6px 18px; border:none; border-radius:30px; font-weight:600; font-size:13px; cursor:pointer;" onclick="refreshCPX()">🔄 Refresh</button>
+                    <button class="btn-refresh" style="background:#0d47a1; color:#fff; padding:6px 18px; border:none; border-radius:30px; font-weight:600; font-size:13px; cursor:pointer;" onclick="window.open('https://offers.cpx-research.com/index.php?app_id=34470&ext_user_id=' + getUserId() + '&secure_hash=&username=' + getUserName() + '&email=' + getUserEmail() + '&subid_1=&subid_2', '_blank')">🔗 Full Screen</button>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p>
+                    📌 <strong>Complete surveys and earn rewards!</strong><br>
+                    Click on any survey offer below, complete it, and earn <span class="highlight">Coins</span> directly into your wallet.
+                    <br><br>
+                    <span style="font-size:13px; color:#888;">
+                        💰 <strong>Commission:</strong> 20% | 
+                        🔄 <strong>Currency:</strong> 1 USD = 800 Coins |
+                        ✅ <strong>Status:</strong> Live
+                    </span>
+                </p>
+            </div>
+
+            <div class="cpx-iframe-wrapper">
+                <div id="cpxLoading" class="loading-placeholder">
+                    <div class="spinner"></div>
+                    <p>Loading survey offers...</p>
+                </div>
+                <iframe
+                    id="cpxIframe"
+                    width="100%"
+                    frameborder="0"
+                    height="600px"
+                    src=""
+                    onload="document.getElementById('cpxLoading').style.display='none';"
+                    style="display:block;"
+                ></iframe>
+            </div>
+
+            <div class="cpx-actions">
+                <button class="btn-sm" style="background:#e8f5e9; color:#2e7d32; padding:6px 16px; border:none; border-radius:20px; font-weight:600; cursor:pointer;" onclick="refreshCPX()">🔄 Reload Surveys</button>
+                <button class="btn-sm" style="background:#e3f2fd; color:#0d47a1; padding:6px 16px; border:none; border-radius:20px; font-weight:600; cursor:pointer;" onclick="window.open('https://offers.cpx-research.com/index.php?app_id=34470&ext_user_id=' + getUserId() + '&secure_hash=&username=' + getUserName() + '&email=' + getUserEmail() + '&subid_1=&subid_2', '_blank')">🔗 Open in New Tab</button>
+                <button class="btn-sm" style="background:#fef7e0; color:#e65100; padding:6px 16px; border:none; border-radius:20px; font-weight:600; cursor:pointer;" onclick="showToast('💡 Complete surveys to earn Coins! Each survey pays between 200-2000 Coins.')">ℹ️ How It Works</button>
+            </div>
+        </div>
+
+        <!-- =============================================
+        RECENT TRANSACTIONS
+        ============================================= -->
         <div class="table-section">
             <div class="header">
                 <h3>📊 Recent Transactions</h3>
@@ -541,13 +752,20 @@
                 </tbody>
             </table>
         </div>
+
     </div>
 
+    <!-- =============================================
+    FOOTER
+    ============================================= -->
     <footer class="footer">
         <p>&copy; 2026 CashVista. All rights reserved.</p>
         <p class="founder">Designed & Built by Stephen Melek Elisha</p>
     </footer>
 
+    <!-- =============================================
+    JAVASCRIPT
+    ============================================= -->
     <script>
         // =============================================
         // SUPABASE CONFIGURATION
@@ -555,6 +773,7 @@
         const SUPABASE_URL = 'https://jblfciwnddqokyiuzmgd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_nge3ZsQ3TmI54oR2ySSb7w_Tj322Hke';
         const APP_URL = 'https://cashvista.vercel.app';
+        const CPX_APP_ID = '34470';
 
         let currentUser = null;
         let chatFileAttachment = null;
@@ -564,7 +783,7 @@
         // =============================================
         async function getLoggedInUser() {
             let userEmail = sessionStorage.getItem('userEmail');
-            
+
             if (!userEmail) {
                 const stored = localStorage.getItem('cashvista_user');
                 if (stored) {
@@ -615,6 +834,50 @@
                 console.error('Error fetching user:', e);
                 window.location.href = 'login.html';
                 return null;
+            }
+        }
+
+        // =============================================
+        // GET USER DATA FOR CPX
+        // =============================================
+        function getUserId() {
+            return currentUser ? encodeURIComponent(currentUser.email) : 'guest';
+        }
+
+        function getUserName() {
+            return currentUser ? encodeURIComponent(currentUser.name || currentUser.email) : 'Guest';
+        }
+
+        function getUserEmail() {
+            return currentUser ? encodeURIComponent(currentUser.email) : 'guest@cashvista.com';
+        }
+
+        // =============================================
+        // GET CPX IFRAME URL
+        // =============================================
+        function getCPXUrl() {
+            const userId = getUserId();
+            const userName = getUserName();
+            const userEmail = getUserEmail();
+            return 'https://offers.cpx-research.com/index.php?app_id=' + CPX_APP_ID + '&ext_user_id=' + userId + '&secure_hash=&username=' + userName + '&email=' + userEmail + '&subid_1=&subid_2';
+        }
+
+        // =============================================
+        // REFRESH CPX IFRAME
+        // =============================================
+        function refreshCPX() {
+            const iframe = document.getElementById('cpxIframe');
+            const loading = document.getElementById('cpxLoading');
+            if (iframe) {
+                loading.style.display = 'flex';
+                iframe.src = getCPXUrl();
+                iframe.onload = function() {
+                    loading.style.display = 'none';
+                };
+                // Fallback: hide loading after 10 seconds
+                setTimeout(function() {
+                    loading.style.display = 'none';
+                }, 10000);
             }
         }
 
@@ -734,7 +997,7 @@
         }
 
         // =============================================
-        // ✅ NEW: GET UNREAD MESSAGE COUNT
+        // CHAT FUNCTIONS
         // =============================================
         async function getUnreadMessageCount(userEmail) {
             try {
@@ -753,9 +1016,6 @@
             }
         }
 
-        // =============================================
-        // ✅ NEW: LOAD CHAT MESSAGES
-        // =============================================
         async function loadChatMessages() {
             const container = document.getElementById('chatMessages');
             if (!currentUser) return;
@@ -802,7 +1062,6 @@
                 container.innerHTML = html;
                 container.scrollTop = container.scrollHeight;
 
-                // Mark messages as read
                 await markMessagesAsRead(currentUser.email);
 
             } catch (error) {
@@ -811,9 +1070,6 @@
             }
         }
 
-        // =============================================
-        // ✅ NEW: MARK MESSAGES AS READ
-        // =============================================
         async function markMessagesAsRead(userEmail) {
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/messages?recipient_email=eq.' + encodeURIComponent(userEmail) + '&is_read=eq.false', {
@@ -833,9 +1089,6 @@
             }
         }
 
-        // =============================================
-        // ✅ NEW: UPDATE UNREAD BADGE
-        // =============================================
         async function updateUnreadBadge(userEmail) {
             const count = await getUnreadMessageCount(userEmail);
             const badge = document.getElementById('chatUnreadBadge');
@@ -847,9 +1100,6 @@
             }
         }
 
-        // =============================================
-        // ✅ NEW: TOGGLE CHAT MODAL
-        // =============================================
         function toggleChat() {
             const modal = document.getElementById('chatModal');
             modal.classList.toggle('active');
@@ -858,9 +1108,6 @@
             }
         }
 
-        // =============================================
-        // ✅ NEW: ATTACH USER FILE
-        // =============================================
         function attachUserFile(input) {
             const file = input.files[0];
             if (!file) return;
@@ -873,9 +1120,6 @@
             reader.readAsDataURL(file);
         }
 
-        // =============================================
-        // ✅ NEW: SEND USER MESSAGE
-        // =============================================
         async function sendUserMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
@@ -916,7 +1160,6 @@
                     throw new Error('Failed to send message');
                 }
 
-                // Send email notification to admin
                 try {
                     await fetch(SUPABASE_URL + '/rest/v1/activity', {
                         method: 'POST',
@@ -941,8 +1184,6 @@
                 document.getElementById('chatFileInput').value = '';
 
                 showToast('✅ Message sent to admin!');
-
-                // Reload messages
                 await loadChatMessages();
 
             } catch (error) {
@@ -992,9 +1233,13 @@
                 }
 
                 await loadTransactions(user.email);
-
-                // ✅ NEW: Update chat unread badge
                 await updateUnreadBadge(user.email);
+
+                // Load CPX iframe
+                const cpxIframe = document.getElementById('cpxIframe');
+                if (cpxIframe) {
+                    cpxIframe.src = getCPXUrl();
+                }
 
             } catch (error) {
                 console.error('Error loading dashboard:', error);
